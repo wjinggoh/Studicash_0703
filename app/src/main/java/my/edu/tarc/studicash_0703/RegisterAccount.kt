@@ -1,67 +1,140 @@
 package my.edu.tarc.studicash_0703
 
 import android.Manifest
-import android.content.ActivityNotFoundException
-import android.content.ContentValues
+import androidx.core.text.HtmlCompat
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import my.edu.tarc.studicash_0703.databinding.ActivityRegisterAccountBinding
 import android.net.Uri
+import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
-import android.provider.Settings
 import android.text.Html
 import android.util.Log
-import androidx.appcompat.app.AlertDialog
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import my.edu.tarc.studicash_0703.Models.User
+import my.edu.tarc.studicash_0703.databinding.ActivityRegisterAccountBinding
+import my.edu.tarc.studicash_0703.utils.USER_NODE
+import my.edu.tarc.studicash_0703.utils.USER_PROFILE_FOLDER
+import my.edu.tarc.studicash_0703.utils.uploadImage
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.messaging.FirebaseMessaging
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import my.edu.tarc.studicash_0703.utils.USER_NODE
-import my.edu.tarc.studicash_0703.utils.USER_PROFILE_FOLDER
-import my.edu.tarc.studicash_0703.Models.User
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceDetectorOptions
+import com.squareup.picasso.Picasso
 import java.io.File
 import java.io.IOException
+
 
 class RegisterAccount : AppCompatActivity() {
 
     private var fileUri: Uri? = null
 
 
+
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            fileUri?.let { uri ->
+                detectFace(uri) { faceDetected ->
+                    if (faceDetected) {
+                        uploadImage(uri, USER_PROFILE_FOLDER) { imageUrl ->
+                            if (imageUrl != null) {
+                                user.image = imageUrl
+                                binding.profileImage.setImageURI(uri)
+                            }
+                        }
+                    } else {
+                        Toast.makeText(this, "No face detected, please take a valid photo with a face.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
+
     val binding by lazy {
         ActivityRegisterAccountBinding.inflate(layoutInflater)
     }
 
-    lateinit var user: my.edu.tarc.studicash_0703.Models.User
+    lateinit var user:User
+    private val launcher= registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            detectFace(uri) { faceDetected ->
+                if (faceDetected) {
+                    uploadImage(uri, USER_PROFILE_FOLDER) { imageUrl ->
+                        if (imageUrl != null) {
+                            user.image = imageUrl
+                            binding.profileImage.setImageURI(uri)
+                        }
+                    }
+                } else {
+                    Toast.makeText(this, "No face detected, please upload a valid photo with a face.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        // Check camera permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Request camera permission
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.CAMERA),
+                CAMERA_PERMISSION_REQUEST_CODE
+            )
+        } else {
+            // Camera permission granted, continue with existing initialization
             val text =
                 "<font color=#FF000000>Already have an account</font> <font color=#00C9B8>Login ?</font>"
             binding.backSignIn.setText(Html.fromHtml(text))
             user = User()
-
-            binding.uploadStudentIdPhoto.setOnClickListener {
-                cameraCheckPermission()
+            if (intent.hasExtra("MODE")) {
+                if (intent.getIntExtra("MODE", -1) == 1) {
+                    binding.registerButton.text = "Update Profile"
+                    Firebase.firestore.collection(USER_NODE)
+                        .document(Firebase.auth.currentUser!!.uid)
+                        .get()
+                        .addOnSuccessListener {
+                            user = it.toObject<User>()!!
+                            if (!user.image.isNullOrEmpty()) {
+                                Picasso.get().load(user.image).into(binding.profileImage)
+                            }
+                            binding.userName.editText?.setText(user.name)
+                            binding.email.editText?.setText(user.email)
+                            binding.password.editText?.setText(user.password)
+                            binding.gender.editText?.setText(user.gender)
+                        }
+                }
             }
 
+            binding.profileImage.setOnClickListener {
+                fileUri = createImageFileUri()
+                fileUri?.let { uri ->
+                    cameraLauncher.launch(uri)
+                }
+            }
+
+
+            binding.profileImage.setOnClickListener {
+                fileUri = createImageFileUri()
+                fileUri?.let { uri ->
+                    cameraLauncher.launch(uri)
+                }
+            }
 
             binding.backSignIn.setOnClickListener {
                 startActivity(Intent(this@RegisterAccount, MainActivity::class.java))
@@ -204,7 +277,7 @@ class RegisterAccount : AppCompatActivity() {
                                         }
                                 } else {
                                     Log.e(
-                                        ContentValues.TAG,
+                                        TAG,
                                         "Failed to retrieve FCM token: ${task.exception?.localizedMessage}"
                                     )
                                     Toast.makeText(
@@ -228,67 +301,66 @@ class RegisterAccount : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+                }
+            }
+        }
+    }
+    private fun createImageFileUri(): Uri {
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val file = File.createTempFile("selfie_", ".jpg", storageDir)
+        return FileProvider.getUriForFile(this, "com.example.fyp07.fileprovider", file)
+    }
 
+    private fun detectFace(uri: Uri, onDetectionComplete: (Boolean) -> Unit) {
+        val image: InputImage
+        try {
+            image = InputImage.fromFilePath(this, uri)
+            val options = FaceDetectorOptions.Builder()
+                .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+                .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+                .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+                .build()
+
+            val detector = FaceDetection.getClient(options)
+
+            detector.process(image)
+                .addOnSuccessListener { faces ->
+                    onDetectionComplete(faces.isNotEmpty())
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(
+                        this,
+                        "Face detection failed: ${e.localizedMessage}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    onDetectionComplete(false)
+                }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            onDetectionComplete(false)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // User granted camera permission, continue with initialization
+                // (Already handled in onCreate)
+            } else {
+                // User denied camera permission, you can show a message or continue with other actions
+                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show()
+                // You may choose to close the app or continue with other actions
             }
         }
     }
 
-    private fun cameraCheckPermission(){
-
-        Dexter.withContext(this)
-            .withPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                android.Manifest.permission.CAMERA).withListener(
-
-                    object:MultiplePermissionsListener{
-                        override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                            report?.let{
-
-                                if(report.areAllPermissionsGranted()){
-                                    camera()
-                                }
-                            }
-                        }
-
-                        override fun onPermissionRationaleShouldBeShown(
-                            p0: MutableList<PermissionRequest>?,
-                            p1: PermissionToken?
-                        ) {
-                           showRorationalDialogForPermission()
-                        }
-
-                    }
-                ).onSameThread().check()
-    }
-
-    private fun camera(){
-        val intent=Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(intent,CAMERA_REQUEST_CODE)
-    }
-
-    private fun showRorationalDialogForPermission(){
-        AlertDialog.Builder(this)
-            .setMessage("It looks like you have turned off permissions"
-            +"required for this feature. It can be enable under App settings.")
-            .setPositiveButton("GO TO SETTINGS"){_,_->
-
-                try{
-                    val intent=Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    val uri=Uri.fromParts("package",packageName,null)
-                    intent.data=uri
-                    startActivity(intent)
-
-
-                }catch(e:ActivityNotFoundException){
-                    e.printStackTrace()
-                }
-            }
-
-            .setNegativeButton("CANCEL"){dialog,_->
-                dialog.dismiss()
-            }.show()
-    }
-
     companion object {
-        private const val CAMERA_REQUEST_CODE = 100
+        private const val CAMERA_PERMISSION_REQUEST_CODE = 100
     }
 }
+

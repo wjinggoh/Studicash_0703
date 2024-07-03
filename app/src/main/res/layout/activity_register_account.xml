@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
-
-<androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/main"
     android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".RegisterAccount">
 
-    <ImageView
+    <androidx.camera.view.PreviewView
+        android:background="@color/white"
+        android:id="@+id/previewView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profileImage"
         android:layout_width="125dp"
         android:layout_height="113dp"
         android:layout_marginTop="40dp"
-        android:src="@drawable/baseline_image_48"
+        android:src="@drawable/profile_user__128dp"
+        app:civ_border_color="@color/black"
+        app:civ_border_width="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <TextView
         android:id="@+id/upload_studentIdPhoto"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        android:layout_width="220dp"
+        android:layout_height="28dp"
         android:layout_marginStart="178dp"
         android:layout_marginTop="13dp"
         android:layout_marginEnd="175dp"
@@ -48,7 +53,7 @@
         app:layout_constraintBottom_toTopOf="@+id/userName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/upload_studentIdPhoto">
+        app:layout_constraintTop_toBottomOf="@+id/profileImage">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -118,7 +123,7 @@
         android:layout_width="344dp"
         android:layout_height="67dp"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="25dp"
         android:hint="@string/gender"
         app:layout_constraintBottom_toTopOf="@+id/registerButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -132,6 +137,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+
     <Button
         android:id="@+id/registerButton"
         android:layout_width="335dp"
@@ -141,9 +147,8 @@
         android:paddingTop="1dp"
         android:paddingBottom="1dp"
         android:text="@string/login_Button"
-        android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="28sp"
+        android:textSize="34sp"
         app:cornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -165,5 +170,6 @@
         app:layout_constraintVertical_bias="1.0" />
 
 
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>

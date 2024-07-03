@@ -35,6 +35,7 @@ android {
     }
     buildFeatures{
         viewBinding = true
+        dataBinding=true
     }
 }
 
@@ -55,6 +56,11 @@ dependencies {
     implementation(libs.firebase.messaging.ktx)
     //user permission
     implementation("com.karumi:dexter:6.2.3")
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation("com.squareup.picasso:picasso:2.8")
+    implementation(platform("com.google.firebase:firebase-bom:32.2.0"))
+    implementation("com.google.firebase:firebase-storage-ktx")
+    implementation(libs.androidx.camera.view)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

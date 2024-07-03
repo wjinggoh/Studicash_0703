@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_add"
+        android:icon="@android:drawable/ic_input_add"
+        android:title="@string/add" />
 
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/home__icon"
         android:title="@string/home" />
 
-    <item
-        android:id="@+id/navigation_report"
-        android:icon="@drawable/business_report24px"
-        android:title="@string/report"
-        android:visible="true" />
 
-    <item
-        android:id="@+id/navigation_add"
-        android:icon="@android:drawable/ic_input_add"
-        android:title="@string/add" />
 
 
     <item
