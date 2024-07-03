@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "500957387268",
+    "project_id": "studicashapp",
+    "storage_bucket": "studicashapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500957387268:android:ee81d4a5f6c4d57a7fb351",
+        "android_client_info": {
+          "package_name": "my.edu.tarc.studicash_0703"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "500957387268-ghn2g309foa453ktbvfc1mard5otncl0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4rdmTEA3vmtxWGyDSijsWlnPKl6YqKns"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "500957387268-ghn2g309foa453ktbvfc1mard5otncl0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500957387268:android:270d68c2d5dbd46f7fb351",
+        "android_client_info": {
+          "package_name": "my.edu.tarc.studicashapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "500957387268-ghn2g309foa453ktbvfc1mard5otncl0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4rdmTEA3vmtxWGyDSijsWlnPKl6YqKns"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "500957387268-ghn2g309foa453ktbvfc1mard5otncl0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Studicash</string>
+    <string name="welcome">Welcome to Studicash!</string>
+    <string name="input_email">Email\n</string>
+    <string name="input_password">Password\n</string>
+    <string name="no_account">No Account?   <u>Register</u>\n</string>
+    <string name="login_Button">Login\n</string>
+
+    <!--register-->
+    <string name="studentId_Image"><u>Upload Your Student Id Photo</u>\n</string>
+    <string name="email">Email</string>
+    <string name="userName">User Name\n</string>
+    <string name="password">Password\n</string>
+    <string name="confirmPassword">Confirm Password</string>
+    <string name="gender">Gender</string>
+    <string name="balik_Login">Back to Login</string>
+    <string name="register_button">Register\n</string>
+
+    <!--forgotPassword-->
+    <string name="forgotPassword"><u>I have forgot my Password</u></string>
+    <string name="submit">Submit</string>
+
+    <!--bottomnavmenu-->
+    <string name="home">Home</string>
+    <string name="report">Report</string>
+    <string name="settings">Settings</string>
+    <string name="profile">Profile</string>
+    <string name="add"></string>
+
+    <!--mainmenu-->
+    <string name="todayspending">Todays Spending</string>
+    <string name="todayspent">RM0.00</string>
+</resources>
