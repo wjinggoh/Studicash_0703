@@ -18,8 +18,8 @@ ActivityMainBinding.inflate(layoutInflater)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FirebaseApp.initializeApp(this)
         setContentView(binding.root)
+        FirebaseApp.initializeApp(this)
 
         binding.loginButton.setOnClickListener{
             val email=binding.email.editText?.text.toString()

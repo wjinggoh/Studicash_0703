@@ -16,7 +16,6 @@
 
 
     <de.hdodenhof.circleimageview.CircleImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profileImage"
         android:layout_width="125dp"
         android:layout_height="113dp"
@@ -141,12 +140,12 @@
     <Button
         android:id="@+id/registerButton"
         android:layout_width="335dp"
-        android:layout_height="51dp"
+        android:layout_height="60dp"
         android:layout_marginBottom="50dp"
         android:backgroundTint="#1A5E9E"
         android:paddingTop="1dp"
         android:paddingBottom="1dp"
-        android:text="@string/login_Button"
+        android:text="@string/register_button"
         android:textColor="@color/white"
         android:textSize="34sp"
         app:cornerRadius="0dp"
@@ -161,13 +160,13 @@
         android:id="@+id/backSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
+        android:layout_alignParentBottom="true"
         android:text="@string/balik_Login"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/previewView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/registerButton"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/registerButton" />
 
 
 

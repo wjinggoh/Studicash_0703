@@ -22,6 +22,7 @@ import my.edu.tarc.studicash_0703.utils.USER_NODE
 import my.edu.tarc.studicash_0703.utils.USER_PROFILE_FOLDER
 import my.edu.tarc.studicash_0703.utils.uploadImage
 import com.google.firebase.Firebase
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
@@ -33,11 +34,57 @@ import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.squareup.picasso.Picasso
 import java.io.File
 import java.io.IOException
+import com.google.firebase.storage.ktx.storage
+import com.google.firebase.storage.storage
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 
 
 class RegisterAccount : AppCompatActivity() {
 
     private var fileUri: Uri? = null
+
+    val binding by lazy {
+        ActivityRegisterAccountBinding.inflate(layoutInflater)
+    }
+
+    lateinit var user:User
+
+
+    private fun uploadFile(fileUri: Uri) {
+        val storageRef = Firebase.storage.reference.child("your/storage/path/${fileUri.lastPathSegment}")
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val uploadTask = storageRef.putFile(fileUri)
+
+                // Register observers to listen for upload progress, success, or failure
+                uploadTask.addOnProgressListener {
+                    // Handle upload progress updates
+                }.addOnSuccessListener {
+                    // Upload completed successfully
+                }.addOnFailureListener { exception ->
+                    // Handle upload failure, including the "server terminated session" error
+                    if (exception is IOException && exception.message?.contains("The server has terminated the upload session") == true) {
+                        // Implement retry logic with exponential backoff
+                    } else {
+                        // Handle other upload errors
+                    }
+                }
+
+                // Optionally, use await() to suspend the coroutine until the upload completes
+                val uploadResult = uploadTask.await()
+            } catch (e: Exception) {
+                // Handle exceptions during upload
+                e.printStackTrace()
+            }
+        }
+    }
+
+
 
 
 
@@ -46,12 +93,9 @@ class RegisterAccount : AppCompatActivity() {
             fileUri?.let { uri ->
                 detectFace(uri) { faceDetected ->
                     if (faceDetected) {
-                        uploadImage(uri, USER_PROFILE_FOLDER) { imageUrl ->
-                            if (imageUrl != null) {
-                                user.image = imageUrl
-                                binding.profileImage.setImageURI(uri)
-                            }
-                        }
+                        uploadFile(uri) // Replace with the new function
+                        user.image = uri.toString()
+                        binding.profileImage.setImageURI(uri)
                     } else {
                         Toast.makeText(this, "No face detected, please take a valid photo with a face.", Toast.LENGTH_SHORT).show()
                     }
@@ -60,27 +104,21 @@ class RegisterAccount : AppCompatActivity() {
         }
     }
 
-    val binding by lazy {
-        ActivityRegisterAccountBinding.inflate(layoutInflater)
-    }
-
-    lateinit var user:User
-    private val launcher= registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+    private val launcher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
             detectFace(uri) { faceDetected ->
                 if (faceDetected) {
-                    uploadImage(uri, USER_PROFILE_FOLDER) { imageUrl ->
-                        if (imageUrl != null) {
-                            user.image = imageUrl
-                            binding.profileImage.setImageURI(uri)
-                        }
-                    }
+                    uploadFile(uri) // Replace with the new function
+                    user.image = uri.toString()
+                    binding.profileImage.setImageURI(uri)
                 } else {
                     Toast.makeText(this, "No face detected, please upload a valid photo with a face.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,17 +166,14 @@ class RegisterAccount : AppCompatActivity() {
                 }
             }
 
-
-            binding.profileImage.setOnClickListener {
-                fileUri = createImageFileUri()
-                fileUri?.let { uri ->
-                    cameraLauncher.launch(uri)
-                }
+            binding.uploadStudentIdPhoto.setOnClickListener(){
+                launcher.launch("image/*")
             }
 
             binding.backSignIn.setOnClickListener {
-                startActivity(Intent(this@RegisterAccount, MainActivity::class.java))
-                finish()
+                val intent = Intent(this@RegisterAccount, MainActivity::class.java)
+                startActivity(intent)
+                finish() // Optionally call finish() to close the current activity
             }
 
             binding.registerButton.setOnClickListener {
@@ -308,7 +343,7 @@ class RegisterAccount : AppCompatActivity() {
     private fun createImageFileUri(): Uri {
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val file = File.createTempFile("selfie_", ".jpg", storageDir)
-        return FileProvider.getUriForFile(this, "com.example.fyp07.fileprovider", file)
+        return FileProvider.getUriForFile(this, "my.edu.tarc.studicash_0703.fileprovider", file)
     }
 
     private fun detectFace(uri: Uri, onDetectionComplete: (Boolean) -> Unit) {
@@ -339,6 +374,8 @@ class RegisterAccount : AppCompatActivity() {
             e.printStackTrace()
             onDetectionComplete(false)
         }
+
+
     }
 
     override fun onRequestPermissionsResult(
