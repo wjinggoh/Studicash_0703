@@ -242,7 +242,7 @@ class RegisterAccount : AppCompatActivity() {
                 ) {
                     Toast.makeText(
                         this@RegisterAccount,
-                        "s",
+                        "Please type \"Male\" or \"Female\"",
                         Toast.LENGTH_SHORT
                     ).show()
                     return@setOnClickListener

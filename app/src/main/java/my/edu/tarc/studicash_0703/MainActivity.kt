@@ -21,6 +21,7 @@ ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         FirebaseApp.initializeApp(this)
 
+
         binding.loginButton.setOnClickListener{
             val email=binding.email.editText?.text.toString()
             val password=binding.password.editText?.text.toString()
@@ -32,9 +33,9 @@ ActivityMainBinding.inflate(layoutInflater)
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
                     .addOnCompleteListener{task->
                         if(task.isSuccessful){
-
-                            startActivity(Intent(this@MainActivity,HomeActivity::class.java))
-                            finish()
+                            val intent = Intent(this@MainActivity, HomeActivity::class.java)
+                            startActivity(intent)
+                            finish() // Optionally call finish() to close the current activity
                         }else{
                             Toast.makeText(this@MainActivity,"Authentication failed:${task.exception?.localizedMessage}",
                                 Toast.LENGTH_SHORT)

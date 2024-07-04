@@ -2,5 +2,5 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="#0960A5"/> <!-- Replace with desired background color -->
     <corners android:radius="30dp"/> <!-- Adjust corner radius as needed -->
-    <stroke android:width="2dp" android:color="#8A8A8A"/> <!-- Optional: border color -->
+    <stroke android:width="2dp" android:color="#008A8A8A"/> <!-- Optional: border color -->
 </shape>

@@ -30,4 +30,18 @@
     <!--mainmenu-->
     <string name="todayspending">Todays Spending</string>
     <string name="todayspent">RM0.00</string>
+
+    <!--add-->
+<string name="add_title">Add Transactions</string>
+
+    <!--profile-->
+    <string name="profile_title">Profile</string>
+    <string name="profile_username">Username</string>
+    <string name="profile_email">Email</string>
+
+
+    <!--settings-->
+    <string name="settings_title">Settings</string>
+    <string name="logout">Logout</string>
+
 </resources>

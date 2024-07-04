@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/navigation_add"
-        android:icon="@android:drawable/ic_input_add"
-        android:title="@string/add" />
+
 
     <item
-        android:id="@+id/navigation_home"
+        android:id="@+id/fragment_home"
         android:icon="@drawable/home__icon"
         android:title="@string/home" />
-
-
-
-
     <item
-        android:id="@+id/navigation_profile"
+        android:id="@+id/fragment_add"
+        android:icon="@android:drawable/ic_input_add"
+        android:title="@string/add" />
+    <item
+        android:id="@+id/fragment_profile"
         android:icon="@drawable/profile_user"
         android:title="@string/profile" />
 
     <item
-        android:id="@+id/navigation_settings"
-        android:icon="@drawable/piggy_bank"
+        android:id="@+id/fragment_settings"
+        android:icon="@drawable/setting"
         android:title="@string/settings" />
 
 
