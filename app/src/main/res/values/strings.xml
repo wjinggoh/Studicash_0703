@@ -28,11 +28,12 @@
     <string name="add">Add</string>
 
     <!--mainmenu-->
-    <string name="todayspending">Todays Spending</string>
+    <string name="todayspending">Today Spending</string>
     <string name="todayspent">RM0.00</string>
 
     <!--add-->
 <string name="add_title">Add Transactions</string>
+    <string name="add_create">Create</string>
 
     <!--profile-->
     <string name="profile_title">Profile</string>
