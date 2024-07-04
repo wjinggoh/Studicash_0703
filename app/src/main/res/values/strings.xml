@@ -32,8 +32,11 @@
     <string name="todayspent">RM0.00</string>
 
     <!--add-->
-<string name="add_title">Add Transactions</string>
-    <string name="add_create">Create</string>
+    <string name="add_title">Add Transactions</string>
+    <string name="add_create">Create \n Transaction</string>
+
+    <!--choosetransactiontype-->
+    <string name="choose">Choose Transaction</string>
 
     <!--profile-->
     <string name="profile_title">Profile</string>
@@ -44,5 +47,7 @@
     <!--settings-->
     <string name="settings_title">Settings</string>
     <string name="logout">Logout</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -14,7 +14,11 @@
         android:id="@+id/fragment_add"
         android:name="my.edu.tarc.studicash_0703.Fragment.AddFragment"
         android:label="@string/add"
-        tools:layout="@layout/fragment_add" />
+        tools:layout="@layout/fragment_add">
+        <action
+            android:id="@+id/action_addFragment_to_chooseFragment"
+            app:destination="@id/fragment_choose" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragment_profile"
@@ -27,4 +31,10 @@
         android:name="my.edu.tarc.studicash_0703.Fragment.SettingsFragment"
         android:label="@string/settings"
         tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/fragment_choose"
+        android:name="my.edu.tarc.studicash_0703.Fragment.ChooseTransactionFragment"
+        android:label="@string/choose"
+        tools:layout="@layout/fragment_choose_transaction" />
 </navigation>
