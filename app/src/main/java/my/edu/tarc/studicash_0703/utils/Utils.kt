@@ -5,7 +5,7 @@ import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import my.edu.tarc.studicash_0703.Models.Transaction
+import my.edu.tarc.studicash_0703.Models.Expense
 
 fun uploadImage(uri: Uri, folderName:String, callback:(String?)->Unit){
     var imageUrl:String?=null
@@ -19,13 +19,13 @@ fun uploadImage(uri: Uri, folderName:String, callback:(String?)->Unit){
         }
 }
 
-fun saveTransaction(transaction: Transaction) {
+fun saveExpense(expense:Expense) {
     val db = Firebase.firestore
 
-    db.collection("transactions")
-        .add(transaction)
+    db.collection("expenses")
+        .add(expense)
         .addOnSuccessListener { documentReference ->
-            println("Transaction added with ID: ${documentReference.id}")
+            println("Expense added with ID: ${documentReference.id}")
         }
         .addOnFailureListener { e ->
             println("Error adding transaction: $e")

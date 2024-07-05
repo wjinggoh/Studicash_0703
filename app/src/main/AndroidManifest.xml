@@ -33,7 +33,7 @@
             android:name=".AddReceipt"
             android:exported="false" />
         <activity
-            android:name=".AddExpense"
+            android:name=".AddExpenseActivity"
             android:exported="false" />
         <activity
             android:name=".AddIncomeActivity"

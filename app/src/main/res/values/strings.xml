@@ -9,10 +9,10 @@
     <!--register-->
     <string name="studentId_Image"><u>Upload Your Student Id Photo</u>\n</string>
     <string name="email">Email</string>
-    <string name="userName">User Name\n</string>
-    <string name="password">Password\n</string>
+    <string name="userName">User Name</string>
+    <string name="password">Password (Minimum 6 Characters)</string>
     <string name="confirmPassword">Confirm Password</string>
-    <string name="gender">Gender</string>
+    <string name="gender">Gender(Male or Female)</string>
     <string name="balik_Login">Back to Login</string>
     <string name="register_button">Register\n</string>
 
@@ -34,6 +34,7 @@
     <string name="mainMenuTitle">Main Menu</string>
     <string name="todayspending">Today Spending</string>
     <string name="spendhint">RM0.00</string>
+    <string name="goalTrackingbtn">Goal Tracking</string>
 
     <!--expensemanagement-->
     <string name="add_title">Expenses Management</string>
@@ -53,7 +54,10 @@
     <string name="category">Choose Category</string>
     <string name="amount">Amount</string>
     <string name="save">Save</string>
-    <string name="datehint">dd/mm/yyyy</string>
+    <string name="datehint"><u>dd/mm/yyyy</u></string>
+    <string name="paymentmethod">Payment Method</string>
+<string name="categories">Categories</string>
+
     <!--addincome-->
     <string name="incomeHeader">Add Income</string>
     <string name="incometitle">Income Title </string>
@@ -65,7 +69,7 @@
     <string name="expenseHeader">Add Expense</string>
     <string name="expense_title">Expense Title</string>
     <string name="expense_category">Category</string>
-    <string name="expense_amount">Amount</string>
+    <string name="expense_amount">Expense Amount</string>
     <string name="your_expense_title">Expense Title</string>
 
 
