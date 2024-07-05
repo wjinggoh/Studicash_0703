@@ -18,7 +18,10 @@
 
     <!--forgotPassword-->
     <string name="forgotPassword"><u>I have forgot my Password</u></string>
+    <string name="forgotpwdtitle">Forgot Password</string>
+    <string name="typeemailhint">Please type your email</string>
     <string name="submit">Submit</string>
+
 
     <!--bottomnavmenu-->
     <string name="home">Home</string>
@@ -37,6 +40,36 @@
 
     <!--choosetransactiontype-->
     <string name="choose">Choose Transaction</string>
+    <string name="add_income">Add Income</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="add_receipt">Add Receipt</string>
+
+
+    <!--add-allcanuse-->
+
+    <string name="date">Select Date </string>
+    <string name="category">Choose Category</string>
+    <string name="amount">Amount</string>
+    <string name="save">Save</string>
+    <string name="datehint">dd/mm/yyyy</string>
+    <!--addincome-->
+    <string name="incomeHeader">Add Income</string>
+    <string name="incometitle">Income Title </string>
+    <string name="your_income_title">Income Title</string>
+    <string name="income_category">Category</string>
+    <string name="income_amount">Amount</string>
+
+    <!--addexpenses-->
+    <string name="expenseHeader">Add Expense</string>
+    <string name="expense_title">Expense Title</string>
+    <string name="expense_category">Category</string>
+    <string name="expense_amount">Amount</string>
+    <string name="your_expense_title">Expense Title</string>
+
+
+    <!--addreceipt-->
+    <string name="receipt_title">Add Income</string>
+
 
     <!--profile-->
     <string name="profile_title">Profile</string>

@@ -24,7 +24,8 @@ class AddFragment : Fragment() {
 
         // Set click listener for createTransactionbtn
         binding.createTransactionbtn.setOnClickListener {
-            findNavController().navigate(R.id.action_addFragment_to_chooseFragment)
+            val transactionFragment = ChooseTransactionFragment()
+            transactionFragment.show(childFragmentManager, "ChooseTransactionDialog")
         }
 
         return binding.root
