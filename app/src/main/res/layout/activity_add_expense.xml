@@ -64,7 +64,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/income_description"
+            android:id="@+id/expensedescription"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_marginStart="20dp"
@@ -90,10 +90,10 @@
             android:text="@string/category"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button1" />
+            app:layout_constraintTop_toBottomOf="@+id/selectDate" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/selectDateMsg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -102,10 +102,10 @@
             android:text="@string/date"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/income_description" />
+            app:layout_constraintTop_toBottomOf="@+id/expensedescription" />
 
         <Button
-            android:id="@+id/save_income"
+            android:id="@+id/SaveExpense"
             android:layout_width="130dp"
             android:layout_height="60dp"
             android:layout_marginBottom="20dp"
@@ -122,25 +122,27 @@
 
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/selectDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:text="Change Date"
-            app:layout_constraintTop_toBottomOf="@+id/textView5"
-            tools:layout_editor_absoluteX="215dp" />
+            android:layout_marginEnd="16dp"
+            android:text="@string/date"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/selectDateMsg" />
 
         <TextView
             android:id="@+id/dateView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="12dp"
             android:text="@string/datehint"
-            app:layout_constraintBottom_toBottomOf="@+id/button1"
+            app:layout_constraintBottom_toBottomOf="@+id/selectDate"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/button1" />
+            app:layout_constraintTop_toBottomOf="@+id/selectDateMsg"
+            app:layout_constraintVertical_bias="0.0" />
 
         <Spinner
             android:id="@+id/categories"

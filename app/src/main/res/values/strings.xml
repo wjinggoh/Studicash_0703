@@ -31,12 +31,14 @@
     <string name="add">Add</string>
 
     <!--mainmenu-->
+    <string name="mainMenuTitle">Main Menu</string>
     <string name="todayspending">Today Spending</string>
-    <string name="todayspent">RM0.00</string>
+    <string name="spendhint">RM0.00</string>
 
-    <!--add-->
-    <string name="add_title">Add Transactions</string>
+    <!--expensemanagement-->
+    <string name="add_title">Expenses Management</string>
     <string name="add_create">Create \n Transaction</string>
+    <string name="transactionhistory">Transaction History</string>
 
     <!--choosetransactiontype-->
     <string name="choose">Choose Transaction</string>

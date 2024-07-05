@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import my.edu.tarc.studicash_0703.AddExpenseActivity
 import my.edu.tarc.studicash_0703.AddIncomeActivity
 import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.FragmentChooseTransactionBinding
@@ -29,9 +30,9 @@ class ChooseTransactionFragment : DialogFragment() {
             startActivity(Intent(requireContext(), AddIncomeActivity::class.java))
         }
 
-     //   binding.addExpenseButton.setOnClickListener {
-       //     startActivity(Intent(requireContext(), AddExpenseActivity::class.java))
-       // }
+       binding.addExpenseButton.setOnClickListener {
+           startActivity(Intent(requireContext(), AddExpenseActivity::class.java))
+        }
 
 
         return binding.root
