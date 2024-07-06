@@ -5,18 +5,18 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
-import my.edu.tarc.studicash_0703.databinding.ActivityAddCategoryBinding
+import my.edu.tarc.studicash_0703.databinding.ActivityAddExpensesCategoryBinding
 
-class AddCategoryActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityAddCategoryBinding
+class AddExpensesCategoryActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityAddExpensesCategoryBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAddCategoryBinding.inflate(layoutInflater)
+        binding = ActivityAddExpensesCategoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.backCategory.setOnClickListener {
-            startActivity(Intent(this@AddCategoryActivity, AddExpenseActivity::class.java))
+            startActivity(Intent(this@AddExpensesCategoryActivity, AddExpenseActivity::class.java))
         }
 
         binding.saveCategoryButton.setOnClickListener {

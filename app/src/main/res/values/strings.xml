@@ -60,7 +60,7 @@
 
 
     <!--addcategory-->
-   <string name="addcategorytitle">Add Category</string>
+   <string name="addexpensescategorytitle">Add Expenses Category</string>
 
     <!--addincome-->
     <string name="incomeHeader">Add Income</string>

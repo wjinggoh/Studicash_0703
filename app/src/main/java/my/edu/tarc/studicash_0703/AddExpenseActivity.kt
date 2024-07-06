@@ -23,16 +23,21 @@ class AddExpenseActivity : AppCompatActivity() {
         binding = ActivityAddExpenseBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        loadCategories()
-
         binding.addCategoryButton.setOnClickListener {
-            startActivity(Intent(this, AddCategoryActivity::class.java))
+            startActivity(Intent(this, AddExpensesCategoryActivity::class.java))
         }
 
         setupViews()
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadCategories()
+    }
+
     private fun loadCategories() {
+        categories.clear()
+
         // Predefined categories
         categories.addAll(listOf(
             CategoryItem(R.drawable.food, "Food"),
@@ -63,6 +68,7 @@ class AddExpenseActivity : AppCompatActivity() {
     private fun setupViews() {
         binding.back.setOnClickListener {
             startActivity(Intent(this@AddExpenseActivity, AddFragment::class.java))
+            finish()
         }
         binding.selectDate.setOnClickListener {
             showDatePicker()

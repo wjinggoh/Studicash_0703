@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:backgroundTint="#FFFFFF"
-    tools:context=".AddCategoryActivity">
+    tools:context=".AddExpensesCategoryActivity">
 
     <EditText
         android:id="@+id/categoryNameEditText"
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/concert_one"
-        android:text="@string/addcategorytitle"
+        android:text="@string/addexpensescategorytitle"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
