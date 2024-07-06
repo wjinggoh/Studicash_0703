@@ -56,7 +56,11 @@
     <string name="save">Save</string>
     <string name="datehint"><u>dd/mm/yyyy</u></string>
     <string name="paymentmethod">Payment Method</string>
-<string name="categories">Categories</string>
+    <string name="categories">Categories</string>
+
+
+    <!--addcategory-->
+   <string name="addcategorytitle">Add Category</string>
 
     <!--addincome-->
     <string name="incomeHeader">Add Income</string>

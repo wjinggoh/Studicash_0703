@@ -16,29 +16,53 @@ import java.util.Locale
 
 class AddExpenseActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddExpenseBinding
+    private val categories = mutableListOf<CategoryItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddExpenseBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val categories = listOf(
-            CategoryItem(R.drawable.food, "Food"),
-            CategoryItem(R.drawable.transport, "Transport"),
-            CategoryItem(R.drawable.shopping, "Shopping")
-            // Add more categories as needed
-        )
+        loadCategories()
 
-        val adapter = CategorySpinnerAdapter(this, categories)
-        binding.categoriesSpinner.adapter = adapter
+        binding.addCategoryButton.setOnClickListener {
+            startActivity(Intent(this, AddCategoryActivity::class.java))
+        }
 
         setupViews()
     }
 
-    private fun setupViews() {
+    private fun loadCategories() {
+        // Predefined categories
+        categories.addAll(listOf(
+            CategoryItem(R.drawable.food, "Food"),
+            CategoryItem(R.drawable.transport, "Transport"),
+            CategoryItem(R.drawable.shopping, "Shopping"),
+            CategoryItem(R.drawable.house, "Rental"),
+            CategoryItem(R.drawable.fees, "Fees"),
+            CategoryItem(R.drawable.travel, "Travel")
+        ))
 
-        binding.back.setOnClickListener{
-            startActivity(Intent(this@AddExpenseActivity,AddFragment::class.java))
+        // Load custom categories from Firestore
+        val db = FirebaseFirestore.getInstance()
+        db.collection("Categories")
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val name = document.getString("name") ?: continue
+                    categories.add(CategoryItem(R.drawable.custom_category, name))
+                }
+                val adapter = CategorySpinnerAdapter(this, categories)
+                binding.categoriesSpinner.adapter = adapter
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error loading categories: $e", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun setupViews() {
+        binding.back.setOnClickListener {
+            startActivity(Intent(this@AddExpenseActivity, AddFragment::class.java))
         }
         binding.selectDate.setOnClickListener {
             showDatePicker()
@@ -49,7 +73,7 @@ class AddExpenseActivity : AppCompatActivity() {
             val expenseAmount = binding.yourexpenseAmt.editText?.text.toString()
             val selectedDate = binding.dateView.text.toString()
             val selectedCategory = binding.categoriesSpinner.selectedItem.toString()
-            val paymentMethod= binding.paymentMethods.selectedItem.toString()
+            val paymentMethod = binding.paymentMethods.selectedItem.toString()
 
             if (expenseTitle.isEmpty()) {
                 Toast.makeText(this@AddExpenseActivity, "Please enter an expense title", Toast.LENGTH_SHORT).show()
@@ -63,20 +87,13 @@ class AddExpenseActivity : AppCompatActivity() {
                 "date" to selectedDate,
                 "category" to selectedCategory,
                 "paymentMethod" to paymentMethod
-
-                // Add more fields as necessary
             )
 
             db.collection("Expense")
                 .add(expenseData)
                 .addOnSuccessListener { documentReference ->
                     Toast.makeText(this@AddExpenseActivity, "Expense saved successfully", Toast.LENGTH_SHORT).show()
-                    startActivity(
-                        Intent(
-                            this@AddExpenseActivity,
-                            HomeActivity::class.java
-                        )
-                    )
+                    startActivity(Intent(this@AddExpenseActivity, HomeActivity::class.java))
                     finish()
                 }
                 .addOnFailureListener { e ->

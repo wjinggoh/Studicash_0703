@@ -86,7 +86,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-
             <TextView
                 android:id="@+id/selectcategory"
                 android:layout_width="wrap_content"
@@ -111,7 +110,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/yourexpenseAmt" />
 
-
             <Button
                 android:id="@+id/SaveExpense"
                 android:layout_width="130dp"
@@ -135,6 +133,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginEnd="32dp"
+                android:backgroundTint="#0960A5"
                 android:text="@string/date"
                 app:layout_constraintBottom_toBottomOf="@+id/dateView"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -155,13 +154,24 @@
 
             <Spinner
                 android:id="@+id/categories_spinner"
-                android:layout_width="250dp"
+                android:layout_width="220dp"
                 android:layout_height="48dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/background_with_border_grey"
                 android:elevation="3dp"
                 app:layout_constraintStart_toStartOf="@+id/selectcategory"
                 app:layout_constraintTop_toBottomOf="@+id/selectcategory" />
+
+            <Button
+                android:id="@+id/addCategoryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#0960A5"
+                android:text="Add Category"
+                app:layout_constraintBottom_toBottomOf="@+id/categories_spinner"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/categories_spinner"
+                app:layout_constraintTop_toTopOf="@+id/categories_spinner" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/yourexpenseAmt"
@@ -176,9 +186,11 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
                     android:visibility="visible" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
 
             <TextView
                 android:id="@+id/expenseamttitle"
