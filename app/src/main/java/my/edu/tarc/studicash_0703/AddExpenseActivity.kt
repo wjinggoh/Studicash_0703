@@ -2,13 +2,14 @@ package my.edu.tarc.studicash_0703
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.CategoryItem
+import my.edu.tarc.studicash_0703.Models.Expense
 import my.edu.tarc.studicash_0703.Adapter.CategorySpinnerAdapter
-import my.edu.tarc.studicash_0703.Fragment.AddFragment
 import my.edu.tarc.studicash_0703.databinding.ActivityAddExpenseBinding
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -17,6 +18,7 @@ import java.util.Locale
 class AddExpenseActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddExpenseBinding
     private val categories = mutableListOf<CategoryItem>()
+    private val paymentMethods = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +35,7 @@ class AddExpenseActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         loadCategories()
+        loadPaymentMethods()
     }
 
     private fun loadCategories() {
@@ -65,10 +68,29 @@ class AddExpenseActivity : AppCompatActivity() {
             }
     }
 
+    private fun loadPaymentMethods() {
+        paymentMethods.clear()
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection("paymentMethods")
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val method = document.getString("details") ?: continue
+                    paymentMethods.add(method)
+                }
+                val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, paymentMethods)
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                binding.paymentmethodSpinner.adapter = adapter
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error loading payment methods: $e", Toast.LENGTH_SHORT).show()
+            }
+    }
+
     private fun setupViews() {
         binding.back.setOnClickListener {
-            startActivity(Intent(this@AddExpenseActivity, AddFragment::class.java))
-            finish()
+            finish() // Go back to the previous activity
         }
         binding.selectDate.setOnClickListener {
             showDatePicker()
@@ -76,23 +98,23 @@ class AddExpenseActivity : AppCompatActivity() {
 
         binding.SaveExpense.setOnClickListener {
             val expenseTitle = binding.yourexpenseTitle.editText?.text.toString()
-            val expenseAmount = binding.yourexpenseAmt.editText?.text.toString()
+            val expenseAmount = binding.yourexpenseAmt.editText?.text.toString().toDoubleOrNull()
             val selectedDate = binding.dateView.text.toString()
-            val selectedCategory = binding.categoriesSpinner.selectedItem.toString()
-            val paymentMethod = binding.paymentMethods.selectedItem.toString()
+            val selectedCategory = binding.categoriesSpinner.selectedItem as CategoryItem
+            val paymentMethod = binding.paymentmethodSpinner.selectedItem.toString()
 
-            if (expenseTitle.isEmpty()) {
-                Toast.makeText(this@AddExpenseActivity, "Please enter an expense title", Toast.LENGTH_SHORT).show()
+            if (expenseTitle.isEmpty() || expenseAmount == null) {
+                Toast.makeText(this@AddExpenseActivity, "Please enter valid expense details", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             val db = FirebaseFirestore.getInstance()
-            val expenseData = hashMapOf(
-                "expenseTitle" to expenseTitle,
-                "expenseAmount" to expenseAmount,
-                "date" to selectedDate,
-                "category" to selectedCategory,
-                "paymentMethod" to paymentMethod
+            val expenseData = Expense(
+                expenseTitle = expenseTitle,
+                expenseAmount = expenseAmount,
+                date = selectedDate,
+                category = selectedCategory.name,
+                paymentmethod = paymentMethod
             )
 
             db.collection("Expense")
@@ -106,6 +128,7 @@ class AddExpenseActivity : AppCompatActivity() {
                     Toast.makeText(this@AddExpenseActivity, "Error saving expense: $e", Toast.LENGTH_SHORT).show()
                 }
         }
+
     }
 
     private fun showDatePicker() {

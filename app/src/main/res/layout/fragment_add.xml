@@ -71,6 +71,7 @@
         android:background="@drawable/background_with_border_grey"
         android:elevation="3dp"
         android:id="@+id/history_recycleView"
+
         android:layout_width="350dp"
         android:layout_height="400dp"
         android:layout_marginStart="1dp"

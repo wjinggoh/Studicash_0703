@@ -58,9 +58,12 @@
     <string name="paymentmethod">Payment Method</string>
     <string name="categories">Categories</string>
 
+    <!--recycleviewexpensesincome-->
+    <string name="expenseamttitle">Expense Amount: </string>
+    <string name="datetitle">Date: </string>
 
     <!--addcategory-->
-   <string name="addexpensescategorytitle">Add Expenses Category</string>
+    <string name="addexpensescategorytitle">Add Expenses Category</string>
 
     <!--addincome-->
     <string name="incomeHeader">Add Income</string>
@@ -89,7 +92,13 @@
 
     <!--settings-->
     <string name="settings_title">Settings</string>
+    <string name="add_payment_method">Add Payment Method</string>
     <string name="logout">Logout</string>
+
+
+    <!--createpaymentmethodpage-->
+
+    <string name="createpaymentmethodbtn">Create Payment Method</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

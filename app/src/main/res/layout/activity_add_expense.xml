@@ -124,7 +124,7 @@
                 app:cornerRadius="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/paymentMethods" />
+                app:layout_constraintTop_toBottomOf="@+id/paymentmethod_spinner" />
 
 
             <Button
@@ -231,7 +231,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/categories_spinner" />
 
             <Spinner
-                android:id="@+id/paymentMethods"
+                android:id="@+id/paymentmethod_spinner"
                 android:layout_width="250dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="12dp"

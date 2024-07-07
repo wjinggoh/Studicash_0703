@@ -37,4 +37,5 @@
         android:name="my.edu.tarc.studicash_0703.Fragment.ChooseTransactionFragment"
         android:label="@string/choose"
         tools:layout="@layout/fragment_choose_transaction" />
+
 </navigation>
