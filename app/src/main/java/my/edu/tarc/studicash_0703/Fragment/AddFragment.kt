@@ -51,7 +51,7 @@ class AddFragment : Fragment() {
                     val expenseAmount = document.getDouble("expenseAmount") ?: 0.0
                     val date = document.getString("date") ?: ""
                     val category = document.getString("category") ?: ""
-                    val paymentMethod = document.getString("paymentMethod") ?: ""
+                    val paymentMethod = document.getString("paymentmethod") ?: ""
 
                     val expense = Expense(expenseTitle, expenseAmount, date, category, paymentMethod)
                     expensesList.add(expense)

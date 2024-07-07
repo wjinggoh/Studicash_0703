@@ -90,8 +90,8 @@ dependencies {
     implementation ("com.google.firebase:firebase-auth:21.0.0")
     implementation ("com.google.firebase:firebase-firestore:24.0.0")
     implementation ("com.google.firebase:firebase-storage:21.0.0")
-    implementation ("androidx.navigation:navigation-fragment-ktx:2.5.3")
-    implementation ("androidx.navigation:navigation-ui-ktx:2.5.3")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.5.3") // Use the latest version
+    implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
     implementation ("com.google.android.material:material:1.8.0")
 
 

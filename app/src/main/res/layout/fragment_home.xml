@@ -30,7 +30,7 @@
         app:layout_constraintTop_toBottomOf="@+id/mainMenu">
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/todaySpendingTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/concert_one"
@@ -43,15 +43,27 @@
         <TextView
             android:id="@+id/todaySpendingAmt"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_marginTop="24dp"
-            android:ems="10"
-            android:hint="@string/spendhint"
-            android:inputType="number"
-            android:textAlignment="center"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:text="@string/spendhint"
+            app:layout_constraintTop_toBottomOf="@+id/todaySpendingTitle"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/rm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:fontFamily="@font/concert_one"
+            android:text="RM"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@+id/todaySpendingAmt"
+            app:layout_constraintEnd_toStartOf="@+id/todaySpendingAmt"
+            app:layout_constraintTop_toBottomOf="@+id/todaySpendingTitle" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

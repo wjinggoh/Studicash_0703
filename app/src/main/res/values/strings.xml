@@ -33,7 +33,7 @@
     <!--mainmenu-->
     <string name="mainMenuTitle">Main Menu</string>
     <string name="todayspending">Today Spending</string>
-    <string name="spendhint">RM0.00</string>
+    <string name="spendhint">0.00</string>
     <string name="goalTrackingbtn">Goal Tracking</string>
 
     <!--expensemanagement-->
@@ -61,6 +61,8 @@
     <!--recycleviewexpensesincome-->
     <string name="expenseamttitle">Expense Amount: </string>
     <string name="datetitle">Date: </string>
+    <string name="categorytitle">Category: </string>
+    <string name="paymentmethodtitle">Payment Method: </string>
 
     <!--addcategory-->
     <string name="addexpensescategorytitle">Add Expenses Category</string>

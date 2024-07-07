@@ -27,7 +27,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/concert_one"
             android:text="Expense Title"
             android:textAllCaps="true"
             android:textSize="18sp"
@@ -39,8 +40,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
+            android:fontFamily="@font/concert_one"
             android:text="Expense Amount"
-            android:textSize="16sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/textView4"
             app:layout_constraintStart_toEndOf="@+id/textView4"
             app:layout_constraintTop_toTopOf="@+id/textView4" />
@@ -50,8 +52,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
+            android:fontFamily="@font/concert_one"
             android:text="Date"
-            android:textSize="14sp"
+            android:textSize="18sp"
             app:layout_constraintStart_toEndOf="@+id/datetitle"
             app:layout_constraintTop_toBottomOf="@+id/yourexpenseAmt" />
 
@@ -59,21 +62,25 @@
             android:id="@+id/categories_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="5dp"
+            android:fontFamily="@font/concert_one"
             android:text="Category"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@id/categoryIcon"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/categorytitle"
+            app:layout_constraintStart_toEndOf="@+id/categorytitle"
             app:layout_constraintTop_toBottomOf="@+id/dateView" />
 
         <TextView
             android:id="@+id/paymentmethod_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="5dp"
+            android:fontFamily="@font/concert_one"
             android:text="Payment Method"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@id/categoryIcon"
-            app:layout_constraintTop_toBottomOf="@+id/categories_spinner" />
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/textView10"
+            app:layout_constraintStart_toEndOf="@+id/textView10"
+            app:layout_constraintTop_toTopOf="@+id/textView10" />
 
         <TextView
             android:id="@+id/textView4"
@@ -82,7 +89,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="3dp"
             android:text="@string/expenseamttitle"
-            android:textSize="16sp"
+            android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@+id/categoryIcon"
             app:layout_constraintTop_toBottomOf="@+id/expensetitle" />
 
@@ -91,9 +98,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="3dp"
             android:text="@string/datetitle"
             app:layout_constraintStart_toEndOf="@+id/categoryIcon"
             app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+        <TextView
+            android:id="@+id/categorytitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="3dp"
+            android:text="@string/categorytitle"
+            app:layout_constraintStart_toEndOf="@+id/categoryIcon"
+            app:layout_constraintTop_toBottomOf="@+id/datetitle" />
+
+        <TextView
+            android:id="@+id/textView10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="3dp"
+            android:text="@string/paymentmethodtitle"
+            app:layout_constraintStart_toEndOf="@+id/categoryIcon"
+            app:layout_constraintTop_toBottomOf="@+id/categorytitle" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

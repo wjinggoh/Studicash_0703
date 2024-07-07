@@ -30,7 +30,11 @@
         android:id="@+id/fragment_settings"
         android:name="my.edu.tarc.studicash_0703.Fragment.SettingsFragment"
         android:label="@string/settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_fragment_settings_to_addPaymentMethodFragment"
+            app:destination="@id/addPaymentMethodFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragment_choose"
@@ -38,4 +42,9 @@
         android:label="@string/choose"
         tools:layout="@layout/fragment_choose_transaction" />
 
+    <fragment
+        android:id="@+id/addPaymentMethodFragment"
+        android:name="my.edu.tarc.studicash_0703.Fragment.DialogNewPaymentMethodFragment"
+        android:label="Add Payment Method"
+        tools:layout="@layout/activity_add_payment_method" />
 </navigation>
