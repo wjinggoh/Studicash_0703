@@ -66,6 +66,7 @@
     <string name="datetitle">Date: </string>
     <string name="categorytitle">Category: </string>
     <string name="paymentmethodtitle">Payment Method: </string>
+    <string name="incomeamttitle">Income Amount: </string>
 
     <!--addcategory-->
     <string name="addexpensescategorytitle">Add Expenses Category</string>

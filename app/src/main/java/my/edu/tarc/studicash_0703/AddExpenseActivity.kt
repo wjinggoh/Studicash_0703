@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.CategoryItem
@@ -77,8 +78,9 @@ class AddExpenseActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
-                    val method = document.getString("details") ?: continue
-                    paymentMethods.add(method)
+                    val details = document.getString("details") ?: continue
+                    val methodName = details.substringAfter(": ").trim() // Extract the method name
+                    paymentMethods.add(methodName)
                 }
                 val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, paymentMethods)
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -121,7 +123,8 @@ class AddExpenseActivity : AppCompatActivity() {
                 date = selectedDate,
                 category = selectedCategory.name,
                 paymentmethod = paymentMethod,
-                userId = userId
+                userId = userId,
+                timestamp = Timestamp.now()
             )
 
             db.collection("Expense")
@@ -134,6 +137,7 @@ class AddExpenseActivity : AppCompatActivity() {
                 .addOnFailureListener { e ->
                     Toast.makeText(this@AddExpenseActivity, "Error saving expense: $e", Toast.LENGTH_SHORT).show()
                 }
+
         }
 
     }

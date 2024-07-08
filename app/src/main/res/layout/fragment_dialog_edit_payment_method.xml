@@ -27,37 +27,18 @@
         app:layout_constraintTop_toBottomOf="@id/tv_edit_payment_method_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp">
-
-        <RadioButton
-            android:id="@+id/radio_card"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Card" />
-
-        <RadioButton
-            android:id="@+id/radio_ewallet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="E-Wallet" />
-
-        <RadioButton
-            android:id="@+id/radio_cash"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cash" />
-    </RadioGroup>
+        android:layout_marginBottom="16dp"/>
 
     <EditText
         android:id="@+id/et_bank_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
         android:hint="Bank Name"
         android:inputType="text"
-        app:layout_constraintTop_toBottomOf="@id/radio_group_payment_type"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/radio_group_payment_type" />
 
     <EditText
         android:id="@+id/et_card_number"

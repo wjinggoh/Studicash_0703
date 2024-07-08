@@ -6,16 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import my.edu.tarc.studicash_0703.Adapter.ExpenseAdapter
+import my.edu.tarc.studicash_0703.Adapter.IncomeAdapter
 import my.edu.tarc.studicash_0703.Models.Expense
+import my.edu.tarc.studicash_0703.Models.Income
 import my.edu.tarc.studicash_0703.databinding.FragmentAddBinding
 
 class AddFragment : Fragment() {
     private lateinit var binding: FragmentAddBinding
     private lateinit var expenseAdapter: ExpenseAdapter
+    private lateinit var incomeAdapter: IncomeAdapter
     private var expensesList: MutableList<Expense> = mutableListOf()
+    private var incomesList: MutableList<Income> = mutableListOf()
     private val db = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
@@ -24,13 +30,28 @@ class AddFragment : Fragment() {
     ): View? {
         binding = FragmentAddBinding.inflate(inflater, container, false)
 
-        // Initialize RecyclerView and Adapter
+        // Initialize RecyclerViews and Adapters
         expenseAdapter = ExpenseAdapter(requireContext(), expensesList)
-        binding.historyRecycleView.adapter = expenseAdapter
-        binding.historyRecycleView.layoutManager = LinearLayoutManager(requireContext())
+        incomeAdapter = IncomeAdapter(requireContext(), incomesList)
+
+        binding.historyRecycleView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = expenseAdapter // Start with expense adapter
+        }
 
         // Fetch data from Firestore
         fetchExpenseDataFromFirestore()
+        fetchIncomeDataFromFirestore()
+
+        // Toggle between expense and income RecyclerViews
+        binding.toggleButton.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (isChecked) {
+                when (checkedId) {
+                    R.id.expensesButton -> binding.historyRecycleView.adapter = expenseAdapter
+                    R.id.incomesButton -> binding.historyRecycleView.adapter = incomeAdapter
+                }
+            }
+        }
 
         // Set click listener for createTransactionbtn
         binding.createTransactionbtn.setOnClickListener {
@@ -53,19 +74,49 @@ class AddFragment : Fragment() {
 
         db.collection("Expense")
             .whereEqualTo("userId", userId) // Filter by user ID
+            .orderBy("date", Query.Direction.DESCENDING) // Then order by date descending
+            .orderBy("timestamp", Query.Direction.DESCENDING) // Order by timestamp descending
             .get()
             .addOnSuccessListener { documents ->
                 expensesList.clear() // Clear the list before adding new data
                 for (document in documents) {
                     val expense = document.toObject(Expense::class.java)
                     expensesList.add(expense)
+                    println("Expense timestamp: ${expense.timestamp?.toDate()}")
                 }
-                // Notify adapter of data change
                 expenseAdapter.notifyDataSetChanged()
             }
             .addOnFailureListener { exception ->
-                // Handle the error here
-                println("Error fetching data: ${exception.message}")
+                println("Error fetching expenses: ${exception.message}")
+            }
+    }
+
+    private fun fetchIncomeDataFromFirestore() {
+        val user = FirebaseAuth.getInstance().currentUser
+        val userId = user?.uid
+
+        if (userId == null) {
+            // Handle the case where the user is not logged in
+            println("User not logged in")
+            return
+        }
+
+        db.collection("Income")
+            .whereEqualTo("userId", userId) // Filter by user ID
+            .orderBy("date", Query.Direction.DESCENDING) // Then order by date descending
+            .orderBy("timestamp", Query.Direction.DESCENDING) // Order by timestamp descending
+            .get()
+            .addOnSuccessListener { documents ->
+                incomesList.clear() // Clear the list before adding new data
+                for (document in documents) {
+                    val income = document.toObject(Income::class.java)
+                    incomesList.add(income)
+                    println("Income timestamp: ${income.timestamp?.toDate()}")
+                }
+                incomeAdapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener { exception ->
+                println("Error fetching incomes: ${exception.message}")
             }
     }
 }
