@@ -5,5 +5,6 @@ data class Expense(
     val expenseAmount: Double? = null,
     val date: String? = null,
     val category: String? = null,
-    val paymentmethod: String? = null
+    val paymentmethod: String? = null,
+    val userId: String? = null
 )

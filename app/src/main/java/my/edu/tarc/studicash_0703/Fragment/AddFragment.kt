@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Adapter.ExpenseAdapter
 import my.edu.tarc.studicash_0703.Models.Expense
@@ -41,19 +42,22 @@ class AddFragment : Fragment() {
     }
 
     private fun fetchExpenseDataFromFirestore() {
-        val db = FirebaseFirestore.getInstance()
+        val user = FirebaseAuth.getInstance().currentUser
+        val userId = user?.uid
+
+        if (userId == null) {
+            // Handle the case where the user is not logged in
+            println("User not logged in")
+            return
+        }
+
         db.collection("Expense")
+            .whereEqualTo("userId", userId) // Filter by user ID
             .get()
             .addOnSuccessListener { documents ->
                 expensesList.clear() // Clear the list before adding new data
                 for (document in documents) {
-                    val expenseTitle = document.getString("expenseTitle") ?: ""
-                    val expenseAmount = document.getDouble("expenseAmount") ?: 0.0
-                    val date = document.getString("date") ?: ""
-                    val category = document.getString("category") ?: ""
-                    val paymentMethod = document.getString("paymentmethod") ?: ""
-
-                    val expense = Expense(expenseTitle, expenseAmount, date, category, paymentMethod)
+                    val expense = document.toObject(Expense::class.java)
                     expensesList.add(expense)
                 }
                 // Notify adapter of data change
@@ -64,7 +68,4 @@ class AddFragment : Fragment() {
                 println("Error fetching data: ${exception.message}")
             }
     }
-
-
-
 }

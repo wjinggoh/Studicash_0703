@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.Expense
 import my.edu.tarc.studicash_0703.R
@@ -33,16 +34,24 @@ class HomeFragment : Fragment() {
     }
 
     private fun calculateTodaySpending() {
+        val user = FirebaseAuth.getInstance().currentUser
+        val userId = user?.uid
         val db = FirebaseFirestore.getInstance()
+
+        if (userId == null) {
+            todaySpendingAmt.text = "User not logged in"
+            return
+        }
 
         // Get today's date
         val currentDate = Calendar.getInstance().time
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val formattedDate = sdf.format(currentDate)
 
         Log.d(TAG, "Formatted Date: $formattedDate")
 
         db.collection("Expense")
+            .whereEqualTo("userId", userId) // Filter by user ID
             .whereEqualTo("date", formattedDate)
             .get()
             .addOnSuccessListener { documents ->
