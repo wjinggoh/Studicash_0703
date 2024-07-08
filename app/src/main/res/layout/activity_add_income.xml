@@ -64,18 +64,18 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/concert_one"
-                android:text="@string/expense_title"
+                android:text="@string/incometitle"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/yourexpenseTitle"
+                android:id="@+id/yourIncomeTitle"
                 android:layout_width="300dp"
                 android:layout_height="60dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="12dp"
-                android:hint="@string/your_expense_title"
+                android:hint="@string/your_income_title"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/expensetitle">
 
@@ -103,28 +103,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
                 android:fontFamily="@font/concert_one"
                 android:text="@string/date"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/yourexpenseAmt" />
-
-            <Button
-                android:id="@+id/SaveExpense"
-                android:layout_width="130dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="32dp"
-                android:backgroundTint="#1A5E9E"
-                android:paddingTop="1dp"
-                android:paddingBottom="1dp"
-                android:text="@string/save"
-                android:textColor="@color/white"
-                android:textSize="30sp"
-                app:cornerRadius="0dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/paymentmethod_spinner" />
+                app:layout_constraintTop_toBottomOf="@+id/yourIncomeAmt" />
 
 
             <Button
@@ -139,11 +123,11 @@
                 app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.688"
-                app:layout_constraintStart_toEndOf="@+id/dateView"
-                app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+                app:layout_constraintStart_toEndOf="@+id/constraintLayout"
+                app:layout_constraintTop_toBottomOf="@+id/selectDateMsg" />
 
             <Spinner
-                android:id="@+id/categories_spinner"
+                android:id="@+id/incomeCategoriesSpinner"
                 android:layout_width="220dp"
                 android:layout_height="48dp"
                 android:layout_marginTop="16dp"
@@ -158,10 +142,10 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="#0960A5"
                 android:text="Add Category"
-                app:layout_constraintBottom_toBottomOf="@+id/categories_spinner"
+                app:layout_constraintBottom_toBottomOf="@+id/incomeCategoriesSpinner"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/categories_spinner"
-                app:layout_constraintTop_toTopOf="@+id/categories_spinner" />
+                app:layout_constraintStart_toEndOf="@+id/incomeCategoriesSpinner"
+                app:layout_constraintTop_toTopOf="@+id/incomeCategoriesSpinner" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout"
@@ -175,12 +159,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/selectDateMsg">
 
                 <TextView
-                    android:id="@+id/dateView"
+                    android:id="@+id/incomeDateView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/concert_one"
                     android:text="@string/datehint"
-                    android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -188,7 +170,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/yourexpenseAmt"
+                android:id="@+id/yourIncomeAmt"
                 android:layout_width="300dp"
                 android:layout_height="60dp"
                 android:layout_marginStart="20dp"
@@ -213,10 +195,10 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
                 android:fontFamily="@font/concert_one"
-                android:text="@string/expense_amount"
+                android:text="@string/income_amount"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/yourexpenseTitle" />
+                app:layout_constraintTop_toBottomOf="@+id/yourIncomeTitle" />
 
             <TextView
                 android:id="@+id/textView9"
@@ -228,10 +210,10 @@
                 android:text="@string/paymentmethod"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/categories_spinner" />
+                app:layout_constraintTop_toBottomOf="@+id/incomeCategoriesSpinner" />
 
             <Spinner
-                android:id="@+id/paymentmethod_spinner"
+                android:id="@+id/payment_method_spinner"
                 android:layout_width="250dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="12dp"
@@ -240,6 +222,16 @@
                 android:elevation="3dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView9" />
+
+            <Button
+                android:id="@+id/saveIncome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/save"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/payment_method_spinner" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
