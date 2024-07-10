@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import my.edu.tarc.studicash_0703.Models.Expense
+import my.edu.tarc.studicash_0703.Models.Transaction
 import my.edu.tarc.studicash_0703.R
 import java.text.SimpleDateFormat
 import java.util.*
@@ -57,8 +57,8 @@ class HomeFragment : Fragment() {
             .addOnSuccessListener { documents ->
                 var totalSpending = 0.0
                 for (document in documents) {
-                    val expense = document.toObject(Expense::class.java)
-                    expense.expenseAmount?.let {
+                    val expense = document.toObject(Transaction::class.java)
+                    expense.amount?.let {
                         totalSpending += it
                     }
                     Log.d(TAG, "Expense: $expense")

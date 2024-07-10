@@ -7,9 +7,9 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:backgroundTint="#CFE2FE"
-    tools:context=".AddExpenseActivity">
+    tools:context=".AddTransactionActivity">
 
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="100dp"
@@ -30,24 +30,45 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/expenseHeader"
+            android:id="@+id/transactionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/expenseHeader"
-            tools:layout_editor_absoluteX="197dp"
-            tools:layout_editor_absoluteY="53dp"
+            android:text="@string/transactionHeader"
             android:textSize="32sp"
             android:fontFamily="@font/concert_one"
-            android:paddingLeft="20dp"/>
+            android:paddingLeft="20dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    </Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
+    <RadioGroup
+        android:id="@+id/transactionTypeRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <RadioButton
+            android:id="@+id/rbAddExpense"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_expense" />
+
+        <RadioButton
+            android:id="@+id/rbAddIncome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_income" />
+    </RadioGroup>
 
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/transactionTypeRadioGroup"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -58,36 +79,35 @@
             android:background="@color/white">
 
             <TextView
-                android:id="@+id/expensetitle"
+                android:id="@+id/transactionTitleLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/concert_one"
-                android:text="@string/expense_title"
+                android:text="@string/transaction_title"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/yourexpenseTitle"
+                android:id="@+id/transactionTitleInput"
                 android:layout_width="300dp"
                 android:layout_height="60dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="12dp"
-                android:hint="@string/your_expense_title"
+                android:hint="@string/your_transaction_title"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/expensetitle">
+                app:layout_constraintTop_toBottomOf="@id/transactionTitleLabel">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="visible" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
-                android:id="@+id/selectcategory"
+                android:id="@+id/selectCategoryLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
@@ -96,10 +116,31 @@
                 android:text="@string/category"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/selectDate" />
+                app:layout_constraintTop_toBottomOf="@id/transactionTitleInput" />
+
+            <Spinner
+                android:id="@+id/categorySpinner"
+                android:layout_width="220dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/background_with_border_grey"
+                android:elevation="3dp"
+                app:layout_constraintStart_toStartOf="@id/selectCategoryLabel"
+                app:layout_constraintTop_toBottomOf="@id/selectCategoryLabel" />
+
+            <Button
+                android:id="@+id/addCategoryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#0960A5"
+                android:text="Add Category"
+                app:layout_constraintBottom_toBottomOf="@id/categorySpinner"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/categorySpinner"
+                app:layout_constraintTop_toTopOf="@id/categorySpinner" />
 
             <TextView
-                android:id="@+id/selectDateMsg"
+                android:id="@+id/selectDateLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
@@ -108,60 +149,7 @@
                 android:text="@string/date"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/yourexpenseAmt" />
-
-            <Button
-                android:id="@+id/SaveExpense"
-                android:layout_width="130dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="32dp"
-                android:backgroundTint="#1A5E9E"
-                android:paddingTop="1dp"
-                android:paddingBottom="1dp"
-                android:text="@string/save"
-                android:textColor="@color/white"
-                android:textSize="30sp"
-                app:cornerRadius="0dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/paymentmethod_spinner" />
-
-
-            <Button
-                android:id="@+id/selectDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginEnd="32dp"
-                android:backgroundTint="#0960A5"
-                android:text="@string/date"
-                app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.688"
-                app:layout_constraintStart_toEndOf="@+id/dateView"
-                app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
-
-            <Spinner
-                android:id="@+id/categories_spinner"
-                android:layout_width="220dp"
-                android:layout_height="48dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/background_with_border_grey"
-                android:elevation="3dp"
-                app:layout_constraintStart_toStartOf="@+id/selectcategory"
-                app:layout_constraintTop_toBottomOf="@+id/selectcategory" />
-
-            <Button
-                android:id="@+id/addCategoryButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#0960A5"
-                android:text="Add Category"
-                app:layout_constraintBottom_toBottomOf="@+id/categories_spinner"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/categories_spinner"
-                app:layout_constraintTop_toTopOf="@+id/categories_spinner" />
+                app:layout_constraintTop_toBottomOf="@id/categorySpinner" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout"
@@ -172,7 +160,7 @@
                 android:background="@drawable/background_with_border_grey"
                 android:elevation="3dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/selectDateMsg">
+                app:layout_constraintTop_toBottomOf="@id/selectDateLabel">
 
                 <TextView
                     android:id="@+id/dateView"
@@ -187,39 +175,52 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <Button
+                android:id="@+id/selectDateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginEnd="32dp"
+                android:backgroundTint="#0960A5"
+                android:text="@string/date"
+                app:layout_constraintBottom_toBottomOf="@id/constraintLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.688"
+                app:layout_constraintStart_toEndOf="@id/dateView"
+                app:layout_constraintTop_toTopOf="@id/constraintLayout" />
+
+            <TextView
+                android:id="@+id/transactionAmountLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:fontFamily="@font/concert_one"
+                android:text="@string/transaction_amount"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/constraintLayout" />
+
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/yourexpenseAmt"
+                android:id="@+id/transactionAmountInput"
                 android:layout_width="300dp"
                 android:layout_height="60dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="12dp"
                 android:hint="@string/amount"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/expenseamttitle">
+                app:layout_constraintTop_toBottomOf="@id/transactionAmountLabel">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
                     android:visibility="visible" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
-
             <TextView
-                android:id="@+id/expenseamttitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                android:fontFamily="@font/concert_one"
-                android:text="@string/expense_amount"
-                android:textSize="24sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/yourexpenseTitle" />
-
-            <TextView
-                android:id="@+id/textView9"
+                android:id="@+id/paymentMethodLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
@@ -228,10 +229,10 @@
                 android:text="@string/paymentmethod"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/categories_spinner" />
+                app:layout_constraintTop_toBottomOf="@id/transactionAmountInput" />
 
             <Spinner
-                android:id="@+id/paymentmethod_spinner"
+                android:id="@+id/paymentMethodSpinner"
                 android:layout_width="250dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="12dp"
@@ -239,7 +240,21 @@
                 android:background="@drawable/background_with_border_grey"
                 android:elevation="3dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView9" />
+                app:layout_constraintTop_toBottomOf="@id/paymentMethodLabel" />
+
+            <Button
+                android:id="@+id/saveTransactionButton"
+                android:layout_width="130dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="32dp"
+                android:backgroundTint="#1A5E9E"
+                android:text="@string/save"
+                android:textColor="@color/white"
+                android:textSize="30sp"
+                app:cornerRadius="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/paymentMethodSpinner" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

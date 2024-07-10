@@ -46,8 +46,7 @@
 
     <!--choosetransactiontype-->
     <string name="choose">Choose Transaction</string>
-    <string name="add_income">Add Income</string>
-    <string name="add_expense">Add Expense</string>
+    <string name="add_transaction">Add Transaction</string>
     <string name="add_receipt">Add Receipt</string>
 
 
@@ -62,7 +61,7 @@
     <string name="categories">Categories</string>
 
     <!--recycleviewexpensesincome-->
-    <string name="expenseamttitle">Expense Amount: </string>
+    <string name="expenseamttitle">Transaction Amount:  </string>
     <string name="datetitle">Date: </string>
     <string name="categorytitle">Category: </string>
     <string name="paymentmethodtitle">Payment Method: </string>
@@ -70,20 +69,21 @@
 
     <!--addcategory-->
     <string name="addexpensescategorytitle">Add Expenses Category</string>
+    <string name="addincomecategorytitle">Add Income Category</string>
 
-    <!--addincome-->
-    <string name="incomeHeader">Add Income</string>
-    <string name="incometitle">Income Title </string>
-    <string name="your_income_title">Income Title</string>
-    <string name="income_category">Category</string>
-    <string name="income_amount">Amount</string>
-
-    <!--addexpenses-->
-    <string name="expenseHeader">Add Expense</string>
-    <string name="expense_title">Expense Title</string>
+    <!--addtransaction-->
+    <string name="transactionHeader">Add Transaction</string>
+    <string name="add_expense">Expense</string>
+    <string name="add_income">Income</string>
+    <string name="transaction_title">Transaction Title</string>
+    <string name="your_transaction_title">Transaction Title</string>
     <string name="expense_category">Category</string>
+    <string name="transaction_amount">Transaction Amount</string>
+    <string name="expense_title">Expense Title</string>
+    <string name="income_title">Income Title</string>
     <string name="expense_amount">Expense Amount</string>
-    <string name="your_expense_title">Expense Title</string>
+    <string name="income_amount">Income Amount</string>
+
 
 
     <!--addreceipt-->

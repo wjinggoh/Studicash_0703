@@ -9,4 +9,6 @@
     <color name="black_overlay">#66000000</color>
     <color name="blue">#58B5FF</color>
     <color name="background">#A2D6FF</color>
+        <color name="expense_color">#FF0000</color> <!-- Example color -->
+        <color name="income_color">#00FF00</color> <!-- Example color -->
 </resources>

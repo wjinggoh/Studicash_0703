@@ -16,7 +16,7 @@ class AddExpensesCategoryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.backCategory.setOnClickListener {
-            startActivity(Intent(this@AddExpensesCategoryActivity, AddExpenseActivity::class.java))
+            startActivity(Intent(this@AddExpensesCategoryActivity, AddTransactionActivity::class.java))
         }
 
         binding.saveCategoryButton.setOnClickListener {

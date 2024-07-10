@@ -1,80 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:elevation="3dp"
-    android:background="@drawable/background_with_border_grey">
+    app:cardElevation="4dp"
+    app:cardCornerRadius="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="140dp">
+        android:layout_height="wrap_content"
+        android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/incomeIcon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/income"
+        <TextView
+            android:id="@+id/incomeTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Income Title"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/incomeAmount"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
-            android:id="@+id/incometitle"
+            android:id="@+id/incomeAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/concert_one"
-            android:text="@string/incometitle"
-            android:textAllCaps="true"
-            android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/incomeIcon"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="Amount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/incomeTitle"/>
 
         <TextView
-            android:id="@+id/incomeAmtTxt"
-            android:layout_width="wrap_content"
+            android:id="@+id/incomeDate"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:text="@string/incomeamttitle"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="@+id/incometitle"
-            app:layout_constraintTop_toBottomOf="@+id/incometitle" />
+            android:text="Date"
+            app:layout_constraintTop_toBottomOf="@+id/incomeTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/incomeCategory"/>
 
         <TextView
-            android:id="@+id/yourincomeAmt"
-            android:layout_width="wrap_content"
+            android:id="@+id/incomeCategory"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:fontFamily="@font/concert_one"
-            android:text="Income Amount"
-            android:textAllCaps="false"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/incomeAmtTxt"
-            app:layout_constraintStart_toEndOf="@+id/incomeAmtTxt"
-            app:layout_constraintTop_toBottomOf="@+id/incometitle" />
+            android:text="Category"
+            app:layout_constraintTop_toBottomOf="@+id/incomeDate"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/incomePaymentMethod"/>
 
         <TextView
-            android:id="@+id/datetitle2"
-            android:layout_width="wrap_content"
+            android:id="@+id/incomePaymentMethod"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/datetitle"
-            app:layout_constraintStart_toStartOf="@+id/incomeAmtTxt"
-            app:layout_constraintTop_toBottomOf="@+id/incomeAmtTxt" />
+            android:text="Payment Method"
+            app:layout_constraintTop_toBottomOf="@+id/incomeCategory"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:text="TextView"
-            app:layout_constraintBottom_toBottomOf="@+id/datetitle2"
-            app:layout_constraintStart_toEndOf="@+id/datetitle2"
-            app:layout_constraintTop_toTopOf="@+id/datetitle2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.cardview.widget.CardView>

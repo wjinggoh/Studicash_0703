@@ -5,7 +5,7 @@ import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import my.edu.tarc.studicash_0703.Models.Expense
+import my.edu.tarc.studicash_0703.Models.Transaction
 
 fun uploadImage(uri: Uri, folderName:String, callback:(String?)->Unit){
     var imageUrl:String?=null
@@ -19,7 +19,7 @@ fun uploadImage(uri: Uri, folderName:String, callback:(String?)->Unit){
         }
 }
 
-fun saveExpense(expense:Expense) {
+fun saveExpense(expense:Transaction) {
     val db = Firebase.firestore
 
     db.collection("expenses")
