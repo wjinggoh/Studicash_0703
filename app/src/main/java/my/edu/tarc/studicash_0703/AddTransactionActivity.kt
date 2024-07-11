@@ -1,6 +1,7 @@
 package my.edu.tarc.studicash_0703
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -44,6 +45,11 @@ class AddTransactionActivity : AppCompatActivity() {
         binding.saveTransactionButton.setOnClickListener {
             saveTransaction()
         }
+
+        // Handle back button click to go back to previous activity
+        binding.back.setOnClickListener {
+            onBackPressed()
+        }
     }
 
     private fun saveTransaction() {
@@ -74,11 +80,10 @@ class AddTransactionActivity : AppCompatActivity() {
         firestore.collection("transactions")
             .add(transaction)
             .addOnSuccessListener {
-                finish()
+                finish() // Finish the activity after successful transaction save
             }
             .addOnFailureListener {
                 // Handle failure
             }
     }
-
 }

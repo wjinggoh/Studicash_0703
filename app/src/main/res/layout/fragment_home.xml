@@ -1,280 +1,307 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".HomeActivity">
+    tools:context=".sidebar"
+    tools:openDrawer="start">
 
-    <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+    <!-- Content View -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
+        <!-- Main Content -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:layout_height="match_parent">
 
-            <Toolbar
-                android:id="@+id/toolbar"
+
+            <ScrollView
                 android:layout_width="0dp"
-                android:layout_height="169dp"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/mainpage_background"
+                android:layout_height="0dp"
+                android:fillViewport="true"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/mainMenu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:fontFamily="@font/concert_one"
-                android:text="@string/mainMenuTitle"
-                android:textSize="24sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/todaySpending"
-                android:layout_width="200dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/background_with_border_grey"
-                android:elevation="3dp"
-                android:padding="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/mainMenu">
-
-                <TextView
-                    android:id="@+id/todaySpendingTitle"
-                    android:layout_width="wrap_content"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/concert_one"
-                    android:text="@string/todayspending"
-                    android:textSize="20sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:background="#FFFFFF"
+                    android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/todaySpendingAmt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="22dp"
-                    android:text="@string/spendhint"
-                    android:textColor="#000000"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/todaySpendingTitle" />
+                    <Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="250dp"
+                        android:layout_height="169dp"
+                        android:layout_marginTop="24dp"
+                        android:background="@drawable/mainpage_background"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/rm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="3dp"
-                    android:fontFamily="@font/concert_one"
-                    android:text="RM"
-                    android:textSize="24sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/todaySpendingAmt"
-                    app:layout_constraintEnd_toStartOf="@+id/todaySpendingAmt"
-                    app:layout_constraintTop_toBottomOf="@+id/todaySpendingTitle" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/todaySpending"
+                        android:layout_width="200dp"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/background_with_border_grey"
+                        android:elevation="3dp"
+                        android:padding="16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:id="@+id/todaySpendingTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/concert_one"
+                            android:text="@string/todayspending"
+                            android:textSize="20sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/goalTrackingBtn"
-                android:layout_width="250dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/background_with_border_grey"
-                android:elevation="3dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ttlMonthIncomeExpenses">
+                        <TextView
+                            android:id="@+id/todaySpendingAmt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="22dp"
+                            android:text="@string/spendhint"
+                            android:textColor="#000000"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/todaySpendingTitle" />
 
-                <TextView
-                    android:id="@+id/createtransactiontxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/concert_one"
-                    android:text="@string/goalTrackingbtn"
-                    android:textAlignment="center"
-                    android:textColor="#000000"
-                    android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/trackGoalimg"
-                    app:layout_constraintTop_toTopOf="parent" />
+                        <TextView
+                            android:id="@+id/rm"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="3dp"
+                            android:fontFamily="@font/concert_one"
+                            android:text="RM"
+                            android:textSize="24sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/todaySpendingAmt"
+                            app:layout_constraintEnd_toStartOf="@+id/todaySpendingAmt"
+                            app:layout_constraintTop_toBottomOf="@+id/todaySpendingTitle" />
 
-                <ImageView
-                    android:id="@+id/trackGoalimg"
-                    android:layout_width="55dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="25dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/goal" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/goalTrackingBtn"
+                        android:layout_width="250dp"
+                        android:layout_height="80dp"
+                        android:layout_marginTop="15dp"
+                        android:background="@drawable/background_with_border_grey"
+                        android:elevation="3dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/ttlMonthIncomeExpenses">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/reportBtn"
-                android:layout_width="250dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="32dp"
-                android:background="@drawable/background_with_border_grey"
-                android:elevation="3dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/goalTrackingBtn">
+                        <TextView
+                            android:id="@+id/createtransactiontxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/concert_one"
+                            android:text="@string/goalTrackingbtn"
+                            android:textAlignment="center"
+                            android:textColor="#000000"
+                            android:textSize="20sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/trackGoalimg"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/trackReporttxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="24dp"
-                    android:fontFamily="@font/concert_one"
-                    android:text="@string/report"
-                    android:textAlignment="center"
-                    android:textColor="#000000"
-                    android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/trackReportimg"
-                    app:layout_constraintTop_toTopOf="parent" />
+                        <ImageView
+                            android:id="@+id/trackGoalimg"
+                            android:layout_width="55dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="25dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/goal" />
 
-                <ImageView
-                    android:id="@+id/trackReportimg"
-                    android:layout_width="55dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="25dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/report" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/reportBtn"
+                        android:layout_width="250dp"
+                        android:layout_height="80dp"
+                        android:layout_marginTop="32dp"
+                        android:background="@drawable/background_with_border_grey"
+                        android:elevation="3dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/goalTrackingBtn">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/ttlMonthIncomeExpenses"
-                android:layout_width="350dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="30dp"
-                android:background="@drawable/bluebackground_with_border_grey"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/todaySpending">
+                        <TextView
+                            android:id="@+id/trackReporttxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="24dp"
+                            android:fontFamily="@font/concert_one"
+                            android:text="@string/report"
+                            android:textAlignment="center"
+                            android:textColor="#000000"
+                            android:textSize="20sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/trackReportimg"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/monthTxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginTop="5dp"
-                    android:fontFamily="@font/concert_one"
-                    android:text="@string/month"
-                    android:textSize="18sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                        <ImageView
+                            android:id="@+id/trackReportimg"
+                            android:layout_width="55dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="25dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/report" />
 
-                <TextView
-                    android:id="@+id/incometxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:fontFamily="@font/concert_one"
-                    android:text="@string/income"
-                    android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/monthTxt"
-                    app:layout_constraintStart_toEndOf="@+id/monthTxt"
-                    app:layout_constraintTop_toTopOf="@+id/monthTxt" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <TextView
-                    android:id="@+id/monthTxt2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="64dp"
-                    android:fontFamily="@font/concert_one"
-                    android:text="@string/month"
-                    android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/incometxt"
-                    app:layout_constraintStart_toEndOf="@+id/incometxt"
-                    app:layout_constraintTop_toTopOf="@+id/incometxt" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/ttlMonthIncomeExpenses"
+                        android:layout_width="350dp"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="30dp"
+                        android:background="@drawable/bluebackground_with_border_grey"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/todaySpending">
 
-                <TextView
-                    android:id="@+id/expenseTxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:fontFamily="@font/concert_one"
-                    android:text="@string/expense"
-                    android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/monthTxt2"
-                    app:layout_constraintStart_toEndOf="@+id/monthTxt2"
-                    app:layout_constraintTop_toTopOf="@+id/monthTxt2" />
+                        <TextView
+                            android:id="@+id/monthTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="40dp"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/concert_one"
+                            android:text="@string/month"
+                            android:textSize="18sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/monthExpenseAmt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:fontFamily="@font/concert_one"
-                    android:text="@string/spendhint"
-                    android:textSize="24sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/rm2"
-                    app:layout_constraintStart_toEndOf="@+id/rm2"
-                    app:layout_constraintTop_toTopOf="@+id/rm2" />
+                        <TextView
+                            android:id="@+id/incometxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:fontFamily="@font/concert_one"
+                            android:text="@string/income"
+                            android:textSize="18sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/monthTxt"
+                            app:layout_constraintStart_toEndOf="@+id/monthTxt"
+                            app:layout_constraintTop_toTopOf="@+id/monthTxt" />
 
-                <TextView
-                    android:id="@+id/rm3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/concert_one"
-                    android:text="RM"
-                    android:textSize="24sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/rm2"
-                    app:layout_constraintStart_toStartOf="@+id/monthTxt2"
-                    app:layout_constraintTop_toTopOf="@+id/rm2" />
+                        <TextView
+                            android:id="@+id/monthTxt2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="64dp"
+                            android:fontFamily="@font/concert_one"
+                            android:text="@string/month"
+                            android:textSize="18sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/incometxt"
+                            app:layout_constraintStart_toEndOf="@+id/incometxt"
+                            app:layout_constraintTop_toTopOf="@+id/incometxt" />
 
-                <TextView
-                    android:id="@+id/textView13"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:fontFamily="@font/concert_one"
-                    android:text="@string/spendhint"
-                    android:textSize="24sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/rm3"
-                    app:layout_constraintStart_toEndOf="@+id/rm3"
-                    app:layout_constraintTop_toTopOf="@+id/rm3"
-                    app:layout_constraintVertical_bias="0.0" />
+                        <TextView
+                            android:id="@+id/expenseTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:fontFamily="@font/concert_one"
+                            android:text="@string/expense"
+                            android:textSize="18sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/monthTxt2"
+                            app:layout_constraintStart_toEndOf="@+id/monthTxt2"
+                            app:layout_constraintTop_toTopOf="@+id/monthTxt2" />
 
-                <TextView
-                    android:id="@+id/rm2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/concert_one"
-                    android:text="RM"
-                    android:textSize="24sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/monthTxt"
-                    app:layout_constraintTop_toTopOf="parent" />
+                        <TextView
+                            android:id="@+id/monthExpenseAmt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:fontFamily="@font/concert_one"
+                            android:text="@string/spendhint"
+                            android:textSize="24sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/rm2"
+                            app:layout_constraintStart_toEndOf="@+id/rm2"
+                            app:layout_constraintTop_toTopOf="@+id/rm2" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:id="@+id/rm3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/concert_one"
+                            android:text="RM"
+                            android:textSize="24sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/rm2"
+                            app:layout_constraintStart_toStartOf="@+id/monthTxt2"
+                            app:layout_constraintTop_toTopOf="@+id/rm2" />
+
+                        <TextView
+                            android:id="@+id/textView13"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:fontFamily="@font/concert_one"
+                            android:text="@string/spendhint"
+                            android:textSize="24sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/rm3"
+                            app:layout_constraintStart_toEndOf="@+id/rm3"
+                            app:layout_constraintTop_toTopOf="@+id/rm3"
+                            app:layout_constraintVertical_bias="0.0" />
+
+                        <TextView
+                            android:id="@+id/rm2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/concert_one"
+                            android:text="RM"
+                            android:textSize="24sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/monthTxt"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <ImageView
+                        android:id="@+id/sidebaricon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/baseline_menu_48" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </ScrollView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Navigation Drawer -->
+    <com.google.android.material.navigation.NavigationView
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:id="@+id/sidebar_drawer"
+        android:layout_gravity="start"
+        android:background="#FFFFFF"
+        app:headerLayout="@layout/header"
+        app:menu="@menu/sidebar_drawer_items" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

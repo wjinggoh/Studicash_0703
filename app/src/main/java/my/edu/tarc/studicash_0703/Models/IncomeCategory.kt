@@ -1,6 +1,6 @@
 package my.edu.tarc.studicash_0703.Models
 
-data class CategoryItem(
+data class IncomeCategory(
     val icon: Int,
     val name: String
 ) {

@@ -8,12 +8,12 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import my.edu.tarc.studicash_0703.Models.CategoryItem
+import my.edu.tarc.studicash_0703.Models.ExpenseCategory
 import my.edu.tarc.studicash_0703.R
 
 class CategorySpinnerAdapter(
     private val context: Context,
-    private val categories: List<CategoryItem>
+    private val categories: List<ExpenseCategory>
 ) : BaseAdapter() {
 
     override fun getCount(): Int {

@@ -85,7 +85,6 @@
     <string name="income_amount">Income Amount</string>
 
 
-
     <!--addreceipt-->
     <string name="receipt_title">Add Income</string>
 
@@ -94,6 +93,8 @@
     <string name="profile_title">Profile</string>
     <string name="profile_username">Username</string>
     <string name="profile_email">Email</string>
+    <string name="balancetitle">Your Balance</string>
+    <string name="profilebalance">0.00</string>
 
 
     <!--settings-->
