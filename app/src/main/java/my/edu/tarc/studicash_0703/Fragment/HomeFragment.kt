@@ -7,10 +7,13 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -32,7 +35,6 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val view = binding.root
 
         drawerLayout = binding.drawerLayout
 
@@ -52,14 +54,57 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
 
         binding.sidebarDrawer.setNavigationItemSelectedListener(this)
 
-        return view
+        // Fetch and display user details
+        displayUserDetails()
+
+        calculateTodaySpending()
+        return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun displayUserDetails() {
+        val user = FirebaseAuth.getInstance().currentUser ?: return
+        val db = FirebaseFirestore.getInstance()
+        val headerView = binding.sidebarDrawer.getHeaderView(0)
 
-        // Calculate and display today's spending
-        calculateTodaySpending()
+        val userImageView = headerView.findViewById<ImageView>(R.id.userImageView)
+        val userNameTextView = headerView.findViewById<TextView>(R.id.userNameTextView)
+        val userEmailTextView = headerView.findViewById<TextView>(R.id.userEmailTextView)
+
+        user.displayName?.let {
+            userNameTextView.text = it
+        }
+
+        user.email?.let {
+            userEmailTextView.text = it
+        }
+
+        user.photoUrl?.let {
+            Glide.with(this).load(it).into(userImageView)
+        }
+
+        db.collection("User").document(user.uid).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val userName = document.getString("name")
+                    val userEmail = document.getString("email")
+                    val userImageUrl = document.getString("imageUrl")
+
+                    userName?.let {
+                        userNameTextView.text = it
+                    }
+
+                    userEmail?.let {
+                        userEmailTextView.text = it
+                    }
+
+                    userImageUrl?.let {
+                        Glide.with(this).load(it).into(userImageView)
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error fetching user details", e)
+            }
     }
 
     private fun calculateTodaySpending() {
@@ -79,7 +124,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
 
         Log.d(TAG, "Formatted Date: $formattedDate")
 
-        db.collection("Expense")
+        db.collection("expenseTransactions")
             .whereEqualTo("userId", userId) // Filter by user ID
             .whereEqualTo("date", formattedDate)
             .get()
@@ -87,7 +132,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
                 var totalSpending = 0.0
                 for (document in documents) {
                     val expense = document.toObject(Transaction::class.java)
-                    expense.amount?.let {
+                    expense.amount.let {
                         totalSpending += it
                     }
                     Log.d(TAG, "Expense: $expense")
@@ -99,7 +144,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
                 }
             }
             .addOnFailureListener { e ->
-                Log.e(TAG, "Error calculating spending: $e")
+                Log.e(TAG, "Error getting documents: ", e)
                 binding.todaySpendingAmt.text = "Error calculating spending"
             }
     }

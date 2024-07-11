@@ -9,7 +9,7 @@
     tools:context=".AddExpensesCategoryActivity">
 
     <EditText
-        android:id="@+id/categoryNameEditText"
+        android:id="@+id/ExpenseCategoryNameEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -20,14 +20,16 @@
         app:layout_constraintTop_toBottomOf="@+id/backCategory" />
 
     <Button
-        android:id="@+id/saveCategoryButton"
+        android:id="@+id/saveExpenseCategoryBtn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Save"
+        android:layout_height="55dp"
+        android:layout_marginTop="32dp"
+        android:backgroundTint="#01579B"
+        android:text="@string/saveexpensecatbtn"
+        app:cornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/categoryNameEditText" />
+        app:layout_constraintTop_toBottomOf="@id/ExpenseCategoryNameEditText" />
 
     <ImageView
         android:id="@+id/backCategory"

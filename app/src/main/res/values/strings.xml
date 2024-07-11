@@ -70,6 +70,8 @@
     <!--addcategory-->
     <string name="addexpensescategorytitle">Add Expenses Category</string>
     <string name="addincomecategorytitle">Add Income Category</string>
+    <string name="saveexpensecatbtn">Save Expense Category</string>
+    <string name="saveincomecatbtn">Save Income Category</string>
 
     <!--addtransaction-->
     <string name="transactionHeader">Add Transaction</string>

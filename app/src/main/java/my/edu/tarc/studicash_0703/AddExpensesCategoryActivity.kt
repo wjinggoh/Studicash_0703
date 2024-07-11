@@ -2,9 +2,11 @@ package my.edu.tarc.studicash_0703
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
+import my.edu.tarc.studicash_0703.Fragment.HomeFragment.Companion.TAG
 import my.edu.tarc.studicash_0703.databinding.ActivityAddExpensesCategoryBinding
 
 class AddExpensesCategoryActivity : AppCompatActivity() {
@@ -16,31 +18,34 @@ class AddExpensesCategoryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.backCategory.setOnClickListener {
-            startActivity(Intent(this@AddExpensesCategoryActivity, AddTransactionActivity::class.java))
+            onBackPressed()
         }
 
-        binding.saveCategoryButton.setOnClickListener {
-            val categoryName = binding.categoryNameEditText.text.toString()
+        binding.saveExpenseCategoryBtn.setOnClickListener {
+            val categoryName = binding.ExpenseCategoryNameEditText.text.toString()
             if (categoryName.isNotEmpty()) {
-                // Save the custom category (implement the save logic here)
                 saveCategory(categoryName)
             } else {
                 Toast.makeText(this, "Please enter a category name", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
     private fun saveCategory(categoryName: String) {
         val db = FirebaseFirestore.getInstance()
         val categoryData = hashMapOf("name" to categoryName)
-        db.collection("Categories")
+        db.collection("ExpenseCategories")
             .add(categoryData)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Category added successfully", Toast.LENGTH_SHORT).show()
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                Toast.makeText(this, "Expense category added successfully", Toast.LENGTH_SHORT).show()
                 finish()
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Error adding category: $e", Toast.LENGTH_SHORT).show()
+                Log.w(TAG, "Error adding document", e)
+                Toast.makeText(this, "Error adding expense category: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
 }

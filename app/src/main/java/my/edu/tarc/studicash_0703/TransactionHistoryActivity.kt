@@ -6,12 +6,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import my.edu.tarc.studicash_0703.adapter.TransactionAdapter
 import my.edu.tarc.studicash_0703.Models.Transaction
 import my.edu.tarc.studicash_0703.databinding.ActivityTransactionHistoryBinding
 import com.google.firebase.Timestamp
 import java.util.Date
 import my.edu.tarc.studicash_0703.R
+import my.edu.tarc.studicash_0703.adapter.CategorySpinnerAdapter
+import my.edu.tarc.studicash_0703.adapter.TransactionAdapter
 
 
 class TransactionHistoryActivity : AppCompatActivity() {

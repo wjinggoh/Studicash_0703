@@ -12,6 +12,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import my.edu.tarc.studicash_0703.EditProfile
 import my.edu.tarc.studicash_0703.Models.User
 import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.FragmentProfileBinding
@@ -29,6 +30,10 @@ class ProfileFragment : Fragment() {
     ): View? {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
 
+        binding.editBtn.setOnClickListener{
+            val intent = Intent(requireContext(), EditProfile::class.java)
+            startActivity(intent)
+        }
         return binding.root
     }
 

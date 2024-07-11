@@ -1,4 +1,4 @@
-package my.edu.tarc.studicash_0703.Adapter
+package my.edu.tarc.studicash_0703.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -9,11 +9,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import my.edu.tarc.studicash_0703.Models.ExpenseCategory
+import my.edu.tarc.studicash_0703.Models.IncomeCategory
 import my.edu.tarc.studicash_0703.R
 
 class CategorySpinnerAdapter(
     private val context: Context,
-    private val categories: List<ExpenseCategory>
+    private val categories: List<Any>
 ) : BaseAdapter() {
 
     override fun getCount(): Int {
@@ -32,11 +33,16 @@ class CategorySpinnerAdapter(
         val view: View = convertView ?: LayoutInflater.from(context).inflate(R.layout.spinner_items, parent, false)
 
         val category = categories[position]
-        val icon = view.findViewById<ImageView>(R.id.category)
-        val name = view.findViewById<TextView>(R.id.text)
+        val icon = view.findViewById<ImageView>(R.id.categoryIcon)
+        val name = view.findViewById<TextView>(R.id.categoryName)
 
-        icon.setImageDrawable(ContextCompat.getDrawable(context, category.icon))
-        name.text = category.name
+        if (category is ExpenseCategory) {
+            icon.setImageDrawable(ContextCompat.getDrawable(context, category.icon))
+            name.text = category.name
+        } else if (category is IncomeCategory) {
+            icon.setImageDrawable(ContextCompat.getDrawable(context, category.icon))
+            name.text = category.name
+        }
 
         return view
     }

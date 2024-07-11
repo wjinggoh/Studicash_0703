@@ -1,5 +1,4 @@
 package my.edu.tarc.studicash_0703.adapter
-
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +8,10 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.Models.Transaction
+import java.text.SimpleDateFormat
+import java.util.*
 
-class TransactionAdapter(private val context: Context, private val transactions: List<Transaction>) :
+class TransactionAdapter(private val context: Context, private val transactions: MutableList<Transaction>) :
     RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
@@ -27,6 +28,12 @@ class TransactionAdapter(private val context: Context, private val transactions:
         return transactions.size
     }
 
+    fun updateData(newTransactions: List<Transaction>) {
+        transactions.clear()
+        transactions.addAll(newTransactions)
+        notifyDataSetChanged()
+    }
+
     inner class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val titleTextView: TextView = itemView.findViewById(R.id.transactionTitle)
         private val amountTextView: TextView = itemView.findViewById(R.id.transactionAmount)
@@ -37,18 +44,25 @@ class TransactionAdapter(private val context: Context, private val transactions:
 
         fun bind(transaction: Transaction) {
             titleTextView.text = transaction.title
-            amountTextView.text = transaction.amount.toString()
-            dateTextView.text = transaction.date
+            amountTextView.text = String.format("%.2f", transaction.amount) // Format amount to two decimal places
+            dateTextView.text = formatDate(transaction.date) // Format date here
             categoryTextView.text = transaction.category
             paymentMethodTextView.text = transaction.paymentMethod
 
             // Set color based on transaction type
-            val color = if (transaction.isExpense) {
-                ContextCompat.getColor(context, R.color.expense_color)
+            val indicatorDrawable = if (transaction.isExpense) {
+                ContextCompat.getDrawable(itemView.context, transaction.expenseColorRes)
             } else {
-                ContextCompat.getColor(context, R.color.income_color)
+                ContextCompat.getDrawable(itemView.context, transaction.incomeColorRes)
             }
-            indicatorView.setBackgroundColor(color)
+            indicatorView.background = indicatorDrawable
+        }
+
+        private fun formatDate(date: String): String {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val parsedDate = inputFormat.parse(date)
+            return outputFormat.format(parsedDate)
         }
     }
 }
