@@ -12,6 +12,16 @@ class PaymentMethod(
         parcel.readString() ?: ""
     )
 
+    // Parse the details field to extract necessary information
+    fun getFormattedDetails(): String {
+        // Example logic to extract relevant details
+        val parts = details.split(",")
+        val formattedDetails = parts.joinToString(separator = ",") { part ->
+            part.trim().substringAfter(":").trim()
+        }
+        return formattedDetails
+    }
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(type)
         parcel.writeString(details)

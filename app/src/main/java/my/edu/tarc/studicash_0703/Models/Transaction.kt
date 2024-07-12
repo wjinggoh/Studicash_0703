@@ -9,6 +9,7 @@ data class Transaction(
     val category: String = "",
     val date: String = "",
     val paymentMethod: String = "",
+    val paymentMethodDetails: String? = null,
     val isExpense: Boolean = true,
     val userId: String = "",
     val timestamp: Timestamp? = null,

@@ -15,6 +15,7 @@
     <string name="gender">Gender(Male or Female)</string>
     <string name="balik_Login">Back to Login</string>
     <string name="register_button">Register\n</string>
+    <string name="uploadimg">Upload Image</string>
 
     <!--forgotPassword-->
     <string name="forgotPassword"><u>I have forgot my Password</u></string>
@@ -97,6 +98,7 @@
     <string name="profile_email">Email</string>
     <string name="balancetitle">Your Balance</string>
     <string name="profilebalance">0.00</string>
+    <string name="profile_picture">Profile Picture</string>
 
 
     <!--settings-->

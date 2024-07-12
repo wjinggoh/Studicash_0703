@@ -1,4 +1,5 @@
 package my.edu.tarc.studicash_0703.adapter
+
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.Models.Transaction
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -47,7 +49,10 @@ class TransactionAdapter(private val context: Context, private val transactions:
             amountTextView.text = String.format("%.2f", transaction.amount) // Format amount to two decimal places
             dateTextView.text = formatDate(transaction.date) // Format date here
             categoryTextView.text = transaction.category
-            paymentMethodTextView.text = transaction.paymentMethod
+
+            // Display payment method details if available, otherwise fall back to paymentMethod
+            val paymentMethodDetails = transaction.paymentMethodDetails ?: transaction.paymentMethod
+            paymentMethodTextView.text = paymentMethodDetails
 
             // Set color based on transaction type
             val indicatorDrawable = if (transaction.isExpense) {
@@ -59,10 +64,16 @@ class TransactionAdapter(private val context: Context, private val transactions:
         }
 
         private fun formatDate(date: String): String {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val parsedDate = inputFormat.parse(date)
-            return outputFormat.format(parsedDate)
+            return try {
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val parsedDate = inputFormat.parse(date)
+                parsedDate?.let { outputFormat.format(it) } ?: "Invalid Date"
+            } catch (e: ParseException) {
+                "Invalid Date"
+            }
         }
     }
+
+
 }

@@ -16,6 +16,7 @@ import my.edu.tarc.studicash_0703.Models.Transaction
 import my.edu.tarc.studicash_0703.databinding.ActivityAddTransactionBinding
 import com.google.firebase.Timestamp
 import my.edu.tarc.studicash_0703.adapter.CategorySpinnerAdapter
+import java.text.SimpleDateFormat
 import java.util.*
 
 class AddTransactionActivity : AppCompatActivity() {
@@ -168,7 +169,7 @@ class AddTransactionActivity : AppCompatActivity() {
                 }
 
                 // Create adapter and set it to the spinner
-                val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, paymentMethods.map { it.type })
+                val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, paymentMethods.map {"${it.type}: ${it.details}"  })
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 binding.paymentMethodSpinner.adapter = adapter
             }
@@ -188,11 +189,14 @@ class AddTransactionActivity : AppCompatActivity() {
         isExpense: Boolean,
         userId: String
     ) {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val formattedDate = sdf.format(sdf.parse(date)) // Parse and format the date
+
         val transaction = Transaction(
             title = title,
             amount = amount,
             category = category,
-            date = date,
+            date = formattedDate, // Use the formatted date
             paymentMethod = paymentMethod,
             isExpense = isExpense,
             userId = userId,

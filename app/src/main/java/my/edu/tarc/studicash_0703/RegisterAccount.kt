@@ -61,17 +61,28 @@ class RegisterAccount : AppCompatActivity() {
             try {
                 val uploadTask = storageRef.putFile(fileUri)
 
-                // Register observers to listen for upload progress, success, or failure
-                uploadTask.addOnProgressListener {
-                    // Handle upload progress updates
-                }.addOnSuccessListener {
-                    // Upload completed successfully
+                // Register observer to listen for upload progress
+                uploadTask.addOnProgressListener { snapshot ->
+                    val progress = (100.0 * snapshot.bytesTransferred / snapshot.totalByteCount).toInt()
+                    // Update UI with upload progress if needed
+                    Log.d(TAG, "Upload is $progress% done")
+                }.addOnSuccessListener { _ ->
+                    // Upload completed successfully, get download URL
+                    storageRef.downloadUrl.addOnSuccessListener { uri ->
+                        val downloadUrl = uri.toString()
+                        // Use downloadUrl to do something (e.g., save to user profile)
+                        Log.d(TAG, "File uploaded successfully. Download URL: $downloadUrl")
+                    }.addOnFailureListener { exception ->
+                        // Handle any errors retrieving the download URL
+                        Log.e(TAG, "Failed to retrieve download URL: ${exception.message}")
+                    }
                 }.addOnFailureListener { exception ->
-                    // Handle upload failure, including the "server terminated session" error
+                    // Handle upload failure, including "server terminated session" error
                     if (exception is IOException && exception.message?.contains("The server has terminated the upload session") == true) {
                         // Implement retry logic with exponential backoff
                     } else {
                         // Handle other upload errors
+                        Log.e(TAG, "Upload failed: ${exception.message}")
                     }
                 }
 
@@ -79,10 +90,12 @@ class RegisterAccount : AppCompatActivity() {
                 val uploadResult = uploadTask.await()
             } catch (e: Exception) {
                 // Handle exceptions during upload
+                Log.e(TAG, "Error during upload: ${e.message}")
                 e.printStackTrace()
             }
         }
     }
+
 
 
 

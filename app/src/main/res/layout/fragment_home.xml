@@ -230,7 +230,7 @@
                             app:layout_constraintTop_toTopOf="@+id/monthTxt2" />
 
                         <TextView
-                            android:id="@+id/monthExpenseAmt"
+                            android:id="@+id/monthIncomeAmt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="3dp"
@@ -253,7 +253,7 @@
                             app:layout_constraintTop_toTopOf="@+id/rm2" />
 
                         <TextView
-                            android:id="@+id/textView13"
+                            android:id="@+id/monthExpenseAmt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="3dp"

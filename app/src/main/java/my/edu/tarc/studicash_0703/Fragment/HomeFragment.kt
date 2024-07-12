@@ -57,7 +57,11 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         // Fetch and display user details
         displayUserDetails()
 
+        // Calculate today's spending
         calculateTodaySpending()
+
+        calculateMonthIncomeExpense()
+
         return binding.root
     }
 
@@ -149,6 +153,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
             }
     }
 
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.navHome -> {
@@ -171,6 +176,83 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         super.onDestroyView()
         _binding = null
     }
+
+    private fun calculateMonthIncomeExpense() {
+        val user = FirebaseAuth.getInstance().currentUser
+        val userId = user?.uid
+        val db = FirebaseFirestore.getInstance()
+
+        if (userId == null) {
+            // Handle case where user is not logged in
+            return
+        }
+
+        // Get start and end dates for the current month
+        val calendar = Calendar.getInstance()
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentYear = calendar.get(Calendar.YEAR)
+        calendar.set(currentYear, currentMonth, 1)
+        val startDate = calendar.time
+        calendar.set(Calendar.MONTH, currentMonth + 1)
+        val endDate = calendar.time
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val startFormattedDate = sdf.format(startDate)
+        val endFormattedDate = sdf.format(endDate)
+
+        Log.d(TAG, "Start Date: $startFormattedDate, End Date: $endFormattedDate")
+
+        // Fetch income transactions
+        db.collection("incomeTransactions")
+            .whereEqualTo("userId", userId)
+            .whereGreaterThanOrEqualTo("date", startFormattedDate)
+            .get()
+            .addOnSuccessListener { documents ->
+                var totalIncome = 0.0
+                for (document in documents) {
+                    val income = document.toObject(Transaction::class.java)
+                    income.amount.let {
+                        totalIncome += it
+                    }
+                    Log.d(TAG, "Income: $income")
+                }
+                Log.d(TAG, "Total Income This Month: $totalIncome")
+
+                // Update UI with total income
+                binding.monthIncomeAmt.text = String.format(Locale.getDefault(), "%.2f", totalIncome)
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error getting income documents: ", e)
+                binding.monthIncomeAmt.text = "Error calculating income"
+            }
+
+        // Fetch expense transactions
+        db.collection("expenseTransactions")
+            .whereEqualTo("userId", userId)
+            .whereGreaterThanOrEqualTo("date", startFormattedDate)
+            .whereLessThan("date", endFormattedDate)
+            .get()
+            .addOnSuccessListener { documents ->
+                var totalExpense = 0.0
+                for (document in documents) {
+                    val expense = document.toObject(Transaction::class.java)
+                    expense.amount.let {
+                        totalExpense += it
+                    }
+                    Log.d(TAG, "Expense: $expense")
+                }
+                Log.d(TAG, "Total Expense This Month: $totalExpense")
+
+                // Update UI with total expense
+                binding.monthExpenseAmt.text = String.format(Locale.getDefault(), "%.2f", totalExpense)
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error getting expense documents: ", e)
+                binding.monthExpenseAmt.text = "Error calculating expense"
+            }
+    }
+
+
 
     companion object {
         const val TAG = "HomeFragment"

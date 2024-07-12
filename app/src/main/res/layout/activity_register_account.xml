@@ -8,12 +8,18 @@
     android:layout_height="match_parent"
     tools:context=".RegisterAccount">
 
-    <androidx.camera.view.PreviewView
-        android:background="@color/white"
-        android:id="@+id/previewView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
+    <Button
+        android:id="@+id/registeruploadbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#01579B"
+        android:text="@string/uploadimg"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/upload_studentIdPhoto" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImage"
@@ -45,14 +51,14 @@
         android:layout_width="344dp"
         android:layout_height="67dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="15dp"
         android:hint="@string/email"
         app:layout_constraintBottom_toTopOf="@+id/userName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileImage">
+        app:layout_constraintTop_toBottomOf="@+id/registeruploadbtn">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
