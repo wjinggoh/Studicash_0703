@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import my.edu.tarc.studicash_0703.AddReceiptActivity
 import my.edu.tarc.studicash_0703.AddTransactionActivity
 import my.edu.tarc.studicash_0703.databinding.FragmentChooseTransactionBinding
 
@@ -23,6 +24,10 @@ class ChooseTransactionFragment : DialogFragment() {
 
         binding.addTransactionButton.setOnClickListener {
             startActivity(Intent(requireContext(), AddTransactionActivity::class.java))
+        }
+
+        binding.addReceiptButton.setOnClickListener{
+            startActivity(Intent(requireContext(), AddReceiptActivity::class.java))
         }
 
 

@@ -12,7 +12,7 @@ data class Transaction(
     val paymentMethodDetails: String? = null,
     val isExpense: Boolean = true,
     val userId: String = "",
-    val timestamp: Timestamp? = null,
+    val timestamp: Timestamp = Timestamp.now(),
     val expenseColorRes: Int = R.drawable.expense, // Default values or provide specific colors
     val incomeColorRes: Int = R.drawable.income
 )

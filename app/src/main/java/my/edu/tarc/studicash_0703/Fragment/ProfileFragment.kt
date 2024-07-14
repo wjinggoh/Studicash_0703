@@ -11,8 +11,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import my.edu.tarc.studicash_0703.EditProfileActivity
@@ -36,10 +34,10 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
 
-        binding.editBtn.setOnClickListener{
+        binding.editBtn.setOnClickListener {
             val intent = Intent(requireContext(), EditProfileActivity::class.java)
             startActivity(intent)
         }
@@ -61,6 +59,7 @@ class ProfileFragment : Fragment() {
                     user?.let {
                         binding.userName.text = it.name
                         binding.email.text = it.email
+                        binding.profileGender.text=it.gender
                         if (!it.image.isNullOrEmpty()) {
                             Glide.with(requireContext())
                                 .load(it.image)
@@ -76,7 +75,6 @@ class ProfileFragment : Fragment() {
                 }
         }
     }
-
 
     private fun fetchTransactions() {
         val userId = auth.currentUser?.uid
@@ -106,11 +104,12 @@ class ProfileFragment : Fragment() {
 
                             // Calculate balance
                             val balance = totalIncome - totalExpenses
-                            val df = DecimalFormat("#,###.00")
+                            val df = DecimalFormat("0.00")
 
                             // Display balance
-                            binding.profileBalance.text = "${df.format(balance)}"
-
+                            binding.profileBalance.text = df.format(balance)
+                            binding.profileTotalIncome.text = df.format(totalIncome)
+                            binding.profileTotalExpenses.text = df.format(totalExpenses)
                         }
                         .addOnFailureListener { exception ->
                             Toast.makeText(requireContext(), "Failed to fetch expense transactions: ${exception.message}", Toast.LENGTH_SHORT).show()

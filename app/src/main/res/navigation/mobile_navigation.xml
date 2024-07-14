@@ -14,8 +14,8 @@
             app:popUpTo="@id/fragment_home"
             app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_homeFragment_to_profileFragment"
-            app:destination="@id/fragment_profile" />
+            android:id="@+id/action_fragment_home_to_notificationsActivity"
+            app:destination="@id/notificationsActivity" />
 
     </fragment>
 
@@ -60,5 +60,10 @@
         android:id="@+id/homeSidebarFragment"
         android:name="my.edu.tarc.studicash_0703.Fragment.HomeSidebarFragment"
         android:label="HomeSidebarFragment" />
+    <activity
+        android:id="@+id/notificationsActivity"
+        android:name="my.edu.tarc.studicash_0703.NotificationsActivity"
+        android:label="activity_notifications"
+        tools:layout="@layout/activity_notifications" />
 
 </navigation>

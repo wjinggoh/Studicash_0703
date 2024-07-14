@@ -51,7 +51,7 @@ class TransactionAdapter(private val context: Context, private val transactions:
             categoryTextView.text = transaction.category
 
             // Display payment method details if available, otherwise fall back to paymentMethod
-            val paymentMethodDetails = transaction.paymentMethodDetails ?: transaction.paymentMethod
+            val paymentMethodDetails = transaction.paymentMethod ?: transaction.paymentMethod
             paymentMethodTextView.text = paymentMethodDetails
 
             // Set color based on transaction type
