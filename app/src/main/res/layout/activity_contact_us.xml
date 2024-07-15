@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".Activity.sidebar.NotificationsActivity">
+    tools:context=".Activity.sidebar.ContactUsActivity">
+
 
     <Toolbar
-        android:id="@+id/toolbar3"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:background="@color/background"
@@ -17,33 +17,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/notificationBackBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/baseline_arrow_back_48" />
+    <ImageView
+        android:id="@+id/contactUsBackBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/baseline_arrow_back_48"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
         <TextView
-            android:id="@+id/notificationstitle"
+            android:id="@+id/contact_us_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="70dp"
             android:fontFamily="@font/concert_one"
-            android:text="@string/notifications_title"
+            android:text="@string/contact_us_title"
             android:textSize="32sp"
             app:layout_constraintBottom_toBottomOf="@+id/toolbar3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/toolbar3"
             app:layout_constraintTop_toTopOf="parent" />
 
-
     </Toolbar>
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

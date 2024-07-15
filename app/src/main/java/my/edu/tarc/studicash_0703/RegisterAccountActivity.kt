@@ -1,7 +1,6 @@
 package my.edu.tarc.studicash_0703
 
 import android.Manifest
-import androidx.core.text.HtmlCompat
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -19,10 +18,7 @@ import androidx.core.content.FileProvider
 import my.edu.tarc.studicash_0703.Models.User
 import my.edu.tarc.studicash_0703.databinding.ActivityRegisterAccountBinding
 import my.edu.tarc.studicash_0703.utils.USER_NODE
-import my.edu.tarc.studicash_0703.utils.USER_PROFILE_FOLDER
-import my.edu.tarc.studicash_0703.utils.uploadImage
 import com.google.firebase.Firebase
-import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
@@ -34,7 +30,6 @@ import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.squareup.picasso.Picasso
 import java.io.File
 import java.io.IOException
-import com.google.firebase.storage.ktx.storage
 import com.google.firebase.storage.storage
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.CoroutineScope
@@ -42,8 +37,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-
-class RegisterAccount : AppCompatActivity() {
+class RegisterAccountActivity : AppCompatActivity() {
 
     private var fileUri: Uri? = null
 
@@ -184,7 +178,7 @@ class RegisterAccount : AppCompatActivity() {
             }
 
             binding.backSignIn.setOnClickListener {
-                val intent = Intent(this@RegisterAccount, MainActivity::class.java)
+                val intent = Intent(this@RegisterAccountActivity, my.edu.tarc.studicash_0703.MainActivity::class.java)
                 startActivity(intent)
                 finish() // Optionally call finish() to close the current activity
             }
@@ -198,7 +192,7 @@ class RegisterAccount : AppCompatActivity() {
 
                 if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || gender.isEmpty()) {
                     Toast.makeText(
-                        this@RegisterAccount,
+                        this@RegisterAccountActivity,
                         "Please fill in all fields",
                         Toast.LENGTH_SHORT
                     ).show()
@@ -208,7 +202,7 @@ class RegisterAccount : AppCompatActivity() {
                 // Validate profile image
                 if (user.image == null) {
                     Toast.makeText(
-                        this@RegisterAccount,
+                        this@RegisterAccountActivity,
                         "Please upload your profile image",
                         Toast.LENGTH_SHORT
                     ).show()
@@ -220,7 +214,7 @@ class RegisterAccount : AppCompatActivity() {
                 // Email validation
                 if (email.isEmpty() || !email.matches(tarucEmailPattern.toRegex())) {
                     Toast.makeText(
-                        this@RegisterAccount,
+                        this@RegisterAccountActivity,
                         "Email must follow the TARUMT email format",
                         Toast.LENGTH_SHORT
                     ).show()
@@ -230,7 +224,7 @@ class RegisterAccount : AppCompatActivity() {
                 // Password validation
                 if (password.isEmpty() || password.length < 6) {
                     Toast.makeText(
-                        this@RegisterAccount,
+                        this@RegisterAccountActivity,
                         "Password must be at least 6 characters long",
                         Toast.LENGTH_SHORT
                     ).show()
@@ -240,7 +234,7 @@ class RegisterAccount : AppCompatActivity() {
                 // Confirm password validation
                 if (confirmPassword.isEmpty() || confirmPassword != password) {
                     Toast.makeText(
-                        this@RegisterAccount,
+                        this@RegisterAccountActivity,
                         "Confirm password is not match with the password",
                         Toast.LENGTH_SHORT
                     )
@@ -254,7 +248,7 @@ class RegisterAccount : AppCompatActivity() {
                     ))
                 ) {
                     Toast.makeText(
-                        this@RegisterAccount,
+                        this@RegisterAccountActivity,
                         "Please type \"Male\" or \"Female\"",
                         Toast.LENGTH_SHORT
                     ).show()
@@ -280,14 +274,14 @@ class RegisterAccount : AppCompatActivity() {
                                     if (emailVerificationTask.isSuccessful) {
                                         // Email sent, wait for user to verify
                                         Toast.makeText(
-                                            this@RegisterAccount,
+                                            this@RegisterAccountActivity,
                                             "Verification email sent. Please verify your email to continue.",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     } else {
                                         // Failed to send verification email
                                         Toast.makeText(
-                                            this@RegisterAccount,
+                                            this@RegisterAccountActivity,
                                             "Failed to send verification email",
                                             Toast.LENGTH_SHORT
                                         ).show()
@@ -304,13 +298,13 @@ class RegisterAccount : AppCompatActivity() {
                                         .set(user)
                                         .addOnSuccessListener {
                                             Toast.makeText(
-                                                this@RegisterAccount,
+                                                this@RegisterAccountActivity,
                                                 "Register Successful",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                             startActivity(
                                                 Intent(
-                                                    this@RegisterAccount,
+                                                    this@RegisterAccountActivity,
                                                     HomeActivity::class.java
                                                 )
                                             )
@@ -318,7 +312,7 @@ class RegisterAccount : AppCompatActivity() {
                                         }
                                         .addOnFailureListener { e ->
                                             Toast.makeText(
-                                                this@RegisterAccount,
+                                                this@RegisterAccountActivity,
                                                 "Failed to save user data: ${e.localizedMessage}",
                                                 Toast.LENGTH_SHORT
                                             ).show()
@@ -329,7 +323,7 @@ class RegisterAccount : AppCompatActivity() {
                                         "Failed to retrieve FCM token: ${task.exception?.localizedMessage}"
                                     )
                                     Toast.makeText(
-                                        this@RegisterAccount,
+                                        this@RegisterAccountActivity,
                                         "Failed to retrieve FCM token",
                                         Toast.LENGTH_SHORT
                                     ).show()
@@ -337,14 +331,14 @@ class RegisterAccount : AppCompatActivity() {
                             }
                         } else {
                             Toast.makeText(
-                                this@RegisterAccount,
+                                this@RegisterAccountActivity,
                                 "Failed to retrieve current user",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                     } else {
                         Toast.makeText(
-                            this@RegisterAccount,
+                            this@RegisterAccountActivity,
                             result.exception?.localizedMessage,
                             Toast.LENGTH_SHORT
                         ).show()

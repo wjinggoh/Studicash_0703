@@ -1,3 +1,5 @@
+package my.edu.tarc.studicash_0703
+
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -8,10 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import my.edu.tarc.studicash_0703.Models.Transaction
 import my.edu.tarc.studicash_0703.databinding.ActivityTransactionHistoryBinding
-import com.google.firebase.Timestamp
-import java.util.Date
 import my.edu.tarc.studicash_0703.R
-import my.edu.tarc.studicash_0703.adapter.CategorySpinnerAdapter
 import my.edu.tarc.studicash_0703.adapter.TransactionAdapter
 
 

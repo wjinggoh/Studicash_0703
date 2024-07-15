@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
+    id ("kotlin-android")
 }
 
 android {
@@ -48,6 +49,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
+
     // Firebase libraries
     implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
     implementation(libs.firebase.auth.ktx)
@@ -61,6 +63,7 @@ dependencies {
     implementation(libs.vision.common)
     implementation(libs.play.services.mlkit.face.detection)
     implementation("com.google.mlkit:face-detection:16.1.6")
+
 
     // Image libraries
     implementation("de.hdodenhof:circleimageview:3.1.0")
@@ -84,6 +87,7 @@ dependencies {
     implementation("androidx.camera:camera-view:$camerax_version")
 
     // Other libraries
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("com.karumi:dexter:6.2.3")
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation("com.squareup.retrofit2:retrofit:2.10.0")
@@ -92,6 +96,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.2.0")
     implementation("com.google.android.libraries.places:places:3.4.0")
     implementation("com.android.volley:volley:1.2.1")
+
+
 
     // Testing libraries
     testImplementation(libs.junit)

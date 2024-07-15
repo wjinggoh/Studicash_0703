@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:elevation="3dp"
-    tools:context=".HomeActivity">
+    tools:context=".Activity.HomeActivity">
 
     <!-- Toolbar -->
     <Toolbar
@@ -50,11 +50,11 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout7"
-                android:layout_width="wrap_content"
+                android:layout_width="320dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="100dp"
-                android:background="@drawable/profile_total_blue"
+                android:background="@drawable/background_with_border_grey_no_corner"
                 android:elevation="3dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -98,7 +98,6 @@
                     android:text="@string/profilebalance"
                     android:textColor="#4CAF50"
                     android:textSize="34sp"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView5" />
@@ -185,9 +184,9 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout5"
-                android:layout_width="wrap_content"
+                android:layout_width="320dp"
                 android:layout_height="150dp"
-                android:background="@drawable/balance_blue"
+                android:background="@drawable/bluebackground_with_border_grey"
                 android:elevation="3dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -229,7 +228,6 @@
                     android:text="@string/profilebalance"
                     android:textColor="#4CAF50"
                     android:textSize="34sp"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/textView4"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/balanceTitle" />
@@ -237,10 +235,10 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout6"
-                android:layout_width="wrap_content"
+                android:layout_width="320dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/profile_total_blue"
+                android:background="@drawable/background_with_border_grey_no_corner"
                 android:elevation="3dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -269,9 +267,8 @@
                     android:layout_marginBottom="16dp"
                     android:fontFamily="@font/concert_one"
                     android:text="@string/profilebalance"
-                    android:textColor="#FF5722"
+                    android:textColor="#E91E63"
                     android:textSize="34sp"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/totalExpenseTitle" />

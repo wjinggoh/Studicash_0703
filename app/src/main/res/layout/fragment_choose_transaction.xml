@@ -6,7 +6,7 @@
     android:layout_height="300dp"
     android:background="#FFFFFF"
     android:backgroundTint="@color/white"
-    tools:context=".HomeActivity">
+    tools:context=".Activity.HomeActivity">
 
     <Button
         android:id="@+id/add_transaction_button"

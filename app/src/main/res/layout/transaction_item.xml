@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -14,7 +15,7 @@
 
         <TextView
             android:id="@+id/transactionTitle"
-            android:layout_width="0dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
@@ -28,46 +29,42 @@
 
         <TextView
             android:id="@+id/transactionAmount"
-            android:layout_width="0dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:text="Amount"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/indicatorView"
+            app:layout_constraintEnd_toEndOf="@+id/transactionTitle"
+            app:layout_constraintStart_toStartOf="@+id/transactionTitle"
             app:layout_constraintTop_toBottomOf="@id/transactionTitle" />
 
         <TextView
             android:id="@+id/transactionDate"
-            android:layout_width="0dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:text="Date"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/indicatorView"
+            app:layout_constraintEnd_toEndOf="@+id/transactionAmount"
+            app:layout_constraintStart_toStartOf="@+id/transactionAmount"
             app:layout_constraintTop_toBottomOf="@id/transactionAmount" />
 
         <TextView
             android:id="@+id/transactionCategory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:text="Category"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/indicatorView"
+            app:layout_constraintEnd_toEndOf="@+id/transactionDate"
+            app:layout_constraintStart_toStartOf="@+id/transactionTitle"
             app:layout_constraintTop_toBottomOf="@id/transactionDate" />
 
         <TextView
             android:id="@+id/transactionPaymentMethod"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:text="Payment Method"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/indicatorView"
+            app:layout_constraintEnd_toEndOf="@+id/transactionCategory"
+            app:layout_constraintStart_toStartOf="@+id/transactionAmount"
             app:layout_constraintTop_toBottomOf="@id/transactionCategory" />
 
         <!-- Indicator View -->
@@ -79,6 +76,28 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/transactionDeleteBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/background_with_border_grey_no_corner"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/transactionTitle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/delete" />
+
+        <ImageView
+            android:id="@+id/transactionEditBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/background_with_border_grey_no_corner"
+            app:layout_constraintBottom_toBottomOf="@+id/transactionPaymentMethod"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/transactionCategory"
+            app:srcCompat="@drawable/edit_transaction" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

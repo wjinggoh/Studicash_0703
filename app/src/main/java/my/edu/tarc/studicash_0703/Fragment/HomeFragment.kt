@@ -14,10 +14,11 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import my.edu.tarc.studicash_0703.ReportActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import my.edu.tarc.studicash_0703.GoalTrackingActivity
+import my.edu.tarc.studicash_0703.budget.BudgetTrackingActivity
 import my.edu.tarc.studicash_0703.Models.Transaction
 import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.FragmentHomeBinding
@@ -48,10 +49,14 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         }
 
         binding.goalTrackingBtn.setOnClickListener {
-            val intent = Intent(requireContext(), GoalTrackingActivity::class.java)
+            val intent = Intent(requireContext(), my.edu.tarc.studicash_0703.budget.BudgetTrackingActivity::class.java)
             startActivity(intent)
         }
 
+        binding.reportBtn.setOnClickListener{
+            val intent = Intent(requireContext(), ReportActivity::class.java)
+            startActivity(intent)
+        }
         binding.sidebarDrawer.setNavigationItemSelectedListener(this)
 
         // Fetch and display user details
@@ -169,11 +174,22 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
             }
             R.id.navHelp->{
                 // Navigate to ProfileFragment
-                findNavController().navigate(R.id.action_fragment_home_to_notificationsActivity)
+                findNavController().navigate(R.id.action_fragment_home_to_helpActivity)
                 drawerLayout.closeDrawer(GravityCompat.START)
                 return true
             }
-            // Handle other items as needed
+            R.id.navFeedback->{
+                // Navigate to ProfileFragment
+                findNavController().navigate(R.id.action_fragment_home_to_feedbackActivity)
+                drawerLayout.closeDrawer(GravityCompat.START)
+                return true
+            }
+            R.id.navContact->{
+                // Navigate to ProfileFragment
+                findNavController().navigate(R.id.action_fragment_home_to_contactUsActivity)
+                drawerLayout.closeDrawer(GravityCompat.START)
+                return true
+            }
             else -> return false
         }
     }

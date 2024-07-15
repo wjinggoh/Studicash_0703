@@ -15,6 +15,7 @@ import my.edu.tarc.studicash_0703.Models.PaymentMethod
 import my.edu.tarc.studicash_0703.Models.Transaction
 import my.edu.tarc.studicash_0703.databinding.ActivityAddTransactionBinding
 import com.google.firebase.Timestamp
+import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.adapter.CategorySpinnerAdapter
 import java.text.SimpleDateFormat
 import java.util.*

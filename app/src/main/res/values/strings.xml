@@ -53,6 +53,8 @@
     <!--budgettracking-->
     <string name="addBudget">Add Budget</string>
     <string name="totalBudgetUsageTitle">Total Budget Usage</string>
+    <string name="duration">Duration</string>
+    <string name="saveBudget">Save Budget</string>
 
     <!--add-allcanuse-->
 
@@ -112,8 +114,23 @@
     <!--settings-->
     <string name="settings_title">Settings</string>
     <string name="add_payment_method">Add Payment Method</string>
+    <string name="currency">Currency</string>
+    <string name="currencyName">Currency Name</string>
     <string name="logout">Logout</string>
 
+
+    <!--activity notifications-->
+    <string name="notifications_title">Notifications</string>
+
+    <!--activity feedback-->
+    <string name="feedback_title">Send Feedback</string>
+
+    <!--activity help-->
+    <string name="help_title">Help</string>
+
+
+    <!--activity contact us-->
+    <string name="contact_us_title">Contact Us</string>
 
     <!--createpaymentmethodpage-->
 

@@ -1,32 +1,36 @@
 package my.edu.tarc.studicash_0703
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.LinearLayout
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.DialogFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Fragment.DialogEditPaymentMethodFragment
 import my.edu.tarc.studicash_0703.Fragment.DialogNewPaymentMethodFragment
 import my.edu.tarc.studicash_0703.Models.PaymentMethod
-import my.edu.tarc.studicash_0703.AddPaymentMethodActivity
+import my.edu.tarc.studicash_0703.R
+import my.edu.tarc.studicash_0703.databinding.ActivityAddPaymentMethodBinding
 
 class AddPaymentMethodActivity : AppCompatActivity() {
 
-    private lateinit var paymentMethodsContainer: LinearLayout
-    private lateinit var addButton: Button
+    private lateinit var binding: ActivityAddPaymentMethodBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_payment_method)
+        binding = ActivityAddPaymentMethodBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        paymentMethodsContainer = findViewById(R.id.payment_methods_container)
-        addButton = findViewById(R.id.btn_add_payment_method)
-
-        addButton.setOnClickListener {
+        binding.btnAddPaymentMethod.setOnClickListener {
             val dialog = DialogNewPaymentMethodFragment()
             dialog.show(supportFragmentManager, "NewPaymentMethodDialog")
+        }
+
+        binding.addPaymentBackBtn.setOnClickListener {
+            val intent = Intent(this, my.edu.tarc.studicash_0703.MainActivity::class.java)
+            startActivity(intent)
         }
 
         // Load payment methods from Firestore
@@ -38,23 +42,23 @@ class AddPaymentMethodActivity : AppCompatActivity() {
         firestore.collection("paymentMethods")
             .get()
             .addOnSuccessListener { result ->
-                paymentMethodsContainer.removeAllViews()
+                binding.paymentMethodsContainer.removeAllViews()
                 for (document in result) {
                     val paymentMethod = document.toObject(PaymentMethod::class.java)
                     addPaymentMethodView(paymentMethod, document.id)
                 }
             }
             .addOnFailureListener { exception ->
-                // Handle failure to fetch payment methods
-                // For example, log the error or show a toast
+                // Handle error
             }
     }
 
     private fun addPaymentMethodView(paymentMethod: PaymentMethod, documentId: String) {
-        val paymentMethodView = layoutInflater.inflate(R.layout.created_payment_method_item, paymentMethodsContainer, false)
+        val paymentMethodView = layoutInflater.inflate(R.layout.created_payment_method_item, binding.paymentMethodsContainer, false)
 
         val paymentMethodText = paymentMethodView.findViewById<TextView>(R.id.payment_method_text)
         val editButton = paymentMethodView.findViewById<Button>(R.id.btn_edit_payment_method)
+        val deleteButton = paymentMethodView.findViewById<ImageView>(R.id.btn_delete_payment_method)
 
         paymentMethodText.text = paymentMethod.details
         editButton.setOnClickListener {
@@ -62,6 +66,19 @@ class AddPaymentMethodActivity : AppCompatActivity() {
             dialog.show(supportFragmentManager, "EditPaymentMethodDialog")
         }
 
-        paymentMethodsContainer.addView(paymentMethodView)
+        deleteButton.setOnClickListener {
+            val firestore = FirebaseFirestore.getInstance()
+            firestore.collection("paymentMethods").document(documentId)
+                .delete()
+                .addOnSuccessListener {
+                    binding.paymentMethodsContainer.removeView(paymentMethodView)
+                }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(this, "Failed to delete payment method: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+
+
+        binding.paymentMethodsContainer.addView(paymentMethodView)
     }
 }

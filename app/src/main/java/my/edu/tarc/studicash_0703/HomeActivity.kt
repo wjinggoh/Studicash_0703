@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.ActivityHomeBinding
 
 class HomeActivity : AppCompatActivity() {

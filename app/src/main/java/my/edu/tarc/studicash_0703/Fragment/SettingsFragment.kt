@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import my.edu.tarc.studicash_0703.AddPaymentMethodActivity
+import my.edu.tarc.studicash_0703.sidebar.HelpActivity
 import my.edu.tarc.studicash_0703.MainActivity
 import my.edu.tarc.studicash_0703.databinding.FragmentSettingsBinding
 
@@ -33,6 +34,11 @@ class SettingsFragment : Fragment() {
             startActivity(intent)
         }
 
+        binding.helpBtn.setOnClickListener{
+            val intent=Intent(activity, HelpActivity::class.java)
+            startActivity(intent)
+        }
+
         return view
     }
 
@@ -47,7 +53,7 @@ class SettingsFragment : Fragment() {
         Toast.makeText(context, "Logged out successfully", Toast.LENGTH_SHORT).show()
 
         // Navigate to MainActivity and clear task stack
-        val intent = Intent(activity, MainActivity::class.java)
+        val intent = Intent(activity, my.edu.tarc.studicash_0703.MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }

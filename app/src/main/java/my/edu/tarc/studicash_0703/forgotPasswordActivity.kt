@@ -3,14 +3,10 @@ package my.edu.tarc.studicash_0703
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.databinding.ActivityForgotPasswordBinding
-import my.edu.tarc.studicash_0703.databinding.ActivityRegisterAccountBinding
 
 class forgotPasswordActivity : AppCompatActivity() {
     private lateinit var binding: ActivityForgotPasswordBinding
@@ -33,7 +29,7 @@ class forgotPasswordActivity : AppCompatActivity() {
         }
 
         binding.back.setOnClickListener {
-            val intent = Intent(this@forgotPasswordActivity, MainActivity::class.java)
+            val intent = Intent(this@forgotPasswordActivity, my.edu.tarc.studicash_0703.MainActivity::class.java)
             startActivity(intent)
             finish() // Optionally call finish() to close the current activity
         }
@@ -49,7 +45,7 @@ class forgotPasswordActivity : AppCompatActivity() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     showToast("Password reset email sent successfully")
-                    startActivity(Intent(this, MainActivity::class.java))
+                    startActivity(Intent(this, my.edu.tarc.studicash_0703.MainActivity::class.java))
                     finish()
                 } else {
                     val e = task.exception

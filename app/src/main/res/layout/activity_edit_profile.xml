@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:backgroundTint="#FFFFFF"
-    tools:context=".EditProfileActivity">
+    tools:context=".Activity.EditProfileActivity">
 
     <ImageView
         android:id="@+id/editProfileBack"

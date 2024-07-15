@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
         if (isLoggedIn) {
-            startActivity(Intent(this@MainActivity, HomeActivity::class.java))
+            startActivity(Intent(this@MainActivity, my.edu.tarc.studicash_0703.HomeActivity::class.java))
             finish()
         }
 
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
                             editor.putBoolean("isLoggedIn", true)
                             editor.apply()
 
-                            val intent = Intent(this@MainActivity, HomeActivity::class.java)
+                            val intent = Intent(this@MainActivity, my.edu.tarc.studicash_0703.HomeActivity::class.java)
                             startActivity(intent)
                             finish()
                         } else {
@@ -54,12 +54,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.createAnAccount.setOnClickListener {
-            startActivity(Intent(this@MainActivity, RegisterAccount::class.java))
+            startActivity(Intent(this@MainActivity, my.edu.tarc.studicash_0703.RegisterAccountActivity::class.java))
             finish()
         }
 
         binding.forgotPage.setOnClickListener {
-            startActivity(Intent(this@MainActivity, forgotPasswordActivity::class.java))
+            startActivity(Intent(this@MainActivity, my.edu.tarc.studicash_0703.forgotPasswordActivity::class.java))
         }
     }
 }

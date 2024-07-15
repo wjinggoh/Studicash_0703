@@ -1,5 +1,6 @@
 <!-- res/layout/item_payment_method.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#FFFFFF"
@@ -9,7 +10,7 @@
 
     <TextView
         android:id="@+id/payment_method_text"
-        android:layout_width="0dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Payment Method Details"
@@ -19,5 +20,14 @@
         android:id="@+id/btn_edit_payment_method"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edit" />
+        android:text="Edit"
+        android:layout_marginRight="-35dp"/>
+
+    <ImageView
+        android:id="@+id/btn_delete_payment_method"
+        android:layout_width="30dp"
+        android:layout_height="48dp"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/delete"
+        android:layout_marginRight="-35dp"/>
 </LinearLayout>
