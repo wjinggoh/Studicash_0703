@@ -78,13 +78,15 @@
         app:layout_constraintTop_toBottomOf="@+id/createTransactionbtn" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/viewFullHistoryBtn"
         android:layout_width="350dp"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_marginTop="50dp"
-        android:background="@color/light_blue_900"
-        android:text="Button"
+        android:backgroundTint="#01579B"
+        android:fontFamily="@font/concert_one"
+        android:text="@string/view_all_transaction_history"
         android:textSize="24sp"
+        app:cornerRadius="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recyclerView" />

@@ -44,11 +44,21 @@
     <string name="add_title">Expenses Management</string>
     <string name="add_create">Create \n Transaction</string>
     <string name="transactionhistory">Transaction History</string>
+    <string name="view_all_transaction_history">View All Transaction</string>
+
 
     <!--choosetransactiontype-->
     <string name="choose">Choose Transaction</string>
     <string name="add_transaction">Add Transaction</string>
     <string name="add_receipt">Add Receipt</string>
+
+
+    <!--reportpage-->
+    <string-array name="timeframe_array">
+        <item>Daily</item>
+        <item>Monthly</item>
+        <item>Yearly</item>
+    </string-array>
 
     <!--budgettracking-->
     <string name="addBudget">Add Budget</string>
@@ -138,4 +148,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+
+    <!--contact us-->
+    <string name="contactusdescription">You can get in touch with us through below platforms. Our Team will reach out to you as soon as it would be possible. </string>
+    <string name="customerSupportTitle">Customer Support</string>
+    <string name="contactNoTitle">Contact Number</string>
 </resources>

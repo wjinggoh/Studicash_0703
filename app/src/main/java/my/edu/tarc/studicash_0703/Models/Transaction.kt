@@ -13,6 +13,6 @@ data class Transaction(
     val isExpense: Boolean = true,
     val userId: String = "",
     val timestamp: Timestamp = Timestamp.now(),
-    val expenseColorRes: Int = R.drawable.expense, // Default values or provide specific colors
+    val expenseColorRes: Int = R.drawable.expense,
     val incomeColorRes: Int = R.drawable.income
 )

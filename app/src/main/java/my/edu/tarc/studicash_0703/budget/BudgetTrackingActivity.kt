@@ -1,5 +1,6 @@
 package my.edu.tarc.studicash_0703.budget
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import my.edu.tarc.studicash_0703.databinding.ActivityBudgetTrackingBinding
@@ -16,9 +17,9 @@ class BudgetTrackingActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        binding.addBudgetBtn.setOnClickListener{
-
+        binding.addBudgetBtn.setOnClickListener {
+            val intent = Intent(this, AddBudgetActivity::class.java) // Use 'this' instead of requireContext()
+            startActivity(intent)
         }
     }
-
 }

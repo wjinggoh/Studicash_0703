@@ -8,10 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import my.edu.tarc.studicash_0703.Fragment.HomeFragment.Companion.TAG
 import my.edu.tarc.studicash_0703.Models.Transaction
 import my.edu.tarc.studicash_0703.databinding.FragmentAddBinding
 
@@ -66,7 +64,7 @@ class AddFragment : Fragment() {
                         title = title,
                         amount = amount,
                         category = category,
-                        date = date,
+                        date =date,
                         paymentMethod = paymentMethod,
                         isExpense = isExpense,
                         userId = userId
@@ -80,7 +78,6 @@ class AddFragment : Fragment() {
                 Log.e(TAG, "Error fetching expense transactions", exception)
             }
     }
-
 
     private fun fetchIncomeTransactions() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
@@ -119,19 +116,20 @@ class AddFragment : Fragment() {
             }
     }
 
-
     private fun updateRecyclerView() {
         val allTransactions = mutableListOf<Transaction>()
         allTransactions.addAll(expenseTransactions)
         allTransactions.addAll(incomeTransactions)
 
-        allTransactions.sortByDescending { it.date }
+        // Sort and limit to the latest 5 transactions
+        val latestTransactions = allTransactions
+            .sortedByDescending { it.date }
+            .take(5)
 
-        transactionAdapter.updateData(allTransactions)
+        transactionAdapter.updateData(latestTransactions)
     }
+
     companion object {
         private const val TAG = "AddFragment"
     }
 }
-
-

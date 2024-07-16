@@ -37,10 +37,7 @@ class AddTransactionActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
-        incomeCategories = getIncomeCategories()
-        expenseCategories = getExpenseCategories()
-
-        setupCategorySpinner(expenseCategories)
+        fetchCategories()
         setupPaymentMethodSpinner()
 
         binding.selectDateButton.setOnClickListener {
@@ -61,11 +58,9 @@ class AddTransactionActivity : AppCompatActivity() {
 
         binding.addCategoryButton.setOnClickListener {
             if (binding.rbAddIncome.isChecked) {
-                // Start AddIncomeCategoryActivity
                 val intent = Intent(this, AddIncomeCategoryActivity::class.java)
                 startActivity(intent)
             } else if (binding.rbAddExpense.isChecked) {
-                // Start AddExpenseCategoryActivity
                 val intent = Intent(this, AddExpensesCategoryActivity::class.java)
                 startActivity(intent)
             }
@@ -79,6 +74,40 @@ class AddTransactionActivity : AppCompatActivity() {
             onBackPressed()
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        fetchCategories() // Fetch categories on resume
+    }
+
+    private fun fetchCategories() {
+        // Fetch income categories from Firestore
+        firestore.collection("IncomeCategories")
+            .get()
+            .addOnSuccessListener { result ->
+                incomeCategories = result.map { document ->
+                    IncomeCategory(R.drawable.custom_category, document.getString("name") ?: "")
+                } + getIncomeCategories() // Combine with predefined categories
+
+                if (binding.rbAddIncome.isChecked) {
+                    setupCategorySpinner(incomeCategories)
+                }
+            }
+
+        // Fetch expense categories from Firestore
+        firestore.collection("ExpenseCategories")
+            .get()
+            .addOnSuccessListener { result ->
+                expenseCategories = result.map { document ->
+                    ExpenseCategory(R.drawable.custom_category, document.getString("name") ?: "")
+                } + getExpenseCategories() // Combine with predefined categories
+
+                if (binding.rbAddExpense.isChecked) {
+                    setupCategorySpinner(expenseCategories)
+                }
+            }
+    }
+
 
     private fun setupCategorySpinner(categories: List<Any>) {
         val adapter = if (categories.firstOrNull() is ExpenseCategory) {
@@ -94,7 +123,6 @@ class AddTransactionActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { result ->
                 if (result.isEmpty) {
-                    // Handle case where no documents are found
                     Toast.makeText(this, "No payment methods found", Toast.LENGTH_SHORT).show()
                     return@addOnSuccessListener
                 }
@@ -112,7 +140,6 @@ class AddTransactionActivity : AppCompatActivity() {
                 Log.e("Firestore", "Error fetching payment methods", exception)
             }
     }
-
 
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
@@ -153,12 +180,10 @@ class AddTransactionActivity : AppCompatActivity() {
     }
 
     private fun setupPaymentMethodSpinner() {
-        // Fetch payment methods from Firestore
         firestore.collection("paymentMethods")
             .get()
             .addOnSuccessListener { result ->
                 if (result.isEmpty) {
-                    // Handle case where no documents are found
                     Toast.makeText(this, "No payment methods found", Toast.LENGTH_SHORT).show()
                     return@addOnSuccessListener
                 }
@@ -169,8 +194,12 @@ class AddTransactionActivity : AppCompatActivity() {
                     PaymentMethod(type, details)
                 }
 
-                // Create adapter and set it to the spinner
-                val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, paymentMethods.map {"${it.type}: ${it.details}"  })
+                // Create an adapter with the fetched payment methods
+                val adapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    paymentMethods.map { "${it.type}: ${it.details}" }
+                )
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 binding.paymentMethodSpinner.adapter = adapter
             }
@@ -191,13 +220,13 @@ class AddTransactionActivity : AppCompatActivity() {
         userId: String
     ) {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val formattedDate = sdf.format(sdf.parse(date)) // Parse and format the date
+        val formattedDate = sdf.format(sdf.parse(date))
 
         val transaction = Transaction(
             title = title,
             amount = amount,
             category = category,
-            date = formattedDate, // Use the formatted date
+            date = formattedDate,
             paymentMethod = paymentMethod,
             isExpense = isExpense,
             userId = userId,
@@ -222,7 +251,6 @@ class AddTransactionActivity : AppCompatActivity() {
                 Toast.makeText(this, "Failed to save transaction: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
-
 
     private fun getIncomeCategories(): List<IncomeCategory> {
         return listOf(

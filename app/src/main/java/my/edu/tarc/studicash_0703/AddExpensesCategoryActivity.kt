@@ -28,7 +28,6 @@ class AddExpensesCategoryActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please enter a category name", Toast.LENGTH_SHORT).show()
             }
         }
-
     }
 
     private fun saveCategory(categoryName: String) {
@@ -37,14 +36,29 @@ class AddExpensesCategoryActivity : AppCompatActivity() {
         db.collection("ExpenseCategories")
             .add(categoryData)
             .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
                 Toast.makeText(this, "Expense category added successfully", Toast.LENGTH_SHORT).show()
+                fetchUpdatedCategories()  // Fetch updated categories
                 finish()
             }
             .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
                 Toast.makeText(this, "Error adding expense category: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
+    private fun fetchUpdatedCategories() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("ExpenseCategories")
+            .get()
+            .addOnSuccessListener { result ->
+                val updatedCategories = result.map { document ->
+                    document.getString("name") ?: ""
+                }
+                // Update spinner adapter here if applicable
+                // e.g., myActivity.setupCategorySpinner(updatedCategories)
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error fetching categories: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
 }
+

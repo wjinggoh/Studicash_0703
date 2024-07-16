@@ -71,22 +71,22 @@
         android:label="HomeSidebarFragment" />
     <activity
         android:id="@+id/notificationsActivity"
-        android:name="my.edu.tarc.studicash_0703.Activity.sidebar.NotificationsActivity"
+        android:name="my.edu.tarc.studicash_0703.sidebar.NotificationsActivity"
         android:label="activity_notifications"
         tools:layout="@layout/activity_notifications" />
     <activity
         android:id="@+id/helpActivity"
-        android:name="my.edu.tarc.studicash_0703.Activity.sidebar.HelpActivity"
+        android:name="my.edu.tarc.studicash_0703.sidebar.HelpActivity"
         android:label="activity_help"
         tools:layout="@layout/activity_help" />
     <activity
         android:id="@+id/contactUsActivity"
-        android:name="my.edu.tarc.studicash_0703.Activity.sidebar.ContactUsActivity"
+        android:name="my.edu.tarc.studicash_0703.sidebar.ContactUsActivity"
         android:label="activity_contact_us"
         tools:layout="@layout/activity_contact_us" />
     <activity
         android:id="@+id/feedbackActivity"
-        android:name="my.edu.tarc.studicash_0703.Activity.sidebar.FeedbackActivity"
+        android:name="my.edu.tarc.studicash_0703.sidebar.FeedbackActivity"
         android:label="activity_feedback"
         tools:layout="@layout/activity_feedback" />
 

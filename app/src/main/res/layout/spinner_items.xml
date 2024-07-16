@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="400dp"
     android:layout_height="70dp"
-    android:background="@drawable/background_with_border_grey"
+    android:background="@drawable/background_with_border_grey_no_corner"
     android:elevation="3dp"
     android:orientation="horizontal">
 

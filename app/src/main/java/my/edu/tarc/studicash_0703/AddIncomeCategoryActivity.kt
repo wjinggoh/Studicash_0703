@@ -35,10 +35,28 @@ class AddIncomeCategoryActivity : AppCompatActivity() {
             .add(categoryData)
             .addOnSuccessListener {
                 Toast.makeText(this, "Income category added successfully", Toast.LENGTH_SHORT).show()
+                fetchUpdatedCategories()  // Fetch updated categories
                 finish()
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Error adding income category: $e", Toast.LENGTH_SHORT).show()
             }
     }
+
+    private fun fetchUpdatedCategories() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("IncomeCategories")
+            .get()
+            .addOnSuccessListener { result ->
+                val updatedCategories = result.map { document ->
+                    document.getString("name") ?: ""
+                }
+                // Update spinner adapter here if applicable
+                // e.g., myActivity.setupCategorySpinner(updatedCategories)
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error fetching categories: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
 }
+
