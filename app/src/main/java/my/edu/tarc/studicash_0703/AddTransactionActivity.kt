@@ -228,7 +228,7 @@ class AddTransactionActivity : AppCompatActivity() {
             category = category,
             date = formattedDate,
             paymentMethod = paymentMethod,
-            isExpense = isExpense,
+            expense = isExpense,
             userId = userId,
             timestamp = Timestamp.now(),
             expenseColorRes = R.drawable.expense,

@@ -13,8 +13,7 @@ import my.edu.tarc.studicash_0703.databinding.ActivityTransactionHistoryBinding
 import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.adapter.TransactionAdapter
 
-
-class TransactionHistoryActivity : AppCompatActivity() {
+class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTransactionClickListener {
     private lateinit var binding: ActivityTransactionHistoryBinding
     private lateinit var transactionAdapter: TransactionAdapter
     private var transactionsList: MutableList<Transaction> = mutableListOf()
@@ -33,7 +32,7 @@ class TransactionHistoryActivity : AppCompatActivity() {
         }
 
         // Initialize RecyclerView and Adapter
-        transactionAdapter = TransactionAdapter(this, transactionsList)
+        transactionAdapter = TransactionAdapter(this, transactionsList, this)
 
         binding.historyRecycleView.apply {
             layoutManager = LinearLayoutManager(this@TransactionHistoryActivity)
@@ -56,27 +55,18 @@ class TransactionHistoryActivity : AppCompatActivity() {
 
     private fun fetchExpenseDataFromFirestore() {
         val user = FirebaseAuth.getInstance().currentUser
-        val userId = user?.uid
-
-        if (userId == null) {
-            // Handle the case where the user is not logged in
-            println("User not logged in")
-            return
-        }
+        val userId = user?.uid ?: return
 
         db.collection("Expense")
-            .whereEqualTo("userId", userId) // Filter by user ID
-            .orderBy("date", Query.Direction.DESCENDING) // Then order by date descending
-            .orderBy("timestamp", Query.Direction.DESCENDING) // Order by timestamp descending
+            .whereEqualTo("userId", userId)
+            .orderBy("date", Query.Direction.DESCENDING)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { documents ->
-                transactionsList.clear() // Clear the list before adding new data
+                transactionsList.clear()
                 for (document in documents) {
                     val transaction = document.toObject(Transaction::class.java)
                     transactionsList.add(transaction)
-                    // Convert timestamp to Date manually
-                    val timestamp = transaction.timestamp?.toDate()
-                    println("Expense timestamp: $timestamp")
                 }
                 transactionAdapter.notifyDataSetChanged()
             }
@@ -87,32 +77,53 @@ class TransactionHistoryActivity : AppCompatActivity() {
 
     private fun fetchIncomeDataFromFirestore() {
         val user = FirebaseAuth.getInstance().currentUser
-        val userId = user?.uid
-
-        if (userId == null) {
-            // Handle the case where the user is not logged in
-            println("User not logged in")
-            return
-        }
+        val userId = user?.uid ?: return
 
         db.collection("Income")
-            .whereEqualTo("userId", userId) // Filter by user ID
-            .orderBy("date", Query.Direction.DESCENDING) // Then order by date descending
-            .orderBy("timestamp", Query.Direction.DESCENDING) // Order by timestamp descending
+            .whereEqualTo("userId", userId)
+            .orderBy("date", Query.Direction.DESCENDING)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { documents ->
-                transactionsList.clear() // Clear the list before adding new data
+                transactionsList.clear()
                 for (document in documents) {
                     val transaction = document.toObject(Transaction::class.java)
                     transactionsList.add(transaction)
-                    // Convert timestamp to Date manually
-                    val timestamp = transaction.timestamp?.toDate()
-                    println("Income timestamp: $timestamp")
                 }
                 transactionAdapter.notifyDataSetChanged()
             }
             .addOnFailureListener { exception ->
                 println("Error fetching incomes: ${exception.message}")
+            }
+    }
+
+    // Implementing the OnTransactionClickListener methods
+    override fun onDelete(transactionId: String, isExpense: Boolean) {
+        deleteTransaction(transactionId, isExpense)
+    }
+
+    override fun onEdit(transactionId: String) {
+        // Handle edit transaction
+    }
+
+    private fun deleteTransaction(transactionId: String, isExpense: Boolean) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val collection = if (isExpense) {
+            db.collection("Expense")
+        } else {
+            db.collection("Income")
+        }
+
+        collection.document(transactionId).delete()
+            .addOnSuccessListener {
+                if (isExpense) {
+                    fetchExpenseDataFromFirestore() // Refresh the list after deletion
+                } else {
+                    fetchIncomeDataFromFirestore() // Refresh for income
+                }
+            }
+            .addOnFailureListener { exception ->
+                println("Error deleting transaction: ${exception.message}")
             }
     }
 }

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="400dp"
+    android:layout_height="500dp"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".Fragment.EditTransactionFragment">
+
+    <EditText
+        android:id="@+id/titleEditText"
+        android:layout_width="320dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="16dp"
+        android:hint="Title"
+        app:layout_constraintBottom_toTopOf="@+id/amountEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTransactionBackBtn" />
+
+    <EditText
+        android:id="@+id/amountEditText"
+        android:layout_width="320dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="16dp"
+        android:hint="Amount"
+        android:inputType="numberDecimal"
+        app:layout_constraintBottom_toTopOf="@+id/editCategorySpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/dateEditText"
+        android:layout_width="320dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="16dp"
+        android:hint="Date (yyyy-MM-dd)"
+        app:layout_constraintBottom_toTopOf="@+id/editPaymentMethodSpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="320dp"
+        android:layout_height="55dp"
+        android:backgroundTint="#FF01579B"
+        android:fontFamily="@font/concert_one"
+        android:text="Save"
+        android:textSize="24sp"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <ImageView
+        android:id="@+id/editTransactionBackBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/baseline_arrow_back_48"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/editCategorySpinner"
+        android:layout_width="320dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/dateEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Spinner
+        android:id="@+id/editPaymentMethodSpinner"
+        android:layout_width="320dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/saveButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

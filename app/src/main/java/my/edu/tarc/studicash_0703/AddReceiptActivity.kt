@@ -16,6 +16,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import my.edu.tarc.studicash_0703.adapter.ReceiptItemsAdapter
 import my.edu.tarc.studicash_0703.databinding.ActivityAddReceiptBinding
 import my.edu.tarc.studicash_0703.Models.ReceiptItems
@@ -62,18 +67,32 @@ class AddReceiptActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_SELECT && resultCode == Activity.RESULT_OK && data != null) {
             val imageUri: Uri? = data.data
-            try {
-                val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-                // Check if the selected image is a receipt (you need to implement this logic)
-                if (isReceiptImage(bitmap)) {
-                    selectedImageBitmap = bitmap
-                    binding.imageView.setImageBitmap(bitmap)
-                } else {
-                    Toast.makeText(this, "Only receipt images are allowed", Toast.LENGTH_SHORT).show()
+            imageUri?.let {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val bitmap = loadImageBitmap(imageUri)
+                    if (bitmap != null) {
+                        if (isReceiptImage(bitmap)) {
+                            selectedImageBitmap = bitmap
+                            binding.imageView.setImageBitmap(bitmap)
+                        } else {
+                            Toast.makeText(this@AddReceiptActivity, "Only receipt images are allowed", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
+            }
+        }
+    }
+
+    private suspend fun loadImageBitmap(uri: Uri): Bitmap? {
+        return withContext(Dispatchers.IO) {
+            try {
+                MediaStore.Images.Media.getBitmap(contentResolver, uri)
             } catch (e: IOException) {
-                Toast.makeText(this, "Error loading image: ${e.message}", Toast.LENGTH_SHORT).show()
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@AddReceiptActivity, "Error loading image: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
                 e.printStackTrace()
+                null
             }
         }
     }
@@ -103,30 +122,37 @@ class AddReceiptActivity : AppCompatActivity() {
         }
 
         val averageIntensity = totalIntensity / (width * height)
-        if (averageIntensity < pixelThreshold) {
-            return true  // Example: Accept images with low average intensity (potentially receipt-like)
-        }
-
-        return false
+        return averageIntensity < pixelThreshold  // Example: Accept images with low average intensity (potentially receipt-like)
     }
-
 
     private fun recognizeTextFromImage() {
         val bitmap = selectedImageBitmap
         if (bitmap != null) {
+            CoroutineScope(Dispatchers.Main).launch {
+                val recognizedText = recognizeText(bitmap)
+                recognizedText?.let {
+                    processExtractedText(it)
+                } ?: Toast.makeText(this@AddReceiptActivity, "Text recognition failed", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private suspend fun recognizeText(bitmap: Bitmap): com.google.mlkit.vision.text.Text? {
+        return withContext(Dispatchers.IO) {
             val image = InputImage.fromBitmap(bitmap, 0)
             val options = TextRecognizerOptions.Builder().build()
             val recognizer = TextRecognition.getClient(options)
-
-            recognizer.process(image)
-                .addOnSuccessListener { visionText ->
-                    processExtractedText(visionText)
+            try {
+                recognizer.process(image).await()
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@AddReceiptActivity, "Text recognition failed: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
                 }
-                .addOnFailureListener { e ->
-                    Toast.makeText(this, "Text recognition failed: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
-                }
-        } else {
-            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
+                null
+            }
         }
     }
 

@@ -4,17 +4,26 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.Models.Transaction
+import my.edu.tarc.studicash_0703.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TransactionAdapter(private val context: Context, private val transactions: MutableList<Transaction>) :
-    RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>() {
+class TransactionAdapter(
+    private val context: Context,
+    private var transactions: MutableList<Transaction>,
+    private val listener: OnTransactionClickListener
+) : RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>() {
+
+    interface OnTransactionClickListener {
+        fun onDelete(transactionId: String, isExpense: Boolean)
+        fun onEdit(transactionId: String)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.transaction_item, parent, false)
@@ -24,6 +33,11 @@ class TransactionAdapter(private val context: Context, private val transactions:
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val transaction = transactions[position]
         holder.bind(transaction)
+
+        holder.itemView.setOnClickListener {
+            // Ensure you're passing the correct ID
+            listener.onDelete(transaction.id, transaction.expense)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -33,8 +47,9 @@ class TransactionAdapter(private val context: Context, private val transactions:
     fun updateData(newTransactions: List<Transaction>) {
         transactions.clear()
         transactions.addAll(newTransactions)
-        notifyDataSetChanged()
+        notifyDataSetChanged() // Notify the adapter of data change
     }
+
 
     inner class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val titleTextView: TextView = itemView.findViewById(R.id.transactionTitle)
@@ -44,18 +59,26 @@ class TransactionAdapter(private val context: Context, private val transactions:
         private val paymentMethodTextView: TextView = itemView.findViewById(R.id.transactionPaymentMethod)
         private val indicatorView: View = itemView.findViewById(R.id.indicatorView)
 
+        init {
+            itemView.findViewById<ImageView>(R.id.transactionDeleteBtn).setOnClickListener {
+                val transactionId = transactions[adapterPosition].id
+                listener.onDelete(transactionId, transactions[adapterPosition].expense) // Pass isExpense
+            }
+
+            itemView.findViewById<ImageView>(R.id.transactionEditBtn).setOnClickListener {
+                val transactionId = transactions[adapterPosition].id
+                listener.onEdit(transactionId)
+            }
+        }
+
         fun bind(transaction: Transaction) {
             titleTextView.text = transaction.title
-            amountTextView.text = String.format("%.2f", transaction.amount) // Format amount to two decimal places
-            dateTextView.text = formatDate(transaction.date) // Format date here
+            amountTextView.text = String.format("%.2f", transaction.amount)
+            dateTextView.text = formatDate(transaction.date)
             categoryTextView.text = transaction.category
+            paymentMethodTextView.text = transaction.paymentMethod ?: ""
 
-            // Display payment method details if available, otherwise fall back to paymentMethod
-            val paymentMethodDetails = transaction.paymentMethod ?: transaction.paymentMethod
-            paymentMethodTextView.text = paymentMethodDetails
-
-            // Set color based on transaction type
-            val indicatorDrawable = if (transaction.isExpense) {
+            val indicatorDrawable = if (transaction.expense) {
                 ContextCompat.getDrawable(itemView.context, transaction.expenseColorRes)
             } else {
                 ContextCompat.getDrawable(itemView.context, transaction.incomeColorRes)
@@ -74,6 +97,4 @@ class TransactionAdapter(private val context: Context, private val transactions:
             }
         }
     }
-
-
 }

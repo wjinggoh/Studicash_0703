@@ -112,7 +112,7 @@ class ReportActivity : AppCompatActivity() {
 
                     documents.forEach { document ->
                         val transaction = document.toObject(Transaction::class.java)
-                        if (transaction.isExpense) {
+                        if (transaction.expense) {
                             val currentAmount = categoryTotals[transaction.category] ?: 0.0
                             categoryTotals[transaction.category] = currentAmount + transaction.amount
                         }
