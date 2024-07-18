@@ -131,6 +131,7 @@
     <string name="currency">Currency</string>
     <string name="currencyName">Currency Name</string>
     <string name="logout">Logout</string>
+    <string name="CurrencyRM">RM</string>
 
 
     <!--activity notifications-->

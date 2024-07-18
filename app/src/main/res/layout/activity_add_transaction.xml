@@ -56,37 +56,49 @@
             android:layout_height="wrap_content"
             android:background="@color/white">
 
-            <RadioButton
-                android:id="@+id/rbAddExpense"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="64dp"
-                android:layout_marginTop="32dp"
-                android:text="@string/add_expense"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <RadioButton
-                android:id="@+id/rbAddIncome"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="84dp"
-                android:text="@string/add_income"
-                app:layout_constraintBottom_toBottomOf="@+id/rbAddExpense"
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="200dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="16dp"
+                android:checkedButton="@+id/rbAddExpense"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/rbAddExpense" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <RadioButton
+                    android:id="@+id/rbAddExpense"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    android:text="@string/add_expense"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <RadioButton
+                    android:id="@+id/rbAddIncome"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="84dp"
+                    android:text="@string/add_income"
+                    app:layout_constraintBottom_toBottomOf="@+id/rbAddExpense"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/rbAddExpense" />
+            </RadioGroup>
 
             <TextView
                 android:id="@+id/transactionTitleLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
                 android:fontFamily="@font/concert_one"
                 android:text="@string/transaction_title"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rbAddExpense" />
+                app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/transactionTitleInput"

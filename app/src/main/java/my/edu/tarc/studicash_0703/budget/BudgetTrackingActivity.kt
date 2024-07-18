@@ -1,22 +1,21 @@
 package my.edu.tarc.studicash_0703.budget
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.Budget
 import my.edu.tarc.studicash_0703.Models.Transaction
 import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.ActivityBudgetTrackingBinding
-import org.json.JSONObject
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -33,7 +32,10 @@ class BudgetTrackingActivity : AppCompatActivity() {
 
         barChart = binding.barChart
 
-        binding.addBudgetBtn.setOnClickListener{
+        loadBudgetsFromPreferences()
+        loadTransactions()
+
+        binding.addBudgetBtn.setOnClickListener {
             val intent = Intent(this, AddBudgetActivity::class.java)
             startActivity(intent)
         }
@@ -41,29 +43,26 @@ class BudgetTrackingActivity : AppCompatActivity() {
         binding.BudgetBackBtn.setOnClickListener {
             onBackPressed()
         }
-        loadBudgetsFromPreferences()
-        loadTransactions()
     }
 
     private fun loadBudgetsFromPreferences() {
-        val sharedPreferences = getSharedPreferences("BudgetPrefs", MODE_PRIVATE)
-        val budgetSet = sharedPreferences.getStringSet("BudgetList", setOf()) ?: setOf()
-
-        budgetList = budgetSet.mapNotNull { budgetJson ->
-            try {
-                val jsonObject = JSONObject(budgetJson)
-                val amount = jsonObject.getDouble("amount")
-                val category = jsonObject.getString("category")
-                val startDate = jsonObject.getString("startDate")
-                val endDate = jsonObject.getString("endDate")
-                Budget(amount, category, startDate, endDate)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
+        val db = FirebaseFirestore.getInstance()
+        db.collection("budgets").get()
+            .addOnSuccessListener { documents ->
+                budgetList = documents.mapNotNull { doc ->
+                    Budget(
+                        category = doc.getString("category") ?: "",
+                        amount = doc.getDouble("amount") ?: 0.0,
+                        startDate = doc.getString("startDate") ?: "",
+                        endDate = doc.getString("endDate") ?: ""
+                    )
+                }
+                setupBarChartIfReady()
             }
-        }
-
-        setupBarChartIfReady()
+            .addOnFailureListener { exception ->
+                Log.e("BudgetTrackingActivity", "Error loading budgets: ", exception)
+                Toast.makeText(this, "Error loading budgets", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun loadTransactions() {
@@ -80,14 +79,14 @@ class BudgetTrackingActivity : AppCompatActivity() {
                         paymentMethod = doc.getString("paymentMethod") ?: "",
                         paymentMethodDetails = doc.getString("paymentMethodDetails"),
                         expense = doc.getBoolean("expense") ?: true,
-                        userId = doc.getString("userId") ?: "",
-                        timestamp = doc.getTimestamp("timestamp") ?: Timestamp.now()
+                        userId = doc.getString("userId") ?: ""
                     ).takeIf { it.amount > 0 }
                 }
                 setupBarChartIfReady()
             }
             .addOnFailureListener { exception ->
                 Log.e("BudgetTrackingActivity", "Error loading transactions: ", exception)
+                Toast.makeText(this, "Error loading transactions", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -98,35 +97,55 @@ class BudgetTrackingActivity : AppCompatActivity() {
     }
 
     private fun setupBarChart() {
+        // Calculate category usage
         val categoryUsage = calculateCategoryUsage()
 
+        // Prepare entries for the bar chart
         val entries = budgetList.mapIndexed { index, budget ->
             val usage = categoryUsage[budget.category] ?: 0.0
             BarEntry(index.toFloat(), (usage / budget.amount * 100).toFloat()) // Calculate percentage usage
         }
 
+        // Create a dataset for the bar chart
         val dataSet = BarDataSet(entries, "Budget Usage (%)").apply {
-            color = Color.BLUE
+            color = getColor(R.color.blue)
         }
 
+        // Create bar data and set it to the chart
         val barData = BarData(dataSet)
         barChart.data = barData
 
-        // Chart configuration
+        // Customize chart appearance
         barChart.apply {
             description.isEnabled = false
-            axisRight.isEnabled = false
-            xAxis.setDrawGridLines(false)
-            axisLeft.setDrawGridLines(true)
-            xAxis.labelCount = budgetList.size
-            xAxis.valueFormatter = IndexAxisValueFormatter(budgetList.map { it.category }) // Set X-axis labels
-            invalidate() // Refresh the chart
+            setDrawGridBackground(false)
+            setDrawBarShadow(false)
+            setDrawValueAboveBar(true)
+            animateY(1000)
+            legend.isEnabled = false
+
+            // Customize X axis
+            xAxis.apply {
+                position = XAxis.XAxisPosition.BOTTOM
+                setDrawGridLines(false)
+                valueFormatter = IndexAxisValueFormatter(budgetList.map { it.category })
+                granularity = 1f
+            }
+
+            // Customize Y axis
+            axisLeft.apply {
+                setDrawGridLines(true)
+            }
+
+            // Refresh chart
+            invalidate()
         }
     }
 
     private fun calculateCategoryUsage(): Map<String, Double> {
         val categoryUsage = HashMap<String, Double>()
 
+        // Calculate usage for each budget category based on transactions
         budgetList.forEach { budget ->
             val startDate = parseDate(budget.startDate)
             val endDate = parseDate(budget.endDate)

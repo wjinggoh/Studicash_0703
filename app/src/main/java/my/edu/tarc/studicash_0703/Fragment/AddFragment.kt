@@ -1,5 +1,6 @@
 package my.edu.tarc.studicash_0703.Fragment
 
+import android.content.Intent
 import my.edu.tarc.studicash_0703.adapter.TransactionAdapter
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.Transaction
+import my.edu.tarc.studicash_0703.TransactionHistoryActivity
 import my.edu.tarc.studicash_0703.databinding.FragmentAddBinding
 
 class AddFragment : Fragment(), TransactionAdapter.OnTransactionClickListener {
@@ -30,6 +32,11 @@ class AddFragment : Fragment(), TransactionAdapter.OnTransactionClickListener {
             transactionFragment.show(childFragmentManager, "ChooseTransactionDialog")
         }
 
+        binding.viewFullHistoryBtn.setOnClickListener{
+            val intent = Intent(requireContext(), TransactionHistoryActivity::class.java)
+            startActivity(intent)
+        }
+
         // Initialize RecyclerView and Adapter
         transactionAdapter = TransactionAdapter(requireContext(), mutableListOf(), this)
         binding.recyclerView.adapter = transactionAdapter
@@ -38,6 +45,7 @@ class AddFragment : Fragment(), TransactionAdapter.OnTransactionClickListener {
         // Fetch transactions
         fetchExpenseTransactions()
         fetchIncomeTransactions()
+
 
         return binding.root
     }

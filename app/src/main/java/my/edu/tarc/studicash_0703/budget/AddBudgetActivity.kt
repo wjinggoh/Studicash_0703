@@ -2,13 +2,17 @@ package my.edu.tarc.studicash_0703.budget
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.databinding.ActivityAddBudgetBinding
-import java.util.*
+import my.edu.tarc.studicash_0703.Models.ExpenseCategory // Assuming ExpenseCategory model
+import java.util.Calendar
 
 class AddBudgetActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddBudgetBinding
+    private lateinit var expenseCategories: List<ExpenseCategory> // List to hold expense categories
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +35,7 @@ class AddBudgetActivity : AppCompatActivity() {
             }
         }
 
-        setupCategorySpinner()
+        fetchExpenseCategories() // Fetch expense categories from Firestore
 
         binding.saveBudgetButton.setOnClickListener {
             val budgetAmount = binding.budgetAmountEditText.text.toString()
@@ -39,7 +43,10 @@ class AddBudgetActivity : AppCompatActivity() {
             val startDate = binding.startDateView.text.toString()
             val endDate = binding.endDateView.text.toString()
 
-            // Logic to save the budget goes here
+            if (validateInput(budgetAmount, startDate, endDate) &&
+                isCategoryValid(selectedCategory)) {
+                saveBudgetToFirestore(selectedCategory, budgetAmount.toDouble(), startDate, endDate)
+            }
         }
     }
 
@@ -57,10 +64,63 @@ class AddBudgetActivity : AppCompatActivity() {
         datePicker.show()
     }
 
+    private fun fetchExpenseCategories() {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("expense_categories").get()
+            .addOnSuccessListener { documents ->
+                expenseCategories = documents.mapNotNull { doc ->
+                    ExpenseCategory(
+                        name = doc.getString("name") ?: "",
+                        icon = (doc.getLong("icon")?.toInt() ?: 0) // Retrieve and cast the icon field to Int
+                    )
+                }
+                setupCategorySpinner()
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(this, "Error loading expense categories", Toast.LENGTH_SHORT).show()
+                // Handle failure if needed
+            }
+    }
+
+
     private fun setupCategorySpinner() {
-        val categories = arrayOf("Food", "Transport", "Entertainment")
+        val categories = expenseCategories.map { it.name }.toTypedArray()
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.budgetCategorySpinner.adapter = adapter
+    }
+
+    private fun validateInput(amount: String, startDate: String, endDate: String): Boolean {
+        if (amount.isEmpty() || startDate.isEmpty() || endDate.isEmpty()) {
+            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
+    }
+
+    private fun isCategoryValid(selectedCategory: String): Boolean {
+        return expenseCategories.any { it.name == selectedCategory }
+    }
+
+    private fun saveBudgetToFirestore(category: String, amount: Double, startDate: String, endDate: String) {
+        val db = FirebaseFirestore.getInstance()
+
+        val budget = hashMapOf(
+            "category" to category,
+            "amount" to amount,
+            "startDate" to startDate,
+            "endDate" to endDate
+        )
+
+        db.collection("budgets")
+            .add(budget)
+            .addOnSuccessListener { documentReference ->
+                Toast.makeText(this, "Budget added successfully", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error adding budget: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }

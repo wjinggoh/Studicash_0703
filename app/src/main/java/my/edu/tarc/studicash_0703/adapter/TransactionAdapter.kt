@@ -47,9 +47,8 @@ class TransactionAdapter(
     fun updateData(newTransactions: List<Transaction>) {
         transactions.clear()
         transactions.addAll(newTransactions)
-        notifyDataSetChanged() // Notify the adapter of data change
+        notifyDataSetChanged()
     }
-
 
     inner class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val titleTextView: TextView = itemView.findViewById(R.id.transactionTitle)

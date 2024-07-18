@@ -9,7 +9,6 @@
     android:background="#FFFFFF"
     tools:context=".TransactionHistoryActivity">
 
-    <!-- Toggle Button Group -->
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/toggleButton"
         android:layout_width="wrap_content"
@@ -25,16 +24,19 @@
             android:id="@+id/expensesButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Expenses" />
+            android:text="Expenses"
+            app:backgroundTint="#01579B"
+            app:cornerRadius="10dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/incomesButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Incomes" />
+            android:text="Incomes"
+            app:backgroundTint="#01579B"
+            app:cornerRadius="10dp" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
-    <!-- RecyclerView for History -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/historyRecycleView"
         android:layout_width="350dp"
