@@ -6,25 +6,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".Activity.sidebar.FeedbackActivity">
+    tools:context=".sidebar.FeedbackActivity">
 
     <Toolbar
+        android:id="@+id/toolbar7"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@color/background"
+        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:id="@+id/feedbackBackBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/baseline_arrow_back_48"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/feedbackBackBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/baseline_arrow_back_48"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/feedbackstitle"
@@ -39,6 +40,41 @@
             app:layout_constraintStart_toStartOf="@+id/toolbar3"
             app:layout_constraintTop_toTopOf="parent" />
 
-
     </Toolbar>
+
+    <EditText
+        android:id="@+id/userEmailEditText"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
+        android:hint="Your email here..."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar7" />
+
+    <EditText
+        android:id="@+id/feedbackEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_marginTop="32dp"
+        android:hint="Your feedback here..."
+        android:minHeight="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/userEmailEditText" />
+
+    <Button
+        android:id="@+id/sendFeedbackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#01579B"
+        android:text="Send Feedback"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/feedbackEditText" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

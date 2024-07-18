@@ -17,11 +17,6 @@
         android:title="Help"/>
 
     <item
-        android:icon="@drawable/feedback"
-        android:id="@+id/navFeedback"
-        android:title="Feedback"/>
-
-    <item
         android:icon="@drawable/contact_mail"
         android:id="@+id/navContact"
         android:title="Contact Us"/>

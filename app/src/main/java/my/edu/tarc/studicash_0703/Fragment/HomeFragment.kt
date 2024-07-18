@@ -178,12 +178,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
                 drawerLayout.closeDrawer(GravityCompat.START)
                 return true
             }
-            R.id.navFeedback->{
-                // Navigate to ProfileFragment
-                findNavController().navigate(R.id.action_fragment_home_to_feedbackActivity)
-                drawerLayout.closeDrawer(GravityCompat.START)
-                return true
-            }
+
             R.id.navContact->{
                 // Navigate to ProfileFragment
                 findNavController().navigate(R.id.action_fragment_home_to_contactUsActivity)

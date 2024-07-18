@@ -84,10 +84,14 @@
     <string name="incomeamttitle">Income Amount: </string>
 
     <!--addcategory-->
-    <string name="addexpensescategorytitle">Add Expenses Category</string>
-    <string name="addincomecategorytitle">Add Income Category</string>
+    <string name="addexpensescategorytitle">Add New Expenses Category</string>
+    <string name="addincomecategorytitle">Add New Income Category</string>
     <string name="saveexpensecatbtn">Save Expense Category</string>
     <string name="saveincomecatbtn">Save Income Category</string>
+    <string name="editexpensescategorytitle">Edit Expenses Category</string>
+    <string name="editincomecategorytitle">Edit Income Category</string>
+    <string name="editcategorytitle">Edit Category</string>
+    <string name="deletecategory">Delete Category</string>
 
     <!--addtransaction-->
     <string name="transactionHeader">Add Transaction</string>

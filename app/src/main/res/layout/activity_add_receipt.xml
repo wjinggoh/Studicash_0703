@@ -1,98 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:backgroundTint="#FFFFFF"
-    tools:context=".Activity.AddReceiptActivity">
+    tools:context=".AddReceiptActivity">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="280dp"
-        android:layout_height="200dp"
-        android:layout_margin="16dp"
-        android:background="@drawable/background_with_border_grey"
-        android:elevation="10dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/selectImage"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:backgroundTint="#01579B"
-        android:text="Select Image"
-        app:cornerRadius="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imageView" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="350dp"
+            android:layout_height="200dp"
+            android:layout_margin="16dp"
+            android:background="@drawable/background_with_border_grey"
+            android:elevation="10dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
-    <Button
-        android:id="@+id/recognizeText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:backgroundTint="#01579B"
-        android:text="Recognize Text"
-        app:cornerRadius="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/selectImage" />
+        <Button
+            android:id="@+id/selectImage"
+            android:layout_width="165dp"
+            android:layout_height="55dp"
+            android:layout_margin="16dp"
+            android:backgroundTint="#01579B"
+            android:fontFamily="@font/concert_one"
+            android:text="Select Image"
+            android:textSize="17sp"
+            app:cornerRadius="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageView" />
 
-    <TextView
-        android:id="@+id/itemsTextView"
-        android:layout_width="415dp"
-        android:layout_height="42dp"
-        android:layout_margin="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/background"
-        android:gravity="center"
-        android:shadowRadius="10"
-        android:text="Recognized Items"
-        android:textSize="18sp"
-        app:circularflow_radiusInDP="10dp"
-        app:layout_constraintCircleRadius="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recognizeText" />
+        <Button
+            android:id="@+id/recognizeText"
+            android:layout_width="165dp"
+            android:layout_height="55dp"
+            android:layout_margin="16dp"
+            android:backgroundTint="#01579B"
+            android:fontFamily="@font/concert_one"
+            android:text="Recognize Text"
+            android:textSize="17sp"
+            app:cornerRadius="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/selectImage" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="16dp"
-        android:background="@drawable/background_with_border_grey"
-        android:elevation="3dp"
-        app:layout_constraintBottom_toTopOf="@id/saveButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/itemsTextView" />
+        <TextView
+            android:id="@+id/itemsTextView"
+            android:layout_width="415dp"
+            android:layout_height="42dp"
+            android:layout_margin="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/background_with_border_grey_no_corner"
+            android:elevation="10dp"
+            android:gravity="center"
+            android:shadowRadius="10"
+            android:text="Recognized Items"
+            android:textSize="25dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recognizeText" />
 
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:backgroundTint="#FF01579B"
-        android:text="Save Receipt"
-        app:cornerRadius="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recyclerView2" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/background_with_border_grey"
+            android:elevation="3dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemsTextView" />
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/baseline_arrow_back_48"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="165dp"
+            android:layout_height="55dp"
+            android:layout_margin="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            android:backgroundTint="#FF01579B"
+            android:fontFamily="@font/concert_one"
+            android:text="Save Receipt"
+            android:textSize="17sp"
+            app:cornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerView2" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/baseline_arrow_back_48"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

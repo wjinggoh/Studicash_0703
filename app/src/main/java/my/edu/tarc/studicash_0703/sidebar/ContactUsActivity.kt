@@ -1,9 +1,9 @@
 package my.edu.tarc.studicash_0703.sidebar
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import my.edu.tarc.studicash_0703.databinding.ActivityContactUsBinding
@@ -29,25 +29,26 @@ class ContactUsActivity : AppCompatActivity() {
         }
 
         binding.ContactEmailBtn.setOnClickListener {
-            if (isGmailInstalled()) {
-                val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-                    data = Uri.parse("mailto:wjingggoh15@gmail.com")
-                    putExtra(Intent.EXTRA_SUBJECT, "Hi Studicash Team,")
-                    putExtra(Intent.EXTRA_TEXT, "Body of the email")
-                }
-                startActivity(emailIntent)
-            } else {
-                Toast.makeText(this, "Gmail app is not installed.", Toast.LENGTH_SHORT).show()
-            }
+            sendEmail()
         }
     }
 
-    private fun isGmailInstalled(): Boolean {
-        return try {
-            packageManager.getPackageInfo("com.google.android.gm", 0)
-            true
-        } catch (e: PackageManager.NameNotFoundException) {
-            false
+    private fun sendEmail() {
+        val email = "wjingggoh15@gmail.com"
+        val subject = "Hi Studicash Team,"
+        val emailBody = "Body of the email"
+
+        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:$email")
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, emailBody)
+        }
+
+        try {
+            startActivity(emailIntent)
+        } catch (e: Exception) {
+            Log.e("ContactUsActivity", "Error launching email client", e)
+            Toast.makeText(this, "Error launching email client", Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -5,19 +5,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    android:backgroundTint="#FFFFFF"
-    tools:context=".Activity.AddExpensesCategoryActivity">
+    tools:context=".AddExpensesCategoryActivity">
 
-    <EditText
-        android:id="@+id/ExpenseCategoryNameEditText"
-        android:layout_width="0dp"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_marginTop="30dp"
-        android:hint="Category Name"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/background_with_border_grey_no_corner"
+        android:elevation="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/backCategory" />
+        app:layout_constraintTop_toBottomOf="@+id/textView16">
+
+
+        <EditText
+            android:id="@+id/ExpenseCategoryNameEditText"
+            android:layout_width="300dp"
+            android:layout_height="55dp"
+            android:layout_margin="16dp"
+            android:hint="Category Name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+        <ImageView
+            android:id="@+id/selectedIconImageView"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="Selected Icon"
+            app:layout_constraintStart_toStartOf="@+id/ExpenseCategoryNameEditText"
+            app:layout_constraintTop_toBottomOf="@id/ExpenseCategoryNameEditText" />
+
+        <Button
+            android:id="@+id/chooseIconBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#01579B"
+            android:text="Choose Icon"
+            app:cornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/selectedIconImageView"
+            app:layout_constraintEnd_toEndOf="@+id/ExpenseCategoryNameEditText"
+            app:layout_constraintTop_toTopOf="@+id/selectedIconImageView" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/concert_one"
+            android:text="@string/addexpensescategorytitle"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView16" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <Button
         android:id="@+id/saveExpenseCategoryBtn"
@@ -25,11 +70,12 @@
         android:layout_height="55dp"
         android:layout_marginTop="32dp"
         android:backgroundTint="#01579B"
-        android:text="@string/saveexpensecatbtn"
+        android:text="Save"
         app:cornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ExpenseCategoryNameEditText" />
+        app:layout_constraintTop_toBottomOf="@id/chooseIconBtn" />
 
     <ImageView
         android:id="@+id/backCategory"
@@ -41,16 +87,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+    <Button
+        android:id="@+id/editExpensesCategoryBtn"
+        android:layout_width="240dp"
+        android:layout_height="55dp"
+        android:backgroundTint="#4CAF50"
         android:fontFamily="@font/concert_one"
-        android:text="@string/addexpensescategorytitle"
-        android:textSize="24sp"
+        android:text="@string/editexpensescategorytitle"
+        android:textSize="18sp"
+        app:cornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/backCategory" />
+
+
+
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="or"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editExpensesCategoryBtn" />
+
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/saveExpenseCategoryBtn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
