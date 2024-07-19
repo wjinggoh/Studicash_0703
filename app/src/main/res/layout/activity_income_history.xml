@@ -21,14 +21,11 @@
         app:singleSelection="true">
 
         <Button
-            android:id="@+id/allButtonMain"
+            android:id="@+id/allButton"
             android:layout_width="wrap_content"
-            android:layout_height="55dp"
+            android:layout_height="wrap_content"
             android:text="All"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            app:backgroundTint="#8BCCFF"
-
+            app:backgroundTint="#01579B"
             app:cornerRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,16 +40,18 @@
             app:backgroundTint="#01579B"
             app:cornerRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/allButtonMain"
+            app:layout_constraintStart_toEndOf="@+id/allButton"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/incomesButton"
+            android:id="@+id/incomesButtonMain"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="55dp"
             android:layout_marginStart="16dp"
             android:text="Incomes"
-            app:backgroundTint="#01579B"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:backgroundTint="#8BCCFF"
             app:cornerRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/expensesButton"
@@ -72,7 +71,7 @@
         app:layout_constraintTop_toBottomOf="@id/toggleButton" />
 
     <ImageView
-        android:id="@+id/imageView8"
+        android:id="@+id/imageView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

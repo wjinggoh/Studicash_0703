@@ -33,11 +33,6 @@ class TransactionAdapter(
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val transaction = transactions[position]
         holder.bind(transaction)
-
-        holder.itemView.setOnClickListener {
-            // Ensure you're passing the correct ID
-            listener.onDelete(transaction.id, transaction.expense)
-        }
     }
 
     override fun getItemCount(): Int {
@@ -61,7 +56,7 @@ class TransactionAdapter(
         init {
             itemView.findViewById<ImageView>(R.id.transactionDeleteBtn).setOnClickListener {
                 val transactionId = transactions[adapterPosition].id
-                listener.onDelete(transactionId, transactions[adapterPosition].expense) // Pass isExpense
+                listener.onDelete(transactionId, transactions[adapterPosition].expense)
             }
 
             itemView.findViewById<ImageView>(R.id.transactionEditBtn).setOnClickListener {
