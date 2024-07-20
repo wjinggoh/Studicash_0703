@@ -29,8 +29,7 @@ class AddPaymentMethodActivity : AppCompatActivity() {
         }
 
         binding.addPaymentBackBtn.setOnClickListener {
-            val intent = Intent(this, my.edu.tarc.studicash_0703.MainActivity::class.java)
-            startActivity(intent)
+            onBackPressed()
         }
 
         // Load payment methods from Firestore

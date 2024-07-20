@@ -2,14 +2,15 @@ package my.edu.tarc.studicash_0703
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import my.edu.tarc.studicash_0703.Models.Transaction
 import my.edu.tarc.studicash_0703.adapter.TransactionAdapter
 import my.edu.tarc.studicash_0703.databinding.ActivityTransactionHistoryBinding
@@ -20,6 +21,17 @@ class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTra
     private val expenseTransactions = mutableListOf<Transaction>()
     private val incomeTransactions = mutableListOf<Transaction>()
     private val db = FirebaseFirestore.getInstance()
+
+    private val addDurationActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == RESULT_OK) {
+            val data = result.data
+            val startDate = data?.getStringExtra("startDate")
+            val endDate = data?.getStringExtra("endDate")
+            binding.StartDate.text = startDate
+            binding.endDate.text = endDate
+            fetchTransactionsWithinDateRange(startDate, endDate)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,21 +50,29 @@ class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTra
             adapter = transactionAdapter
         }
 
-
-        binding.allButtonMain.setOnClickListener{
+        binding.allButtonMain.setOnClickListener {
             fetchAllTransactionsFromFirestore()
         }
 
         binding.expensesButton.setOnClickListener {
-           val intent= Intent(this,ExpensesHistoryActivity::class.java)
+            val intent = Intent(this, ExpensesHistoryActivity::class.java)
             startActivity(intent)
             finish()
         }
 
-        binding.incomesButton.setOnClickListener{
-            val intent= Intent(this,IncomeHistoryActivity::class.java)
+        binding.incomesButton.setOnClickListener {
+            val intent = Intent(this, IncomeHistoryActivity::class.java)
             startActivity(intent)
             finish()
+        }
+
+        binding.AddDurationButton.setOnClickListener {
+            val intent = Intent(this, TransactionHistoryAddDurationActivity::class.java)
+            addDurationActivityResultLauncher.launch(intent)
+        }
+
+        binding.backBtn3.setOnClickListener {
+            onBackPressed()
         }
 
         fetchAllTransactionsFromFirestore()
@@ -67,8 +87,6 @@ class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTra
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val expenseCollection = FirebaseFirestore.getInstance().collection("expenseTransactions")
             .whereEqualTo("userId", userId)
-        // Example: add additional filters if needed
-        // .whereGreaterThan("amount", 100.0)
 
         expenseCollection.get()
             .addOnSuccessListener { result ->
@@ -80,10 +98,9 @@ class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTra
                     expenseTransactions.add(transaction)
                 }
                 updateRecyclerView()
-                Log.d(TAG, "Expense transactions fetched: ${expenseTransactions.size}")
             }
             .addOnFailureListener { exception ->
-                Log.e(TAG, "Error fetching expense transactions", exception)
+                // Handle failure
             }
     }
 
@@ -91,8 +108,6 @@ class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTra
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val incomeCollection = FirebaseFirestore.getInstance().collection("incomeTransactions")
             .whereEqualTo("userId", userId)
-        // Example: add additional filters if needed
-        // .whereGreaterThan("amount", 100.0)
 
         incomeCollection.get()
             .addOnSuccessListener { result ->
@@ -104,10 +119,9 @@ class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTra
                     incomeTransactions.add(transaction)
                 }
                 updateRecyclerView()
-                Log.d(TAG, "Income transactions fetched: ${incomeTransactions.size}")
             }
             .addOnFailureListener { exception ->
-                Log.e(TAG, "Error fetching income transactions", exception)
+                // Handle failure
             }
     }
 
@@ -116,11 +130,53 @@ class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTra
         allTransactions.addAll(expenseTransactions)
         allTransactions.addAll(incomeTransactions)
 
-        // Sort transactions by date in descending order
         allTransactions.sortByDescending { it.date }
 
-        // Update the adapter with the new dataset
         transactionAdapter.updateData(allTransactions)
+    }
+
+    private fun fetchTransactionsWithinDateRange(startDate: String?, endDate: String?) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val expenseCollection = FirebaseFirestore.getInstance().collection("expenseTransactions")
+            .whereEqualTo("userId", userId)
+            .whereGreaterThanOrEqualTo("date", startDate ?: "")
+            .whereLessThanOrEqualTo("date", endDate ?: "")
+
+        val incomeCollection = FirebaseFirestore.getInstance().collection("incomeTransactions")
+            .whereEqualTo("userId", userId)
+            .whereGreaterThanOrEqualTo("date", startDate ?: "")
+            .whereLessThanOrEqualTo("date", endDate ?: "")
+
+        val allTransactions = mutableListOf<Transaction>()
+
+        expenseCollection.get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    val transaction = document.toObject(Transaction::class.java).copy(
+                        id = document.id
+                    )
+                    allTransactions.add(transaction)
+                }
+
+                incomeCollection.get()
+                    .addOnSuccessListener { result ->
+                        for (document in result) {
+                            val transaction = document.toObject(Transaction::class.java).copy(
+                                id = document.id
+                            )
+                            allTransactions.add(transaction)
+                        }
+
+                        allTransactions.sortByDescending { it.date }
+                        transactionAdapter.updateData(allTransactions)
+                    }
+                    .addOnFailureListener { exception ->
+                        // Handle failure
+                    }
+            }
+            .addOnFailureListener { exception ->
+                // Handle failure
+            }
     }
 
     override fun onDelete(transactionId: String, isExpense: Boolean) {
@@ -141,17 +197,13 @@ class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTra
         collection.document(transactionId).delete()
             .addOnSuccessListener {
                 if (isExpense) {
-                    fetchExpenseTransactions() // Refresh the list after deletion
+                    fetchExpenseTransactions()
                 } else {
-                    fetchIncomeTransactions() // Refresh for income
+                    fetchIncomeTransactions()
                 }
             }
             .addOnFailureListener { exception ->
-                Log.e(TAG, "Error deleting transaction: ${exception.message}", exception)
+                // Handle failure
             }
-    }
-
-    companion object {
-        private const val TAG = "TransactionHistory"
     }
 }

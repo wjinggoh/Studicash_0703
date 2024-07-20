@@ -3,10 +3,11 @@ package my.edu.tarc.studicash_0703
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,8 +26,6 @@ import my.edu.tarc.studicash_0703.adapter.ReceiptItemsAdapter
 import my.edu.tarc.studicash_0703.databinding.ActivityAddReceiptBinding
 import my.edu.tarc.studicash_0703.Models.ReceiptItems
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
 
 class AddReceiptActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddReceiptBinding
@@ -50,6 +49,9 @@ class AddReceiptActivity : AppCompatActivity() {
         binding.saveButton.setOnClickListener { saveReceipt() }
 
         setupRecyclerView()
+
+        // Back button functionality
+        binding.imageView2.setOnClickListener { onBackPressed() }
     }
 
     private fun setupRecyclerView() {
@@ -71,12 +73,10 @@ class AddReceiptActivity : AppCompatActivity() {
                 CoroutineScope(Dispatchers.Main).launch {
                     val bitmap = loadImageBitmap(imageUri)
                     if (bitmap != null) {
-                        if (isReceiptImage(bitmap)) {
-                            selectedImageBitmap = bitmap
-                            binding.imageView.setImageBitmap(bitmap)
-                        } else {
-                            Toast.makeText(this@AddReceiptActivity, "Only receipt images are allowed", Toast.LENGTH_SHORT).show()
-                        }
+                        selectedImageBitmap = bitmap
+                        binding.imageView.setImageBitmap(bitmap)
+                    } else {
+                        Toast.makeText(this@AddReceiptActivity, "Error loading image", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -86,43 +86,38 @@ class AddReceiptActivity : AppCompatActivity() {
     private suspend fun loadImageBitmap(uri: Uri): Bitmap? {
         return withContext(Dispatchers.IO) {
             try {
-                MediaStore.Images.Media.getBitmap(contentResolver, uri)
-            } catch (e: IOException) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AddReceiptActivity, "Error loading image: ${e.message}", Toast.LENGTH_SHORT).show()
+                val inputStream = contentResolver.openInputStream(uri) ?: return@withContext null
+                val options = BitmapFactory.Options().apply {
+                    inJustDecodeBounds = true
+                    BitmapFactory.decodeStream(inputStream, null, this)
+                    inSampleSize = calculateInSampleSize(this, 1000, 1000)
+                    inJustDecodeBounds = false
                 }
+                inputStream.close()
+                val inputStreamResized = contentResolver.openInputStream(uri)
+                BitmapFactory.decodeStream(inputStreamResized, null, options)
+            } catch (e: IOException) {
                 e.printStackTrace()
                 null
             }
         }
     }
 
-    private fun isReceiptImage(bitmap: Bitmap): Boolean {
-        // Check image dimensions
-        val width = bitmap.width
-        val height = bitmap.height
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+        val (width: Int, height: Int) = options.outWidth to options.outHeight
 
-        // Check aspect ratio or size
-        val aspectRatio = width.toFloat() / height.toFloat()
-        if (aspectRatio < 0.5 || aspectRatio > 2.0) {
-            return false  // Example: Only accept images with a certain aspect ratio
-        }
+        var inSampleSize = 1
 
-        // Check average color intensity or presence of specific features
-        val pixelThreshold = 0.1  // Example threshold for pixel intensity
+        if (height > reqHeight || width > reqWidth) {
+            val halfHeight = height / 2
+            val halfWidth = width / 2
 
-        var totalIntensity = 0.0
-        for (x in 0 until width) {
-            for (y in 0 until height) {
-                val pixel = bitmap.getPixel(x, y)
-                // Example: Calculate intensity (greyscale)
-                val intensity = (Color.red(pixel) + Color.green(pixel) + Color.blue(pixel)) / 3.0
-                totalIntensity += intensity
+            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+                inSampleSize *= 2
             }
         }
 
-        val averageIntensity = totalIntensity / (width * height)
-        return averageIntensity < pixelThreshold  // Example: Accept images with low average intensity (potentially receipt-like)
+        return inSampleSize
     }
 
     private fun recognizeTextFromImage() {
@@ -142,8 +137,7 @@ class AddReceiptActivity : AppCompatActivity() {
     private suspend fun recognizeText(bitmap: Bitmap): com.google.mlkit.vision.text.Text? {
         return withContext(Dispatchers.IO) {
             val image = InputImage.fromBitmap(bitmap, 0)
-            val options = TextRecognizerOptions.Builder().build()
-            val recognizer = TextRecognition.getClient(options)
+            val recognizer = TextRecognition.getClient(TextRecognizerOptions.Builder().build())
             try {
                 recognizer.process(image).await()
             } catch (e: Exception) {
@@ -158,81 +152,46 @@ class AddReceiptActivity : AppCompatActivity() {
 
     private fun processExtractedText(visionText: com.google.mlkit.vision.text.Text) {
         val resultText = visionText.text
+
+        // Display the recognized text
         binding.itemsTextView.text = resultText
 
-        // Extract the items and amounts from the recognized text
-        val itemsAndAmounts = extractItemsAndAmounts(resultText)
-        if (itemsAndAmounts.isNotEmpty()) {
-            receiptItems.clear()
-            receiptItems.addAll(itemsAndAmounts)
-            adapter.notifyDataSetChanged()
-        } else {
-            Toast.makeText(this, "No items or amounts detected", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun extractItemsAndAmounts(text: String): List<ReceiptItems> {
-        val items = mutableListOf<ReceiptItems>()
-        val lines = text.split("\n")
-        var currentItem: ReceiptItems? = null
+        // Extract items and amounts from the recognized text
+        val lines = resultText.split("\n")
+        receiptItems.clear()
 
         for (line in lines) {
-            when {
-                line.matches(Regex("\\d{13}")) -> {
-                    currentItem?.let { items.add(it) }
-                    currentItem = ReceiptItems(itemName = "", itemAmount = 0.0)
-                }
-                currentItem?.itemName.isNullOrEmpty() -> {
-                    currentItem = currentItem!!.copy(itemName = line.trim())
-                }
-                line.matches(Regex(".*\\d+\\.\\d{2}")) -> {
-                    val amount = line.split(" ").last().toDoubleOrNull() ?: 0.0
-                    currentItem = currentItem!!.copy(itemAmount = amount)
-                    items.add(currentItem!!)
-                    currentItem = null
-                }
-                // Handle additional cases if needed
+            val cleanedLine = line.trim()
+            if (cleanedLine.isNotEmpty()) {
+                // Assuming the amount will be extracted or processed later
+                val item = ReceiptItems(itemName = cleanedLine, itemAmount = 0.0) // Default amount
+                receiptItems.add(item)
             }
         }
 
-        currentItem?.let { items.add(it) }
-        return items
+        // Update the RecyclerView with the extracted items
+        adapter.notifyDataSetChanged()
     }
 
+
     private fun saveReceipt() {
-        val user = auth.currentUser
-        if (user == null) {
-            Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show()
-            return
-        }
+        val userId = auth.currentUser?.uid ?: return
+        val currentTime = Timestamp.now()
+        val receiptData = hashMapOf(
+            "userId" to userId,
+            "items" to receiptItems.map { it.toMap() },
+            "timestamp" to currentTime
+        )
 
-        if (receiptItems.isEmpty()) {
-            Toast.makeText(this, "No items to save", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-        val batch = firestore.batch()
-
-        receiptItems.forEach { item ->
-            val expense = hashMapOf(
-                "expenseTitle" to item.itemName,
-                "category" to "Receipt",
-                "amount" to item.itemAmount,
-                "date" to date,
-                "userId" to user.uid,
-                "timestamp" to Timestamp.now()
-            )
-            val docRef = firestore.collection("expenseTransactions").document()
-            batch.set(docRef, expense)
-        }
-
-        batch.commit()
-            .addOnSuccessListener {
-                Toast.makeText(this, "Expenses saved successfully", Toast.LENGTH_SHORT).show()
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                firestore.collection("receipts").add(receiptData).await()
+                Toast.makeText(this@AddReceiptActivity, "Receipt saved successfully", Toast.LENGTH_SHORT).show()
+                finish()
+            } catch (e: Exception) {
+                Toast.makeText(this@AddReceiptActivity, "Failed to save receipt: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Failed to save expenses: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
-            }
+        }
     }
 }

@@ -57,6 +57,9 @@ class IncomeHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTransact
             fetchIncomeTransactions()
         }
 
+        binding.backBtn2.setOnClickListener {
+            onBackPressed()
+        }
         fetchIncomeTransactions()
     }
 

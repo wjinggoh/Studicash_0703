@@ -12,7 +12,6 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@color/background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,7 +23,8 @@
         android:layout_marginTop="32dp"
         android:fontFamily="@font/concert_one"
         android:text="@string/add_title"
-        android:textSize="34sp"
+        android:textColor="#1138F6"
+        android:textSize="35sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -70,12 +70,12 @@
         android:id="@+id/recyclerView"
         android:layout_width="350dp"
         android:layout_height="300dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/background_with_border_grey"
         android:elevation="3dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createTransactionbtn" />
+        app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
     <Button
         android:id="@+id/viewFullHistoryBtn"
@@ -90,6 +90,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/concert_one"
+        android:text="Latest Transactions"
+        android:textColor="#1138F6"
+        android:textSize="24sp"
+        android:textStyle="italic"
+        android:typeface="sans"
+        app:layout_constraintStart_toStartOf="@+id/recyclerView"
+        app:layout_constraintTop_toBottomOf="@+id/createTransactionbtn" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -58,6 +58,10 @@ class ExpensesHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTransa
             finish()
         }
 
+        binding.backBtn.setOnClickListener {
+            onBackPressed()
+        }
+
         fetchExpenseTransactions()
     }
 

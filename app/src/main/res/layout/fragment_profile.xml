@@ -6,14 +6,13 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:elevation="3dp"
-    tools:context=".Activity.HomeActivity">
+    tools:context=".HomeActivity">
 
     <!-- Toolbar -->
     <Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="100dp"
-        android:background="@color/background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,7 +24,8 @@
         android:layout_marginTop="32dp"
         android:fontFamily="@font/concert_one"
         android:text="@string/profile_title"
-        android:textSize="34sp"
+        android:textColor="#1138F6"
+        android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
