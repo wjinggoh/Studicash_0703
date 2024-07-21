@@ -1,5 +1,6 @@
 package my.edu.tarc.studicash_0703
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -14,17 +15,21 @@ class AddIncomeCategoryActivity : AppCompatActivity() {
         binding = ActivityAddIncomeCategoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.backCategory.setOnClickListener {
+        binding.incomeCategoryBackBtn.setOnClickListener {
             onBackPressed()
         }
 
         binding.saveIncomeCategoryBtn.setOnClickListener {
-            val categoryName = binding.incomeCategoryNameEditText.text.toString()
+            val categoryName = binding.IncomeCategoryNameEditText.text.toString()
             if (categoryName.isNotEmpty()) {
                 saveCategory(categoryName)
             } else {
                 Toast.makeText(this, "Please enter a category name", Toast.LENGTH_SHORT).show()
             }
+        }
+        binding.editIncomeCategoryBtn.setOnClickListener {
+            val intent= Intent(this,EditIncomeCategoryActivity::class.java)
+            startActivity(intent)
         }
     }
 

@@ -24,7 +24,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@+id/indicatorView"
+            app:layout_constraintStart_toEndOf="@+id/transactionIcon"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -67,15 +67,16 @@
             app:layout_constraintStart_toStartOf="@+id/transactionAmount"
             app:layout_constraintTop_toBottomOf="@id/transactionCategory" />
 
-        <!-- Indicator View -->
-        <View
-            android:id="@+id/indicatorView"
+        <!-- Indicator View as ImageView -->
+        <ImageView
+            android:id="@+id/transactionIcon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/baseline_image_48"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:contentDescription="Transaction Icon"
+            android:src="@drawable/baseline_image_48"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/transactionDeleteBtn"

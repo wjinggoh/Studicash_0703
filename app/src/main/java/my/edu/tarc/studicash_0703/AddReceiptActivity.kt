@@ -7,191 +7,199 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
-import my.edu.tarc.studicash_0703.adapter.ReceiptItemsAdapter
-import my.edu.tarc.studicash_0703.databinding.ActivityAddReceiptBinding
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.storage.FirebaseStorage
 import my.edu.tarc.studicash_0703.Models.ReceiptItems
-import java.io.IOException
+import my.edu.tarc.studicash_0703.adapter.ReceiptItemsAdapter
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
 
 class AddReceiptActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityAddReceiptBinding
-    private val REQUEST_IMAGE_SELECT = 1
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var auth: FirebaseAuth
-    private var selectedImageBitmap: Bitmap? = null
+
+    private lateinit var imageView: ImageView
+    private lateinit var selectImageButton: Button
+    private lateinit var recognizeTextButton: Button
+    private lateinit var itemsTextView: TextView
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var saveButton: Button
+    private var receiptImageBitmap: Bitmap? = null
     private val receiptItems = mutableListOf<ReceiptItems>()
-    private lateinit var adapter: ReceiptItemsAdapter
+    private val itemAdapter = ReceiptItemsAdapter(receiptItems)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAddReceiptBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_add_receipt)
 
-        firestore = FirebaseFirestore.getInstance()
-        auth = FirebaseAuth.getInstance()
+        imageView = findViewById(R.id.imageView)
+        selectImageButton = findViewById(R.id.selectImage)
+        recognizeTextButton = findViewById(R.id.recognizeText)
+        itemsTextView = findViewById(R.id.itemsTextView)
+        recyclerView = findViewById(R.id.recyclerView2)
+        saveButton = findViewById(R.id.saveButton)
 
-        binding.selectImage.setOnClickListener { selectImage() }
-        binding.recognizeText.setOnClickListener { recognizeTextFromImage() }
-        binding.saveButton.setOnClickListener { saveReceipt() }
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = itemAdapter
 
-        setupRecyclerView()
+        selectImageButton.setOnClickListener {
+            // Launch image picker
+            val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(pickPhoto, PICK_IMAGE_REQUEST)
+        }
 
-        // Back button functionality
-        binding.imageView2.setOnClickListener { onBackPressed() }
-    }
+        recognizeTextButton.setOnClickListener {
+            receiptImageBitmap?.let {
+                recognizeTextFromImage(it) { receiptText ->
+                    val receiptFormat = detectReceiptFormat(receiptText)
+                    val itemsAndAmounts = extractItemsAndAmounts(receiptText)
+                    val totalAmount = detectTotalAmount(receiptText)
 
-    private fun setupRecyclerView() {
-        adapter = ReceiptItemsAdapter(receiptItems)
-        binding.recyclerView2.layoutManager = LinearLayoutManager(this)
-        binding.recyclerView2.adapter = adapter
-    }
+                    receiptItems.clear()
+                    receiptItems.addAll(itemsAndAmounts.map { ReceiptItems(it.first, it.second) })
+                    itemAdapter.notifyDataSetChanged()
 
-    private fun selectImage() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, REQUEST_IMAGE_SELECT)
+                    itemsTextView.text = "Recognized Items (Total: $${totalAmount})"
+
+                    // Optionally, display recognized text or other info
+                }
+            } ?: Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show()
+        }
+
+        saveButton.setOnClickListener {
+            receiptImageBitmap?.let {
+                recognizeTextFromImage(it) { receiptText ->
+                    val receiptFormat = detectReceiptFormat(receiptText)
+                    val itemsAndAmounts = extractItemsAndAmounts(receiptText)
+                    val totalAmount = detectTotalAmount(receiptText)
+
+                    saveTransaction(itemsAndAmounts, totalAmount, receiptFormat)
+
+                    val receiptDetails = mapOf(
+                        "receiptFormat" to receiptFormat,
+                        "totalAmount" to totalAmount,
+                        "items" to itemsAndAmounts
+                    )
+
+                    saveReceiptHistory(it, receiptDetails)
+                }
+            } ?: Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMAGE_SELECT && resultCode == Activity.RESULT_OK && data != null) {
-            val imageUri: Uri? = data.data
-            imageUri?.let {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val bitmap = loadImageBitmap(imageUri)
-                    if (bitmap != null) {
-                        selectedImageBitmap = bitmap
-                        binding.imageView.setImageBitmap(bitmap)
-                    } else {
-                        Toast.makeText(this@AddReceiptActivity, "Error loading image", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
+            val imageUri: Uri = data.data ?: return
+            val imageStream: InputStream? = contentResolver.openInputStream(imageUri)
+            receiptImageBitmap = BitmapFactory.decodeStream(imageStream)
+            imageView.setImageBitmap(receiptImageBitmap)
         }
     }
 
-    private suspend fun loadImageBitmap(uri: Uri): Bitmap? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val inputStream = contentResolver.openInputStream(uri) ?: return@withContext null
-                val options = BitmapFactory.Options().apply {
-                    inJustDecodeBounds = true
-                    BitmapFactory.decodeStream(inputStream, null, this)
-                    inSampleSize = calculateInSampleSize(this, 1000, 1000)
-                    inJustDecodeBounds = false
-                }
-                inputStream.close()
-                val inputStreamResized = contentResolver.openInputStream(uri)
-                BitmapFactory.decodeStream(inputStreamResized, null, options)
-            } catch (e: IOException) {
-                e.printStackTrace()
-                null
+    private fun recognizeTextFromImage(image: Bitmap, onComplete: (String) -> Unit) {
+        val firebaseVisionImage = FirebaseVisionImage.fromBitmap(image)
+        val textRecognizer = FirebaseVision.getInstance().onDeviceTextRecognizer
+
+        textRecognizer.processImage(firebaseVisionImage)
+            .addOnSuccessListener { firebaseVisionText ->
+                onComplete(firebaseVisionText.text)
             }
+            .addOnFailureListener { exception ->
+                exception.printStackTrace()
+                onComplete("")
+            }
+    }
+
+    private fun detectReceiptFormat(receiptText: String): String {
+        return when {
+            receiptText.contains("Aeon", ignoreCase = true) -> "Aeon"
+            receiptText.contains("Speedmart 99", ignoreCase = true) -> "Speedmart 99"
+            else -> "Unknown"
         }
     }
 
-    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
-        val (width: Int, height: Int) = options.outWidth to options.outHeight
+    private fun extractItemsAndAmounts(receiptText: String): List<Pair<String, Double>> {
+        val itemList = mutableListOf<Pair<String, Double>>()
+        val itemRegex = Regex("""(\w+.*)\s+(\d+\.\d{2})""")
 
-        var inSampleSize = 1
-
-        if (height > reqHeight || width > reqWidth) {
-            val halfHeight = height / 2
-            val halfWidth = width / 2
-
-            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
-                inSampleSize *= 2
-            }
+        itemRegex.findAll(receiptText).forEach { matchResult ->
+            val itemName = matchResult.groupValues[1]
+            val itemAmount = matchResult.groupValues[2].toDouble()
+            itemList.add(Pair(itemName, itemAmount))
         }
 
-        return inSampleSize
+        return itemList
     }
 
-    private fun recognizeTextFromImage() {
-        val bitmap = selectedImageBitmap
-        if (bitmap != null) {
-            CoroutineScope(Dispatchers.Main).launch {
-                val recognizedText = recognizeText(bitmap)
-                recognizedText?.let {
-                    processExtractedText(it)
-                } ?: Toast.makeText(this@AddReceiptActivity, "Text recognition failed", Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
-        }
+    private fun detectTotalAmount(receiptText: String): Double {
+        val totalRegex = Regex("""Total\s*:\s*(\d+\.\d{2})""")
+        val matchResult = totalRegex.find(receiptText)
+        return matchResult?.groupValues?.get(1)?.toDouble() ?: 0.0
     }
 
-    private suspend fun recognizeText(bitmap: Bitmap): com.google.mlkit.vision.text.Text? {
-        return withContext(Dispatchers.IO) {
-            val image = InputImage.fromBitmap(bitmap, 0)
-            val recognizer = TextRecognition.getClient(TextRecognizerOptions.Builder().build())
-            try {
-                recognizer.process(image).await()
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AddReceiptActivity, "Text recognition failed: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
-                }
-                e.printStackTrace()
-                null
-            }
-        }
-    }
-
-    private fun processExtractedText(visionText: com.google.mlkit.vision.text.Text) {
-        val resultText = visionText.text
-
-        // Display the recognized text
-        binding.itemsTextView.text = resultText
-
-        // Extract items and amounts from the recognized text
-        val lines = resultText.split("\n")
-        receiptItems.clear()
-
-        for (line in lines) {
-            val cleanedLine = line.trim()
-            if (cleanedLine.isNotEmpty()) {
-                // Assuming the amount will be extracted or processed later
-                val item = ReceiptItems(itemName = cleanedLine, itemAmount = 0.0) // Default amount
-                receiptItems.add(item)
-            }
-        }
-
-        // Update the RecyclerView with the extracted items
-        adapter.notifyDataSetChanged()
-    }
-
-
-    private fun saveReceipt() {
-        val userId = auth.currentUser?.uid ?: return
-        val currentTime = Timestamp.now()
-        val receiptData = hashMapOf(
-            "userId" to userId,
-            "items" to receiptItems.map { it.toMap() },
-            "timestamp" to currentTime
+    private fun categorizeItem(itemName: String): String {
+        val categoryMap = mapOf(
+            "milk" to "Groceries",
+            "bread" to "Groceries",
+            "detergent" to "Household",
+            // Add more mappings as needed
         )
 
-        CoroutineScope(Dispatchers.Main).launch {
-            try {
-                firestore.collection("receipts").add(receiptData).await()
-                Toast.makeText(this@AddReceiptActivity, "Receipt saved successfully", Toast.LENGTH_SHORT).show()
-                finish()
-            } catch (e: Exception) {
-                Toast.makeText(this@AddReceiptActivity, "Failed to save receipt: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
-                e.printStackTrace()
+        return categoryMap.entries.find { itemName.contains(it.key, ignoreCase = true) }?.value ?: "Miscellaneous"
+    }
+
+    private fun saveTransaction(items: List<Pair<String, Double>>, totalAmount: Double, receiptFormat: String) {
+        val transaction = hashMapOf(
+            "items" to items.map { mapOf("name" to it.first, "amount" to it.second, "category" to categorizeItem(it.first)) },
+            "totalAmount" to totalAmount,
+            "receiptFormat" to receiptFormat,
+            "timestamp" to FieldValue.serverTimestamp()
+        )
+
+        FirebaseFirestore.getInstance().collection("transactions").add(transaction)
+    }
+
+    private fun saveReceiptHistory(receiptImage: Bitmap, receiptDetails: Map<String, Any>) {
+        // Convert receiptImage to byte array
+        val baos = ByteArrayOutputStream()
+        receiptImage.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val imageData = baos.toByteArray()
+
+        // Upload image to Firebase Storage
+        val storageRef = FirebaseStorage.getInstance().reference.child("receipts/${System.currentTimeMillis()}.jpg")
+        val uploadTask = storageRef.putBytes(imageData)
+
+        uploadTask.addOnSuccessListener {
+            storageRef.downloadUrl.addOnSuccessListener { uri ->
+                val receiptHistory = receiptDetails.toMutableMap()
+                receiptHistory["imageUri"] = uri.toString()
+
+                FirebaseFirestore.getInstance().collection("receipt_history").add(receiptHistory)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Receipt processed and saved!", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { exception ->
+                        exception.printStackTrace()
+                        Toast.makeText(this, "Failed to save receipt history", Toast.LENGTH_SHORT).show()
+                    }
             }
+        }.addOnFailureListener { exception ->
+            exception.printStackTrace()
+            Toast.makeText(this, "Failed to upload receipt image", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    companion object {
+        private const val PICK_IMAGE_REQUEST = 1
     }
 }

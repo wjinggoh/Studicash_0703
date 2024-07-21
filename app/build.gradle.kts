@@ -49,7 +49,6 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
-
     // Firebase libraries
     implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
     implementation(libs.firebase.auth.ktx)
@@ -64,13 +63,13 @@ dependencies {
     implementation(libs.play.services.mlkit.face.detection)
     implementation("com.google.mlkit:face-detection:16.1.6")
 
-
     // Image libraries
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("com.github.bumptech.glide:glide:4.12.0")
-    implementation(libs.play.services.mlkit.text.recognition.common)
     implementation(libs.play.services.mlkit.text.recognition)
+    implementation("com.google.android.gms:play-services-vision:20.1.0") // Updated version
+    implementation(libs.firebase.ml.vision)
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
     // Navigation libraries
@@ -97,10 +96,12 @@ dependencies {
     implementation("com.google.android.libraries.places:places:3.4.0")
     implementation("com.android.volley:volley:1.2.1")
 
-
-
     // Testing libraries
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+
+
+
+

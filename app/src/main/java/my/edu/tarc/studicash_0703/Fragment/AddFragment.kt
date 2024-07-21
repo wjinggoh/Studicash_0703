@@ -39,8 +39,8 @@ class AddFragment : Fragment(), TransactionAdapter.OnTransactionClickListener {
 
         // Initialize RecyclerView and Adapter
         transactionAdapter = TransactionAdapter(requireContext(), mutableListOf(), this)
-        binding.recyclerView.adapter = transactionAdapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.addFragmentRecycleView.adapter = transactionAdapter
+        binding.addFragmentRecycleView.layoutManager = LinearLayoutManager(requireContext())
 
         // Fetch transactions
         fetchExpenseTransactions()

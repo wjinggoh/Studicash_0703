@@ -1,5 +1,6 @@
 package my.edu.tarc.studicash_0703
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -16,7 +17,7 @@ class AddExpensesCategoryActivity : AppCompatActivity() {
         binding = ActivityAddExpensesCategoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.backCategory.setOnClickListener {
+        binding.addExpenseCategoryBackBtn.setOnClickListener {
             onBackPressed()
         }
 
@@ -27,6 +28,10 @@ class AddExpensesCategoryActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Please enter a category name", Toast.LENGTH_SHORT).show()
             }
+        }
+        binding.editExpenseCategoryBtn.setOnClickListener{
+            val intent = Intent(this, EditExpensesCategoryActivity::class.java)
+            startActivity(intent)
         }
     }
 

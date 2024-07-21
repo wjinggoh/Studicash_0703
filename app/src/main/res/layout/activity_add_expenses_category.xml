@@ -59,7 +59,7 @@
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView16" />
+             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -68,17 +68,16 @@
         android:id="@+id/saveExpenseCategoryBtn"
         android:layout_width="wrap_content"
         android:layout_height="55dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
         android:backgroundTint="#01579B"
         android:text="Save"
         app:cornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chooseIconBtn" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/backCategory"
+        android:id="@+id/addExpenseCategoryBackBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -88,7 +87,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/editExpensesCategoryBtn"
+        android:id="@+id/editExpenseCategoryBtn"
         android:layout_width="240dp"
         android:layout_height="55dp"
         android:backgroundTint="#4CAF50"
@@ -98,8 +97,7 @@
         app:cornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/backCategory" />
-
+        app:layout_constraintTop_toBottomOf="@+id/addExpenseCategoryBackBtn" />
 
 
     <TextView
@@ -111,7 +109,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editExpensesCategoryBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/editExpenseCategoryBtn" />
 
 
     <FrameLayout

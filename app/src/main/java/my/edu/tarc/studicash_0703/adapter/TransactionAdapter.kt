@@ -51,17 +51,17 @@ class TransactionAdapter(
         private val dateTextView: TextView = itemView.findViewById(R.id.transactionDate)
         private val categoryTextView: TextView = itemView.findViewById(R.id.transactionCategory)
         private val paymentMethodTextView: TextView = itemView.findViewById(R.id.transactionPaymentMethod)
-        private val indicatorView: View = itemView.findViewById(R.id.indicatorView)
+        private val indicatorView: ImageView = itemView.findViewById(R.id.transactionIcon) // Use ImageView
 
         init {
             itemView.findViewById<ImageView>(R.id.transactionDeleteBtn).setOnClickListener {
-                val transactionId = transactions[adapterPosition].id
-                listener.onDelete(transactionId, transactions[adapterPosition].expense)
+                val transaction = transactions[adapterPosition]
+                listener.onDelete(transaction.id, transaction.expense)
             }
 
             itemView.findViewById<ImageView>(R.id.transactionEditBtn).setOnClickListener {
-                val transactionId = transactions[adapterPosition].id
-                listener.onEdit(transactionId)
+                val transaction = transactions[adapterPosition]
+                listener.onEdit(transaction.id)
             }
         }
 
@@ -73,17 +73,17 @@ class TransactionAdapter(
             paymentMethodTextView.text = transaction.paymentMethod ?: ""
 
             val indicatorDrawable = if (transaction.expense) {
-                ContextCompat.getDrawable(itemView.context, transaction.expenseColorRes)
+                ContextCompat.getDrawable(context, transaction.expenseColorRes)
             } else {
-                ContextCompat.getDrawable(itemView.context, transaction.incomeColorRes)
+                ContextCompat.getDrawable(context, transaction.incomeColorRes)
             }
-            indicatorView.background = indicatorDrawable
+            indicatorView.setImageDrawable(indicatorDrawable) // Use setImageDrawable for ImageView
         }
 
         private fun formatDate(date: String): String {
             return try {
                 val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val outputFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
                 val parsedDate = inputFormat.parse(date)
                 parsedDate?.let { outputFormat.format(it) } ?: "Invalid Date"
             } catch (e: ParseException) {
@@ -91,4 +91,5 @@ class TransactionAdapter(
             }
         }
     }
+
 }
