@@ -3,37 +3,53 @@ package my.edu.tarc.studicash_0703.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import my.edu.tarc.studicash_0703.BudgetItem
 import my.edu.tarc.studicash_0703.Models.Budget
 import my.edu.tarc.studicash_0703.R
 
-class BudgetAdapter(private val budgets: List<Budget>) : RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder>() {
 
-    class BudgetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val budgetAmount: TextView = itemView.findViewById(R.id.budget_amount)
-        private val budgetCategory: TextView = itemView.findViewById(R.id.budget_category)
-        private val budgetStartDate: TextView = itemView.findViewById(R.id.budget_start_date)
-        private val budgetEndDate: TextView = itemView.findViewById(R.id.budget_end_date)
+class BudgetAdapter(private val budgets: List<BudgetItem>) : RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder>() {
 
-        fun bind(budget: Budget) {
-            budgetAmount.text = budget.amount.toString()
-            budgetCategory.text = budget.category
-            budgetStartDate.text = budget.startDate
-            budgetEndDate.text = budget.endDate
-        }
+    inner class BudgetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val budgetName: TextView = itemView.findViewById(R.id.budgetName)
+        val budgetAmount: TextView = itemView.findViewById(R.id.budgetAmount)
+        val budgetSpent: TextView = itemView.findViewById(R.id.budgetSpent)
+        val budgetProgressText: TextView = itemView.findViewById(R.id.budgetProgressText)
+        val budgetProgress: ProgressBar = itemView.findViewById(R.id.budgetProgress)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BudgetViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.budget_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_budget, parent, false)
         return BudgetViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: BudgetViewHolder, position: Int) {
-        holder.bind(budgets[position])
+        val budget = budgets[position]
+
+        holder.budgetName.text = budget.name
+        holder.budgetAmount.text = "Amount: ${budget.amount}"
+        holder.budgetSpent.text = "Spent: ${budget.spent}"
+
+        // Ensure amounts are positive
+        val maxAmount = budget.amount.toInt().coerceAtLeast(0)
+        val spentAmount = budget.spent.toInt().coerceAtLeast(0)
+
+        // Set ProgressBar max and progress values
+        holder.budgetProgress.max = maxAmount
+        holder.budgetProgress.progress = spentAmount
+
+        // Display progress as text
+        val progressPercentage = if (maxAmount > 0) {
+            ((spentAmount.toDouble() / maxAmount) * 100).toInt()
+        } else {
+            0
+        }
+        holder.budgetProgressText.text = "Progress: $progressPercentage%"
     }
 
-    override fun getItemCount(): Int {
-        return budgets.size
-    }
+    override fun getItemCount() = budgets.size
 }
+

@@ -5,13 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".budget.AddBudgetActivity">
+    tools:context=".AddBudgetActivity">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/budgetAmt"
         android:layout_width="300dp"
         android:layout_height="60dp"
         android:layout_marginTop="16dp"
+        android:elevation="3dp"
         android:hint="Budget Amount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
@@ -22,6 +23,7 @@
             android:id="@+id/budgetAmountEditText"
             android:layout_width="match_parent"
             android:layout_height="60dp"
+            android:background="@drawable/background_with_border_grey"
             android:inputType="numberDecimal" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -63,12 +65,12 @@
         android:id="@+id/durationTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="70dp"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/concert_one"
         android:text="@string/duration"
         android:textSize="24sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/budgetAmt" />
 
@@ -91,7 +93,7 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/background_with_border_grey"
         android:elevation="3dp"
-        app:layout_constraintStart_toStartOf="@+id/durationTitle"
+        app:layout_constraintStart_toStartOf="@+id/startdatetitle"
         app:layout_constraintTop_toBottomOf="@+id/startdatetitle">
 
         <TextView
@@ -164,7 +166,7 @@
         android:fontFamily="@font/concert_one"
         android:text="Start Date"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/durationTitle"
+        app:layout_constraintStart_toStartOf="@+id/budgetAmt"
         app:layout_constraintTop_toBottomOf="@+id/durationTitle" />
 
     <TextView

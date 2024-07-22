@@ -18,7 +18,7 @@ import my.edu.tarc.studicash_0703.ReportActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import my.edu.tarc.studicash_0703.budget.BudgetTrackingActivity
+import my.edu.tarc.studicash_0703.BudgetTrackingActivity
 import my.edu.tarc.studicash_0703.Models.Transaction
 import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.FragmentHomeBinding
@@ -49,7 +49,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         }
 
         binding.goalTrackingBtn.setOnClickListener {
-            val intent = Intent(requireContext(), my.edu.tarc.studicash_0703.budget.BudgetTrackingActivity::class.java)
+            val intent = Intent(requireContext(), BudgetTrackingActivity::class.java)
             startActivity(intent)
         }
 
