@@ -34,6 +34,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Studicash_0703"
         tools:targetApi="31">
+        <activity android:name=".EditBudgetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChangeCurrencyActivity"
+            android:exported="false" />
         <activity
             android:name=".SpinnerActivity"
             android:exported="false" />

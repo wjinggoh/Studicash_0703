@@ -157,7 +157,7 @@
         app:layout_constraintWidth_percent="0.8" />
 
     <ImageView
-        android:id="@+id/imageView10"
+        android:id="@+id/createBudgetBackBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

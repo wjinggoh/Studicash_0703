@@ -45,4 +45,20 @@
         android:progress="0"
         android:max="100"/>
 
+    <TextView
+        android:id="@+id/budgetStartDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textSize="14sp"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/budgetEndDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textSize="14sp"
+        android:textColor="#000000" />
+
 </LinearLayout>

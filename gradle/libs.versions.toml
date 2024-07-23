@@ -24,6 +24,7 @@ navigationUiKtx = "2.7.7"
 firebaseMlVision = "24.1.0"
 playServicesMlkitTextRecognitionCommon = "19.0.0"
 playServicesMlkitTextRecognition = "19.0.0"
+workRuntimeKtx = "2.9.0"
 
 
 [libraries]
@@ -49,6 +50,7 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 firebase-ml-vision = { group = "com.google.firebase", name = "firebase-ml-vision", version.ref = "firebaseMlVision" }
 play-services-mlkit-text-recognition-common = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition-common", version.ref = "playServicesMlkitTextRecognitionCommon" }
 play-services-mlkit-text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version.ref = "playServicesMlkitTextRecognition" }
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

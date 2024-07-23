@@ -1,6 +1,11 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/border_for_recycle_view"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -8,23 +13,96 @@
         android:id="@+id/budget_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:hint="Budget Amount"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/budget_category" />
 
     <TextView
         android:id="@+id/budget_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:hint="Category"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/budget_start_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp" />
+        android:layout_marginTop="8dp"
+        android:hint="Start Date"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/budget_amount"
+        app:layout_constraintTop_toBottomOf="@+id/budget_amount" />
 
     <TextView
         android:id="@+id/budget_end_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp" />
-</LinearLayout>
+        android:layout_marginStart="8dp"
+        android:hint="End Date"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView19"
+        app:layout_constraintStart_toEndOf="@+id/textView19"
+        app:layout_constraintTop_toTopOf="@+id/budget_start_date" />
+
+    <Button
+        android:id="@+id/editBudgetBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="#14B31A"
+        android:text="Edit"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/deleteBudgetBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="#FF0000"
+        android:text="Delete"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editBudgetBtn" />
+
+    <ProgressBar
+        android:id="@+id/budgetProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="300dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="16dp"
+        android:indeterminateDrawable="@drawable/progress_bar_drawable"
+        android:progressDrawable="@android:drawable/progress_horizontal"
+        app:layout_constraintStart_toStartOf="@+id/budget_start_date"
+        app:layout_constraintTop_toBottomOf="@+id/usageProgress" />
+
+    <TextView
+        android:id="@+id/textView19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="to"
+        app:layout_constraintBottom_toBottomOf="@+id/budget_start_date"
+        app:layout_constraintStart_toEndOf="@+id/budget_start_date"
+        app:layout_constraintTop_toTopOf="@+id/budget_start_date" />
+
+    <TextView
+        android:id="@+id/usageProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="0% used"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/budget_start_date"
+        app:layout_constraintTop_toBottomOf="@+id/budget_start_date" />
+</androidx.constraintlayout.widget.ConstraintLayout>

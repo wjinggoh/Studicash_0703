@@ -1,7 +1,7 @@
 package my.edu.tarc.studicash_0703.Fragment
 
+import android.app.AlertDialog
 import android.content.Intent
-import my.edu.tarc.studicash_0703.adapter.TransactionAdapter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.Transaction
 import my.edu.tarc.studicash_0703.TransactionHistoryActivity
+import my.edu.tarc.studicash_0703.adapter.TransactionAdapter
 import my.edu.tarc.studicash_0703.databinding.FragmentAddBinding
 
 class AddFragment : Fragment(), TransactionAdapter.OnTransactionClickListener {
@@ -32,7 +33,7 @@ class AddFragment : Fragment(), TransactionAdapter.OnTransactionClickListener {
             transactionFragment.show(childFragmentManager, "ChooseTransactionDialog")
         }
 
-        binding.viewFullHistoryBtn.setOnClickListener{
+        binding.viewFullHistoryBtn.setOnClickListener {
             val intent = Intent(requireContext(), TransactionHistoryActivity::class.java)
             startActivity(intent)
         }
@@ -45,7 +46,6 @@ class AddFragment : Fragment(), TransactionAdapter.OnTransactionClickListener {
         // Fetch transactions
         fetchExpenseTransactions()
         fetchIncomeTransactions()
-
 
         return binding.root
     }
@@ -72,7 +72,6 @@ class AddFragment : Fragment(), TransactionAdapter.OnTransactionClickListener {
             }
     }
 
-
     private fun fetchIncomeTransactions() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val incomeCollection = FirebaseFirestore.getInstance().collection("incomeTransactions")
@@ -95,7 +94,6 @@ class AddFragment : Fragment(), TransactionAdapter.OnTransactionClickListener {
             }
     }
 
-
     private fun updateRecyclerView() {
         val allTransactions = mutableListOf<Transaction>()
         allTransactions.addAll(expenseTransactions)
@@ -108,11 +106,31 @@ class AddFragment : Fragment(), TransactionAdapter.OnTransactionClickListener {
         transactionAdapter.updateData(latestTransactions)
     }
 
-
-    override fun onDelete(transactionId: String, isExpense: Boolean) {
-        deleteTransaction(transactionId, isExpense)
+    private fun showDeleteConfirmationDialog(transactionId: String, isExpense: Boolean) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Transaction")
+            .setMessage("Are you sure you want to delete this transaction?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                deleteTransaction(transactionId, isExpense)
+                dialog.dismiss()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
+    override fun onDelete(transactionId: String, isExpense: Boolean) {
+        showDeleteConfirmationDialog(transactionId, isExpense)
+    }
+
+    override fun onEdit(transactionId: String) {
+        // Handle edit action here
+        // For example, show an EditTransactionFragment
+        val editFragment = EditTransactionFragment.newInstance(transactionId)
+        editFragment.show(childFragmentManager, "EditTransactionDialog")
+    }
 
     private fun deleteTransaction(transactionId: String, isExpense: Boolean) {
         val collection = if (isExpense) {
@@ -126,52 +144,14 @@ class AddFragment : Fragment(), TransactionAdapter.OnTransactionClickListener {
                 Log.d(TAG, "Transaction deleted successfully.")
                 if (isExpense) {
                     fetchExpenseTransactions() // Refresh expenses
-                    Log.d(TAG, "Fetched ${expenseTransactions.size} expense transactions.")
                 } else {
                     fetchIncomeTransactions() // Refresh incomes
-
-                    Log.d(TAG, "Fetched ${incomeTransactions.size} income transactions.")
-
                 }
             }
             .addOnFailureListener { exception ->
                 Log.e(TAG, "Error deleting transaction: ${exception.message}", exception)
             }
     }
-
-
-
-    private fun verifyTransactionIdExists(transactionId: String, isExpense: Boolean) {
-        val collection = if (isExpense) {
-            FirebaseFirestore.getInstance().collection("expenseTransactions")
-        } else {
-            FirebaseFirestore.getInstance().collection("incomeTransactions")
-        }
-
-        collection.get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    if (document.id == transactionId) {
-                        Log.d(TAG, "Transaction ID $transactionId exists.")
-                        return@addOnSuccessListener
-                    }
-                }
-                Log.e(TAG, "Transaction ID $transactionId does not exist.")
-            }
-            .addOnFailureListener { exception ->
-                Log.e(TAG, "Error fetching transactions: ${exception.message}", exception)
-            }
-    }
-
-
-
-
-    override fun onEdit(transactionId: String) {
-        // Open an edit dialog or fragment
-        val editTransactionFragment = EditTransactionFragment.newInstance(transactionId)
-        editTransactionFragment.show(childFragmentManager, "EditTransactionDialog")
-    }
-
 
     companion object {
         private const val TAG = "AddFragment"

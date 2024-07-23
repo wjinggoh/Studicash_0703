@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.play.services.mlkit.text.recognition)
     implementation("com.google.android.gms:play-services-vision:20.1.0") // Updated version
     implementation(libs.firebase.ml.vision)
+    implementation(libs.androidx.work.runtime.ktx)
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
     // Navigation libraries

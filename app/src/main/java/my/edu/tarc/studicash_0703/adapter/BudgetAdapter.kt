@@ -1,55 +1,52 @@
 package my.edu.tarc.studicash_0703.adapter
 
+import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import my.edu.tarc.studicash_0703.BudgetItem
-import my.edu.tarc.studicash_0703.Models.Budget
-import my.edu.tarc.studicash_0703.R
+import my.edu.tarc.studicash_0703.EditBudgetActivity
+import my.edu.tarc.studicash_0703.Models.BudgetItem
+import my.edu.tarc.studicash_0703.databinding.BudgetItemBinding
 
+class BudgetAdapter(
+    private val context: Context,
+    private val budgets: List<BudgetItem>,
+    private val onEditClick: (BudgetItem) -> Unit,
+    private val onDeleteClick: (BudgetItem) -> Unit
+) : RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder>() {
 
-class BudgetAdapter(private val budgets: List<BudgetItem>) : RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder>() {
+    inner class BudgetViewHolder(private val binding: BudgetItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(budget: BudgetItem) {
+            binding.budgetCategory.text = budget.category
+            binding.budgetAmount.text = budget.amount.toString()
+            binding.budgetStartDate.text = budget.startDate
+            binding.budgetEndDate.text = budget.endDate
+            binding.budgetProgressBar.progress = budget.progress
 
-    inner class BudgetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val budgetName: TextView = itemView.findViewById(R.id.budgetName)
-        val budgetAmount: TextView = itemView.findViewById(R.id.budgetAmount)
-        val budgetSpent: TextView = itemView.findViewById(R.id.budgetSpent)
-        val budgetProgressText: TextView = itemView.findViewById(R.id.budgetProgressText)
-        val budgetProgress: ProgressBar = itemView.findViewById(R.id.budgetProgress)
+            binding.editBudgetBtn.setOnClickListener {
+                val intent = Intent(context, EditBudgetActivity::class.java).apply {
+                    putExtra("BUDGET_ID", budget.id) // Replace `id` with the actual property name
+                }
+                context.startActivity(intent)
+            }
+
+            binding.deleteBudgetBtn.setOnClickListener {
+                onDeleteClick(budget)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BudgetViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_budget, parent, false)
-        return BudgetViewHolder(view)
+        val binding = BudgetItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return BudgetViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: BudgetViewHolder, position: Int) {
-        val budget = budgets[position]
-
-        holder.budgetName.text = budget.name
-        holder.budgetAmount.text = "Amount: ${budget.amount}"
-        holder.budgetSpent.text = "Spent: ${budget.spent}"
-
-        // Ensure amounts are positive
-        val maxAmount = budget.amount.toInt().coerceAtLeast(0)
-        val spentAmount = budget.spent.toInt().coerceAtLeast(0)
-
-        // Set ProgressBar max and progress values
-        holder.budgetProgress.max = maxAmount
-        holder.budgetProgress.progress = spentAmount
-
-        // Display progress as text
-        val progressPercentage = if (maxAmount > 0) {
-            ((spentAmount.toDouble() / maxAmount) * 100).toInt()
-        } else {
-            0
-        }
-        holder.budgetProgressText.text = "Progress: $progressPercentage%"
+        holder.bind(budgets[position])
     }
 
-    override fun getItemCount() = budgets.size
+    override fun getItemCount(): Int {
+        return budgets.size
+    }
 }
-
