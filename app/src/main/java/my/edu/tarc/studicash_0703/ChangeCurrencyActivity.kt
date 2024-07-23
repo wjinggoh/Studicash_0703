@@ -4,14 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseAuth
 import my.edu.tarc.studicash_0703.databinding.ActivityChangeCurrencyBinding
 
 class ChangeCurrencyActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityChangeCurrencyBinding
     private val firestore = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
     private val currencies = mapOf(
         "Afghanistan" to "AFN",
@@ -386,19 +389,23 @@ class ChangeCurrencyActivity : AppCompatActivity() {
     }
 
     private fun updateCurrency(currencyCode: String) {
-        // Update currency in Firestore
-        val userId = "YOUR_USER_ID" // Replace with actual user ID
-        firestore.collection("users").document(userId)
-            .update("currency", currencyCode)
-            .addOnSuccessListener {
-                // Handle success
-                updateCurrencySymbol(currencyCode)
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-            }
-            .addOnFailureListener {
-                // Handle failure
-            }
+        // Retrieve the current user ID dynamically
+        val userId = auth.currentUser?.uid
+        if (userId != null) {
+            firestore.collection("User").document(userId)
+                .update("currency", currencyCode)
+                .addOnSuccessListener {
+                    // Handle success
+                    updateCurrencySymbol(currencyCode)
+                    Toast.makeText(this, "Currency updated successfully.", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+                    // Handle failure
+                    showError("Failed to update currency. Please try again.")
+                }
+        } else {
+            showError("User not authenticated. Please log in again.")
+        }
     }
 
     private fun updateCurrencySymbol(currencyCode: String) {
@@ -409,5 +416,9 @@ class ChangeCurrencyActivity : AppCompatActivity() {
             putString("currency_symbol", currencySymbol)
             apply()
         }
+    }
+
+    private fun showError(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }

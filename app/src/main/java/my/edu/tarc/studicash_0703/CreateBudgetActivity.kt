@@ -43,6 +43,7 @@ class CreateBudgetActivity : AppCompatActivity() {
         binding.buttonCancel.setOnClickListener {
             finish()
         }
+
         binding.createBudgetBackBtn.setOnClickListener {
             finish()
         }
@@ -105,25 +106,26 @@ class CreateBudgetActivity : AppCompatActivity() {
     }
 
     private fun saveBudget() {
+        val name=binding.budgetNameCreateBudget.text.toString()
         val selectedCategory = binding.spinnerCategory.selectedItem as ExpenseCategory
         val amount = binding.editTextAmount.text.toString().toDoubleOrNull()
         val startDate = binding.editTextStartDate.text.toString()
         val endDate = binding.editTextEndDate.text.toString()
 
         if (amount != null && startDate.isNotEmpty() && endDate.isNotEmpty()) {
-            val budget = hashMapOf(
+            val budgetData = mapOf(
+                "name" to name,
                 "category" to selectedCategory.name,
                 "amount" to amount,
                 "startDate" to startDate,
-                "endDate" to endDate,
-                "icon" to selectedCategory.icon
+                "endDate" to endDate
             )
 
             firestore.collection("Budget")
-                .add(budget)
-                .addOnSuccessListener { documentReference ->
-                    Toast.makeText(this, "Budget saved successfully!", Toast.LENGTH_SHORT).show()
-                    finish() // Close the activity after saving
+                .add(budgetData)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Budget saved successfully", Toast.LENGTH_SHORT).show()
+                    finish()
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(this, "Error saving budget: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -132,5 +134,4 @@ class CreateBudgetActivity : AppCompatActivity() {
             Toast.makeText(this, "Please fill all fields correctly", Toast.LENGTH_SHORT).show()
         }
     }
-
 }

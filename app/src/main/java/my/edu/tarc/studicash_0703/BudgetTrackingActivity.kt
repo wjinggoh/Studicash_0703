@@ -26,53 +26,51 @@ class BudgetTrackingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Initialize the binding object
         binding = ActivityBudgetTrackingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Set up Spinner with options
+        setupSpinner()
+        setupButtons()
+
+        fetchAndDisplayBudgets()
+    }
+
+    private fun setupSpinner() {
         val items = arrayOf("Budget", "Goal")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        // Create an ArrayAdapter using the custom layout
+        val adapter = ArrayAdapter(this, R.layout.spinner_drop_down_item, items)
+
+        // Set the layout for the dropdown items
+        adapter.setDropDownViewResource(R.layout.spinner_drop_down_item)
+
         binding.spinner.adapter = adapter
 
-        // Set default selection to Budget
-        binding.spinner.setSelection(0)
-
-        // Set up the OnItemSelectedListener for Spinner
         binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 when (position) {
-                    0 -> {
-                        // Stay on BudgetTrackingActivity
-                        fetchAndDisplayBudgets()
-                    }
+                    0 -> fetchAndDisplayBudgets()
                     1 -> {
-                        // Switch to GoalTrackingActivity
-                        val intent = Intent(this@BudgetTrackingActivity, GoalTrackingActivity::class.java)
-                        startActivity(intent)
-                        finish() // Optional: Close this activity if you don't want to return to it
+                        startActivity(Intent(this@BudgetTrackingActivity, GoalTrackingActivity::class.java))
+                        finish()
                     }
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // Handle case when no item is selected
-            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
+    }
 
+
+    private fun setupButtons() {
         binding.addBudgetBtn.setOnClickListener {
-            val intent = Intent(this, CreateBudgetActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, CreateBudgetActivity::class.java))
         }
 
         binding.BudgetTrackingBackBtn.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, MainActivity::class.java))
         }
 
-        // Fetch and display budgets initially
-        fetchAndDisplayBudgets()
     }
 
     private fun fetchAndDisplayBudgets() {
@@ -89,38 +87,52 @@ class BudgetTrackingActivity : AppCompatActivity() {
 
             for (document in result) {
                 val id = document.id
+                val name=document.getString("name")?: ""
                 val category = document.getString("category") ?: ""
                 val amount = document.getDouble("amount") ?: 0.0
                 val startDate = document.getString("startDate") ?: ""
                 val endDate = document.getString("endDate") ?: ""
                 val icon = document.getLong("icon")?.toInt() ?: 0
-                Log.d("BudgetTrackingActivity", "Document data: category=$category, amount=$amount, startDate=$startDate, endDate=$endDate, icon=$icon")
-                val budgetItem = BudgetItem(id, category, amount, 0.0, 0, startDate, endDate, icon)
+
+                // Creating BudgetItem object
+                val budgetItem = BudgetItem(
+                    id = id,
+                    name=name,
+                    category = category,
+                    amount = amount,
+                    spent = 0.0, // Default value
+                    progress = 0, // Default value
+                    startDate = startDate,
+                    endDate = endDate,
+                    icon = icon
+                )
 
                 val task = fetchTotalSpentForBudget(category).continueWith { totalSpent ->
-                    budgetItem to totalSpent.result
+                    val spent = totalSpent.result
+                    val progress = if (budgetItem.amount > 0) ((spent / budgetItem.amount) * 100).toInt() else 0
+                    budgetItem.spent = spent
+                    budgetItem.progress = progress
+                    budgetItem to spent
                 }
                 budgetTasks.add(task)
             }
 
             Tasks.whenAllComplete(budgetTasks).addOnCompleteListener { tasks ->
                 val results = tasks.result
+                val updatedBudgets = mutableListOf<BudgetItem>()
                 results.forEach { task ->
                     val (budgetItem, spent) = task.result as Pair<BudgetItem, Double>
-                    val progress = if (budgetItem.amount > 0) ((spent / budgetItem.amount) * 100).toInt() else 0
-                    budgetItem.spent = spent
-                    budgetItem.progress = progress
-                    budgets.add(budgetItem)
+                    updatedBudgets.add(budgetItem)
                 }
 
-                Log.d("BudgetTrackingActivity", "Budgets to display: ${budgets.size}")
-                if (budgets.isEmpty()) {
+                Log.d("BudgetTrackingActivity", "Budgets to display: ${updatedBudgets.size}")
+                if (updatedBudgets.isEmpty()) {
                     binding.budgetTrackingRecycleView.visibility = View.GONE
                     binding.noBudgetsMessage.visibility = View.VISIBLE
                 } else {
                     binding.budgetTrackingRecycleView.visibility = View.VISIBLE
                     binding.noBudgetsMessage.visibility = View.GONE
-                    setupRecyclerView(budgets)
+                    setupRecyclerView(updatedBudgets)
                 }
             }.addOnFailureListener { exception ->
                 binding.budgetTrackingRecycleView.visibility = View.GONE
@@ -134,24 +146,20 @@ class BudgetTrackingActivity : AppCompatActivity() {
         }
     }
 
+
     private fun fetchTotalSpentForBudget(budgetName: String): Task<Double> {
         val transactionsCollection = firestore.collection("expenseTransactions")
         val taskCompletionSource = TaskCompletionSource<Double>()
 
-        transactionsCollection
-            .whereEqualTo("category", budgetName)
-            .get()
+        transactionsCollection.whereEqualTo("category", budgetName).get()
             .addOnSuccessListener { result ->
                 var totalSpent = 0.0
                 for (document in result) {
-                    val amount = document.getDouble("amount") ?: 0.0
-                    totalSpent += amount
+                    totalSpent += document.getDouble("amount") ?: 0.0
                 }
-                Log.d("BudgetTrackingActivity", "Total spent for $budgetName: $totalSpent")
                 taskCompletionSource.setResult(totalSpent)
             }
             .addOnFailureListener { exception ->
-                Log.e("BudgetTrackingActivity", "Error fetching transactions for $budgetName: ${exception.message}")
                 taskCompletionSource.setException(exception)
             }
 
@@ -160,24 +168,16 @@ class BudgetTrackingActivity : AppCompatActivity() {
 
     private fun setupRecyclerView(budgets: List<BudgetItem>) {
         val adapter = BudgetAdapter(
-            this, // Pass the context
+            this,
             budgets,
-            onEditClick = { budgetItem ->
-                // Handle edit click
-                editBudget(budgetItem)
-            },
-            onDeleteClick = { budgetItem ->
-                // Handle delete click
-                deleteBudget(budgetItem)
-            }
+            onEditClick = { budgetItem -> editBudget(budgetItem) },
+            onDeleteClick = { budgetItem -> deleteBudget(budgetItem) }
         )
         binding.budgetTrackingRecycleView.adapter = adapter
         binding.budgetTrackingRecycleView.layoutManager = LinearLayoutManager(this)
     }
 
-
     private fun editBudget(budgetItem: BudgetItem) {
-        // Navigate to EditBudgetActivity with the selected budgetItem details
         val intent = Intent(this, EditBudgetActivity::class.java).apply {
             putExtra("id", budgetItem.id)
             putExtra("category", budgetItem.category)
@@ -190,22 +190,32 @@ class BudgetTrackingActivity : AppCompatActivity() {
     }
 
     private fun deleteBudget(budgetItem: BudgetItem) {
-        // Show a confirmation dialog before deleting
         AlertDialog.Builder(this)
             .setTitle("Delete Budget")
             .setMessage("Are you sure you want to delete this budget?")
             .setPositiveButton("Yes") { _, _ ->
                 firestore.collection("Budget").document(budgetItem.id).delete()
                     .addOnSuccessListener {
-                        // Refresh the budget list after deletion
                         fetchAndDisplayBudgets()
                     }
                     .addOnFailureListener { e ->
-                        // Handle the error
-                        Toast.makeText(this, "Error deleting budget: ${e.message}", Toast.LENGTH_SHORT).show()
+                        handleError("Error deleting budget: ${e.message}")
                     }
             }
             .setNegativeButton("No", null)
             .show()
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        // Implement a loading indicator (e.g., ProgressBar) if needed
+        // Example: binding.loadingIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun handleError(message: String) {
+        binding.noBudgetsMessage.apply {
+            visibility = View.VISIBLE
+            text = message
+        }
+        binding.budgetTrackingRecycleView.visibility = View.GONE
     }
 }

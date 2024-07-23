@@ -37,7 +37,7 @@
         android:id="@+id/editTextAmount"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/background_with_border_grey"
         android:elevation="5dp"
         android:hint="Amount"
@@ -45,7 +45,7 @@
         android:paddingLeft="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spinnerCategory"
+        app:layout_constraintTop_toBottomOf="@+id/budgetNameCreateBudget"
         app:layout_constraintWidth_percent="0.8" />
 
     <TextView
@@ -165,5 +165,20 @@
         android:src="@drawable/baseline_arrow_back_48"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/budgetNameCreateBudget"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/background_with_border_grey"
+        android:elevation="3dp"
+        android:ems="10"
+        android:hint="Budget Name"
+        android:inputType="text"
+        android:paddingLeft="12dp"
+        app:layout_constraintEnd_toEndOf="@+id/spinnerCategory"
+        app:layout_constraintStart_toStartOf="@+id/spinnerCategory"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerCategory" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

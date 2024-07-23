@@ -18,21 +18,41 @@ class BudgetAdapter(
 
     inner class BudgetViewHolder(private val binding: BudgetItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(budget: BudgetItem) {
+            // Set text for each TextView from BudgetItem
             binding.budgetCategory.text = budget.category
-            binding.budgetAmount.text = budget.amount.toString()
+            binding.budgetItemName.text=budget.name
+            binding.budgetAmount.text = "RM ${budget.amount}"
             binding.budgetStartDate.text = budget.startDate
             binding.budgetEndDate.text = budget.endDate
-            binding.budgetProgressBar.progress = budget.progress
 
+            // Update the ProgressBar
+            binding.budgetProgressBar.progress = budget.progress
+            // Set the progress as a percentage in usageProgress TextView
+            binding.usageProgress.text = "${budget.progress}%"
+
+            // Edit button click listener
             binding.editBudgetBtn.setOnClickListener {
                 val intent = Intent(context, EditBudgetActivity::class.java).apply {
-                    putExtra("BUDGET_ID", budget.id) // Replace `id` with the actual property name
+                    putExtra("id", budget.id)
+                    putExtra("title", budget.name)
+                    putExtra("category", budget.category)
+                    putExtra("amount", budget.amount)
+                    putExtra("startDate", budget.startDate)
+                    putExtra("endDate", budget.endDate)
+                    putExtra("icon", budget.icon)
                 }
                 context.startActivity(intent)
             }
 
+            // Delete button click listener
             binding.deleteBudgetBtn.setOnClickListener {
                 onDeleteClick(budget)
+            }
+
+            binding.editBudgetBtn.setOnClickListener{
+                val intent=Intent(context,EditBudgetActivity::class.java)
+                intent.putExtra("id",budget.id)
+                context.startActivity(intent)
             }
         }
     }

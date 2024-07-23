@@ -7,8 +7,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.databinding.ActivityAddBudgetBinding
-import my.edu.tarc.studicash_0703.Models.ExpenseCategory // Assuming ExpenseCategory model
+import my.edu.tarc.studicash_0703.Models.ExpenseCategory
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class AddBudgetActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddBudgetBinding
@@ -57,7 +59,11 @@ class AddBudgetActivity : AppCompatActivity() {
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         val datePicker = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
-            val formattedDate = "${selectedYear}-${selectedMonth + 1}-${selectedDay}"
+            val formattedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
+                Calendar.getInstance().apply {
+                    set(selectedYear, selectedMonth, selectedDay)
+                }.time
+            )
             onDateSelected(formattedDate)
         }, year, month, day)
 
@@ -82,7 +88,6 @@ class AddBudgetActivity : AppCompatActivity() {
                 // Handle failure if needed
             }
     }
-
 
     private fun setupCategorySpinner() {
         val categories = expenseCategories.map { it.name }.toTypedArray()
