@@ -12,6 +12,7 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -109,12 +110,15 @@ class ReportActivity : AppCompatActivity() {
                     showNoExpensesMessage(timeframe)
                 } else {
                     val categoryTotals = mutableMapOf<String, Double>()
+                    var totalExpenses = 0.0
 
                     documents.forEach { document ->
                         val transaction = document.toObject(Transaction::class.java)
                         if (transaction.expense) {
                             val currentAmount = categoryTotals[transaction.category] ?: 0.0
-                            categoryTotals[transaction.category] = currentAmount + transaction.amount
+                            val newAmount = currentAmount + transaction.amount
+                            categoryTotals[transaction.category] = newAmount
+                            totalExpenses += transaction.amount
                         }
                     }
 
@@ -127,8 +131,8 @@ class ReportActivity : AppCompatActivity() {
                     binding.insightsRecyclerView.visibility = View.VISIBLE
                     binding.insightsRecyclerView.adapter = InsightAdapter(insights)
 
-                    // Update Pie Chart
-                    updatePieChart(categoryTotals)
+                    // Update Pie Chart with percentages
+                    updatePieChart(categoryTotals, totalExpenses)
                 }
             }
             .addOnFailureListener { exception ->
@@ -143,17 +147,23 @@ class ReportActivity : AppCompatActivity() {
         binding.insightsRecyclerView.visibility = View.GONE // Hide the RecyclerView
     }
 
-    private fun updatePieChart(categoryTotals: Map<String, Double>) {
+    private fun updatePieChart(categoryTotals: Map<String, Double>, totalExpenses: Double) {
         binding.noExpensesTextView.visibility = View.GONE // Hide the no expenses message
         binding.pieChart.visibility = View.VISIBLE // Show the pie chart
 
-        val entries = categoryTotals.map { PieEntry(it.value.toFloat(), it.key) }
+        val entries = categoryTotals.map { PieEntry((it.value / totalExpenses * 100).toFloat(), it.key) }
         val dataSet = PieDataSet(entries, "Expenses").apply {
             colors = ColorTemplate.MATERIAL_COLORS.toList()
             valueTextSize = 16f
             valueTextColor = Color.WHITE
         }
-        val pieData = PieData(dataSet)
+        val pieData = PieData(dataSet).apply {
+            setValueFormatter(object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return String.format("%.1f%%", value)
+                }
+            })
+        }
 
         binding.pieChart.apply {
             this.data = pieData
