@@ -52,7 +52,9 @@ class ExpensesHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTransa
         }
 
         binding.allButton.setOnClickListener {
-            fetchExpenseTransactions()
+            val intent=Intent(this,TransactionHistoryActivity::class.java)
+            startActivity(intent)
+            finish()
         }
 
         binding.incomesButtonMain.setOnClickListener {

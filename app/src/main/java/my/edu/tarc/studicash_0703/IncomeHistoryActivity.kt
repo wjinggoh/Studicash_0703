@@ -52,7 +52,9 @@ class IncomeHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTransact
         }
 
         binding.allButton.setOnClickListener {
-            fetchIncomeTransactions()
+            val intent=Intent(this,TransactionHistoryActivity::class.java)
+            startActivity(intent)
+            finish()
         }
 
         binding.expensesButton.setOnClickListener {
