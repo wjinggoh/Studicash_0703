@@ -146,13 +146,13 @@ class AddReceiptActivity : AppCompatActivity() {
     private fun extractItemsAndAmounts(receiptText: String): List<Pair<String, Double>> {
         val itemList = mutableListOf<Pair<String, Double>>()
 
-        // Regex to capture items with optional quantity
-        val itemRegex = Regex("""(\d+)?\s*x?\s*([\w\s]+?)\s+([\d,.]+)(?:\s|$)""", RegexOption.IGNORE_CASE)
+        // Updated regex to capture items with the specified pattern
+        val itemRegex = Regex("""(\d+x\s+)?(\d{13})\s+([\d,.]+)\s+([\w\s]+)""", RegexOption.IGNORE_CASE)
 
         // Find and extract items and their amounts
         itemRegex.findAll(receiptText).forEach { matchResult ->
-            val itemName = matchResult.groupValues[2].trim()
-            val itemAmount = matchResult.groupValues[3].replace(",", "").toDoubleOrNull() ?: 0.0
+            val itemName = matchResult.groupValues[4].trim()  // The item name is in the 4th group
+            val itemAmount = matchResult.groupValues[3].replace(",", "").toDoubleOrNull() ?: 0.0  // The item price is in the 3rd group
             itemList.add(Pair(itemName, itemAmount))
         }
 

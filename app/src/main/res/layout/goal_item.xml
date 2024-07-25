@@ -17,29 +17,9 @@
         android:layout_marginTop="16dp"
         android:hint="Goal Amount"
         android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@+id/deletegoalBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/goalItemName" />
-
-    <TextView
-        android:id="@+id/goal_start_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="Start Date"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/goal_amt"
-        app:layout_constraintTop_toBottomOf="@+id/goal_amt" />
-
-    <TextView
-        android:id="@+id/goal_end_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:hint="End Date"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView19"
-        app:layout_constraintStart_toEndOf="@+id/textView19"
-        app:layout_constraintTop_toTopOf="@+id/goal_start_date" />
 
     <Button
         android:id="@+id/editgoalBtn"
@@ -65,16 +45,6 @@
         app:layout_constraintTop_toBottomOf="@+id/editgoalBtn" />
 
     <TextView
-        android:id="@+id/textView19"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="to"
-        app:layout_constraintBottom_toBottomOf="@+id/goal_start_date"
-        app:layout_constraintStart_toEndOf="@+id/goal_start_date"
-        app:layout_constraintTop_toTopOf="@+id/goal_start_date" />
-
-    <TextView
         android:id="@+id/goalItemName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -95,7 +65,7 @@
         android:background="#DFE9FF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/goal_start_date">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout10">
 
         <TextView
             android:id="@+id/GoalSavedAmtTitle"
@@ -143,6 +113,45 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/goalProgress" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/deletegoalBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/goal_amt">
+
+        <TextView
+            android:id="@+id/goal_start_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Start Date"
+            android:textSize="18sp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView19"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="to"
+            app:layout_constraintBottom_toBottomOf="@+id/goal_start_date"
+            app:layout_constraintStart_toEndOf="@+id/goal_start_date"
+            app:layout_constraintTop_toTopOf="@+id/goal_start_date" />
+
+        <TextView
+            android:id="@+id/goal_end_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:hint="End Date"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/textView19"
+            app:layout_constraintStart_toEndOf="@+id/textView19"
+            app:layout_constraintTop_toTopOf="@+id/textView19" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

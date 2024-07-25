@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.firebase.messaging.ktx)
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-core:21.1.1")
+    implementation ("androidx.recyclerview:recyclerview:1.3.0" )
 
     // ML Kit and Vision libraries
     implementation(libs.vision.common)
@@ -71,6 +72,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-vision:20.1.0") // Updated version
     implementation(libs.firebase.ml.vision)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.recyclerview)
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
     // Navigation libraries
@@ -96,6 +98,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.2.0")
     implementation("com.google.android.libraries.places:places:3.4.0")
     implementation("com.android.volley:volley:1.2.1")
+
 
     // Testing libraries
     testImplementation(libs.junit)

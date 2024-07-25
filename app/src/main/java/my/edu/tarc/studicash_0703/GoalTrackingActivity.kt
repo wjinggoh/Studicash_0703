@@ -137,8 +137,8 @@ class GoalTrackingActivity : AppCompatActivity() {
     }
 
     private fun fetchTotalSavedForGoal(goalName: String): Task<Double> {
-        val transactionsCollection = firestore.collection("Transactions") // Adjust if your collection name is different
-        val query = transactionsCollection.whereEqualTo("goalName", goalName) // Adjust field name as necessary
+        val transactionsCollection = firestore.collection("expenseTransactions") // Adjust if your collection name is different
+        val query = transactionsCollection.whereEqualTo("category", goalName) // Adjust field name as necessary
 
         return query.get().continueWith { task ->
             if (task.isSuccessful) {

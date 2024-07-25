@@ -8,4 +8,10 @@ data class ExpenseCategory(
     override fun toString(): String {
         return name
     }
+        fun toMap(): Map<String, Any> {
+            return mapOf(
+                "name" to name,
+                "icon" to icon
+            )
+        }
 }
