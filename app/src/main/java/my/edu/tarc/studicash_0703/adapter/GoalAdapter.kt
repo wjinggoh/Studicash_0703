@@ -12,6 +12,16 @@ class GoalAdapter(
     private val onDeleteClick: (GoalItem) -> Unit
 ) : RecyclerView.Adapter<GoalAdapter.GoalViewHolder>() {
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GoalViewHolder {
+        val binding = GoalItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return GoalViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: GoalViewHolder, position: Int) {
+        val goal = goals[position]
+        holder.bind(goal)
+    }
+
     inner class GoalViewHolder(private val binding: GoalItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(goal: GoalItem) {
             binding.goalItemName.text = goal.name
@@ -20,23 +30,17 @@ class GoalAdapter(
             binding.goalProgressBar.progress = goal.progress
             binding.goalProgress.text = "${goal.progress}%"
 
-            binding.editgoalBtn.setOnClickListener {
-                onEditClick(goal)
-            }
+            // Bind startDate and endDate
+            binding.goalStartDate.text = goal.startDate
+            binding.goalEndDate.text = goal.endDate
 
             binding.deletegoalBtn.setOnClickListener {
                 onDeleteClick(goal)
             }
+            binding.editgoalBtn.setOnClickListener {
+                onEditClick(goal)
+            }
         }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GoalViewHolder {
-        val binding = GoalItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return GoalViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: GoalViewHolder, position: Int) {
-        holder.bind(goals[position])
     }
 
     override fun getItemCount(): Int = goals.size

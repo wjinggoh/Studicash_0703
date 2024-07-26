@@ -6,16 +6,16 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-
 data class GoalItem(
     val id: String = "",
     val name: String = "",
     val amount: Double = 0.0,
     var saved: Double = 0.0,
     var progress: Int = 0,
-    val startDate: String = "",
-    val endDate: String = "",
+    val startDate: String = "", // Add this line
+    val endDate: String = "" // Add this line
 )
+
 
 
 

@@ -5,7 +5,6 @@
     <string name="input_password">Password\n</string>
     <string name="no_account">No Account?   <u>Register</u>\n</string>
     <string name="login_Button">Login\n</string>
-
     <!--register-->
     <string name="studentId_Image"><u>Upload Your Student Id Photo</u>\n</string>
     <string name="email">Email</string>
@@ -16,20 +15,16 @@
     <string name="balik_Login">Back to Login</string>
     <string name="register_button">Register\n</string>
     <string name="uploadimg">Upload Image</string>
-
     <!--forgotPassword-->
     <string name="forgotPassword"><u>I have forgot my Password</u></string>
     <string name="forgotpwdtitle">Forgot Password</string>
     <string name="typeemailhint">Please type your email</string>
     <string name="submit">Submit</string>
-
-
     <!--bottomnavmenu-->
     <string name="home">Home</string>
     <string name="settings">Settings</string>
     <string name="profile">Profile</string>
     <string name="add">Add</string>
-
     <!--mainmenu-->
     <string name="mainMenuTitle">Main Menu</string>
     <string name="todayspending">Today Spending</string>
@@ -39,35 +34,34 @@
     <string name="month">Month</string>
     <string name="expense">Expenses</string>
     <string name="income">Income</string>
-
     <!--expensemanagement-->
     <string name="add_title">Expenses Management</string>
     <string name="add_create">Create \n Transaction</string>
     <string name="transactionhistory">Transaction History</string>
     <string name="view_all_transaction_history">View All Transaction</string>
-
-
     <!--choosetransactiontype-->
     <string name="choose">Choose Transaction</string>
     <string name="add_transaction">Add Transaction</string>
     <string name="add_receipt">Add Receipt</string>
-
-
     <!--reportpage-->
     <string-array name="timeframe_array">
         <item>Daily</item>
         <item>Monthly</item>
         <item>Yearly</item>
     </string-array>
-
     <!--budgettracking-->
     <string name="addBudget">Add Budget</string>
     <string name="totalBudgetUsageTitle">Total Budget Usage</string>
     <string name="duration">Duration</string>
     <string name="saveBudget">Save Budget</string>
-
+    <!--goaltracking-->
+    <string-array name="saving_frequency_options">
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+        <item>Yearly</item>
+    </string-array>
     <!--add-allcanuse-->
-
     <string name="date">Select Date </string>
     <string name="category">Choose Category</string>
     <string name="amount">Amount</string>
@@ -75,14 +69,12 @@
     <string name="datehint"><u>dd/mm/yyyy</u></string>
     <string name="paymentmethod">Payment Method</string>
     <string name="categories">Categories</string>
-
     <!--recycleviewexpensesincome-->
     <string name="expenseamttitle">Transaction Amount:  </string>
     <string name="datetitle">Date: </string>
     <string name="categorytitle">Category: </string>
     <string name="paymentmethodtitle">Payment Method: </string>
     <string name="incomeamttitle">Income Amount: </string>
-
     <!--addcategory-->
     <string name="addexpensescategorytitle">Add New Expenses Category</string>
     <string name="addincomecategorytitle">Add New Income Category</string>
@@ -92,7 +84,6 @@
     <string name="editincomecategorytitle">Edit Income Category</string>
     <string name="editcategorytitle">Edit Category</string>
     <string name="deletecategory">Delete Category</string>
-
     <!--addtransaction-->
     <string name="transactionHeader">Add Transaction</string>
     <string name="add_expense">Expense</string>
@@ -105,14 +96,10 @@
     <string name="income_title">Income Title</string>
     <string name="expense_amount">Expense Amount</string>
     <string name="income_amount">Income Amount</string>
-
-
     <!--addreceipt-->
     <string name="receipt_title">Add Income</string>
     <string name="item_name">Item Name</string>
     <string name="item_amount">Item Amount</string>
-
-
     <!--profile-->
     <string name="profile_title">Profile</string>
     <string name="profile_username">Username</string>
@@ -123,8 +110,6 @@
     <string name="profile_picture">Profile Picture</string>
     <string name="profile_totalExpense">Total Expense</string>
     <string name="profile_totalIncome">Total Income</string>"
-
-
     <!--settings-->
     <string name="settings_title">Settings</string>
     <string name="add_payment_method">Add Payment Method</string>
@@ -132,28 +117,18 @@
     <string name="currencyName">Currency Name</string>
     <string name="logout">Logout</string>
     <string name="CurrencyRM">RM</string>
-
-
     <!--activity notifications-->
     <string name="notifications_title">Notifications</string>
-
     <!--activity feedback-->
     <string name="feedback_title">Send Feedback</string>
-
     <!--activity help-->
     <string name="help_title">Help</string>
-
-
     <!--activity contact us-->
     <string name="contact_us_title">Contact Us</string>
-
     <!--createpaymentmethodpage-->
-
     <string name="createpaymentmethodbtn">Create Payment Method</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
     <!--contact us-->
     <string name="contactusdescription">You can get in touch with us through below platforms. Our Team will reach out to you as soon as it would be possible. </string>
     <string name="customerSupportTitle">Customer Support</string>

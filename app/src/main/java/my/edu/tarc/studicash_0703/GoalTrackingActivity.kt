@@ -2,19 +2,19 @@ package my.edu.tarc.studicash_0703
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
-import my.edu.tarc.studicash_0703.Models.BudgetItem
 import my.edu.tarc.studicash_0703.Models.GoalItem
 import my.edu.tarc.studicash_0703.databinding.ActivityGoalTrackingBinding
+import java.util.concurrent.TimeUnit
 
 class GoalTrackingActivity : AppCompatActivity() {
 
@@ -66,18 +66,17 @@ class GoalTrackingActivity : AppCompatActivity() {
         }
 
         fetchAndDisplayGoals()
+
+        // Schedule the worker to run daily
+        val workRequest = PeriodicWorkRequestBuilder<GoalTransactionWorker>(1, TimeUnit.DAYS)
+            .build()
+        WorkManager.getInstance(this).enqueue(workRequest)
     }
 
     private fun fetchAndDisplayGoals() {
         val goalCollection = firestore.collection("Goal")
         goalCollection.get().addOnSuccessListener { result ->
-            Log.d("GoalTrackingActivity", "Fetched ${result.size()} goals")
-
             val goalTasks = mutableListOf<Task<Pair<GoalItem, Double>>>()
-
-            if (result.isEmpty) {
-                Log.d("GoalTrackingActivity", "No goals found.")
-            }
 
             for (document in result) {
                 val id = document.id
@@ -86,7 +85,6 @@ class GoalTrackingActivity : AppCompatActivity() {
                 val startDate = document.getString("startDate") ?: ""
                 val endDate = document.getString("endDate") ?: ""
 
-                // Creating GoalItem object
                 val goalItem = GoalItem(
                     id = id,
                     name = name,
@@ -98,11 +96,15 @@ class GoalTrackingActivity : AppCompatActivity() {
                 )
 
                 val task = fetchTotalSavedForGoal(name).continueWith { saved ->
-                    val saved = saved.result
-                    val progress = if (goalItem.amount > 0) ((saved / goalItem.amount) * 100).toInt() else 0
-                    goalItem.saved = saved
+                    val savedAmount = saved.result
+                    val progress = if (goalItem.amount > 0) {
+                        ((savedAmount / goalItem.amount) * 100).toInt()
+                    } else {
+                        0
+                    }
+                    goalItem.saved = savedAmount
                     goalItem.progress = progress
-                    goalItem to saved
+                    goalItem to savedAmount
                 }
                 goalTasks.add(task)
             }
@@ -115,7 +117,6 @@ class GoalTrackingActivity : AppCompatActivity() {
                     updatedGoals.add(goalItem)
                 }
 
-                Log.d("GoalTrackingActivity", "Goals to display: ${updatedGoals.size}")
                 if (updatedGoals.isEmpty()) {
                     binding.goalTrackingRecycleView.visibility = View.GONE
                     binding.noGoalsMessage.visibility = View.VISIBLE
@@ -125,79 +126,55 @@ class GoalTrackingActivity : AppCompatActivity() {
                     setupRecyclerView(updatedGoals)
                 }
             }.addOnFailureListener { exception ->
-                binding.goalTrackingRecycleView.visibility = View.GONE
-                binding.noGoalsMessage.visibility = View.VISIBLE
-                binding.noGoalsMessage.text = "Error fetching goals: ${exception.message}"
+                handleError("Error fetching goals: ${exception.message}")
             }
         }.addOnFailureListener { exception ->
-            binding.goalTrackingRecycleView.visibility = View.GONE
-            binding.noGoalsMessage.visibility = View.VISIBLE
-            binding.noGoalsMessage.text = "Error fetching goals: ${exception.message}"
+            handleError("Error fetching goals: ${exception.message}")
         }
     }
 
     private fun fetchTotalSavedForGoal(goalName: String): Task<Double> {
-        val transactionsCollection = firestore.collection("expenseTransactions") // Adjust if your collection name is different
-        val query = transactionsCollection.whereEqualTo("category", goalName) // Adjust field name as necessary
+        val transactionsCollection = firestore.collection("expenseTransactions") // Adjust if needed
+        val query = transactionsCollection.whereEqualTo("category", goalName)
 
         return query.get().continueWith { task ->
             if (task.isSuccessful) {
                 val documents = task.result
                 var totalSaved = 0.0
                 for (document in documents) {
-                    val amount = document.getDouble("amount") ?: 0.0 // Adjust field name as necessary
+                    val amount = document.getDouble("amount") ?: 0.0
                     totalSaved += amount
                 }
                 totalSaved
             } else {
-                throw task.exception ?: Exception("Error fetching total saved amount")
+                0.0
             }
         }
     }
 
-
     private fun setupRecyclerView(goals: List<GoalItem>) {
-        val adapter = GoalAdapter(goals,
+        binding.goalTrackingRecycleView.layoutManager = LinearLayoutManager(this)
+        binding.goalTrackingRecycleView.adapter = GoalAdapter(
+            goals,
             onEditClick = { goal ->
-                // Handle edit goal
+                // Navigate to EditGoalActivity
                 val intent = Intent(this, EditGoalActivity::class.java)
                 intent.putExtra("goalId", goal.id)
                 startActivity(intent)
             },
             onDeleteClick = { goal ->
-                // Handle delete goal
-                deleteGoal(goal)
+                // Delete the goal
+                firestore.collection("Goal").document(goal.id).delete().addOnSuccessListener {
+                    // Refresh the goal list after deletion
+                    fetchAndDisplayGoals()
+                }.addOnFailureListener { exception ->
+                    handleError("Error deleting goal: ${exception.message}")
+                }
             }
         )
-        binding.goalTrackingRecycleView.adapter = adapter
-        binding.goalTrackingRecycleView.layoutManager = LinearLayoutManager(this)
     }
-
-    private fun deleteGoal(goalItem: GoalItem) {
-        AlertDialog.Builder(this)
-            .setTitle("Delete Goal")
-            .setMessage("Are you sure you want to delete this goal?")
-            .setPositiveButton("Yes") { _, _ ->
-                firestore.collection("Goal").document(goalItem.id).delete()
-                    .addOnSuccessListener {
-                        fetchAndDisplayGoals()
-                    }
-                    .addOnFailureListener { e ->
-                        handleError("Error deleting goal: ${e.message}")
-                    }
-            }
-            .setNegativeButton("No", null)
-            .show()
-    }
-
-
 
     private fun handleError(message: String) {
-        binding.noGoalsMessage.apply {
-            visibility = View.VISIBLE
-            text = message
-        }
-        binding.goalTrackingRecycleView.visibility = View.GONE
+        // Handle error (e.g., show a toast or log the error)
     }
-
 }

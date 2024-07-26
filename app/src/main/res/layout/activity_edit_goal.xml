@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:padding="16dp"
+        tools:context=".EditGoalActivity">
+
+        <TextView
+            android:id="@+id/goalNameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView13"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="8dp"
+            android:text="Goal Name"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/goalNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/goalNameLabel"
+            android:layout_alignStart="@+id/goalNameLabel"
+            android:layout_marginStart="-16dp"
+            android:layout_marginBottom="16dp"
+            android:hint="Enter goal name" />
+
+        <TextView
+            android:id="@+id/goalAmountLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/goalNameEditText"
+            android:layout_marginBottom="8dp"
+            android:text="Goal Amount"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/goalAmountEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/goalAmountLabel"
+            android:layout_marginBottom="16dp"
+            android:hint="Enter goal amount"
+            android:inputType="numberDecimal" />
+
+        <TextView
+            android:id="@+id/goalStartDateLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/goalAmountEditText"
+            android:layout_marginBottom="8dp"
+            android:text="Start Date"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/goalStartDateEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/goalStartDateLabel"
+            android:layout_marginBottom="16dp"
+            android:hint="Enter start date"
+            android:inputType="date" />
+
+        <TextView
+            android:id="@+id/goalEndDateLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/goalStartDateEditText"
+            android:layout_marginBottom="8dp"
+            android:text="End Date"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/goalEndDateEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/goalEndDateLabel"
+            android:layout_marginBottom="24dp"
+            android:hint="Enter end date"
+            android:inputType="date" />
+
+        <Button
+            android:id="@+id/saveGoalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/goalEndDateEditText"
+            android:layout_centerHorizontal="true"
+            android:backgroundTint="#01579B"
+            android:text="Save Goal"
+            app:cornerRadius="10dp" />
+
+        <ImageView
+            android:id="@+id/imageView13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:src="@drawable/baseline_arrow_back_48" />
+
+    </RelativeLayout>
+</layout>
