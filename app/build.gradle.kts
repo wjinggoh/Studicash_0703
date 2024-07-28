@@ -48,7 +48,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-
+    implementation ("com.google.firebase:firebase-analytics:21.0.0")
     // Firebase libraries
     implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
     implementation(libs.firebase.auth.ktx)

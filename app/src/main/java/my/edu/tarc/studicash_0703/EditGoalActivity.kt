@@ -28,6 +28,9 @@ class EditGoalActivity : AppCompatActivity() {
                 saveGoalDetails(it)
             }
         }
+        binding.editGoalBackBtn.setOnClickListener{
+            finish()
+        }
     }
 
     private fun fetchGoalDetails(goalId: String) {

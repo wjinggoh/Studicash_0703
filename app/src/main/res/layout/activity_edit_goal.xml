@@ -15,7 +15,7 @@
             android:id="@+id/goalNameLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView13"
+            android:layout_below="@+id/editGoalBackBtn"
             android:layout_alignParentStart="true"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
@@ -98,7 +98,7 @@
             app:cornerRadius="10dp" />
 
         <ImageView
-            android:id="@+id/imageView13"
+            android:id="@+id/editGoalBackBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"

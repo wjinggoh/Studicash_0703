@@ -2,6 +2,7 @@ package my.edu.tarc.studicash_0703
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,20 +35,35 @@ class EditExpensesCategoryActivity : AppCompatActivity() {
     }
 
     private fun fetchExpenseCategoriesFromFirestore() {
-        db.collection("ExpenseCategories")
+        // Fetch goal categories first
+        db.collection("Goal")
             .get()
-            .addOnSuccessListener { result ->
-                expenseCategories.clear()
-                for (document in result) {
-                    val icon = document.getLong("icon")?.toInt() ?: R.drawable.baseline_image_48
-                    val name = document.getString("name") ?: ""
-                    val id = document.id
-                    expenseCategories.add(ExpenseCategory(icon, name, id))
-                }
-                expenseCategoryAdapter.notifyDataSetChanged()
+            .addOnSuccessListener { goalResult ->
+                val goalNames = goalResult.documents.mapNotNull { it.getString("name") }
+
+                // Fetch expense categories
+                db.collection("ExpenseCategories")
+                    .get()
+                    .addOnSuccessListener { result ->
+                        expenseCategories.clear()
+                        for (document in result) {
+                            val icon = document.getLong("icon")?.toInt() ?: R.drawable.baseline_image_48
+                            val name = document.getString("name") ?: ""
+                            val id = document.id
+
+                            // Only add the category if its name is not in the goal names
+                            if (!goalNames.contains(name)) {
+                                expenseCategories.add(ExpenseCategory(icon, name, id))
+                            }
+                        }
+                        expenseCategoryAdapter.notifyDataSetChanged()
+                    }
+                    .addOnFailureListener { exception ->
+                        Toast.makeText(this, "Error getting expense categories: $exception", Toast.LENGTH_SHORT).show()
+                    }
             }
             .addOnFailureListener { exception ->
-                Toast.makeText(this, "Error getting documents: $exception", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error getting goal categories: $exception", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -57,7 +73,26 @@ class EditExpensesCategoryActivity : AppCompatActivity() {
     }
 
     fun deleteCategory(position: Int) {
-        val categoryId = expenseCategories[position].id
+        val category = expenseCategories[position]
+        showDeleteConfirmationDialog(category.id, category.name, position)
+    }
+
+    private fun showDeleteConfirmationDialog(categoryId: String, categoryName: String, position: Int) {
+        AlertDialog.Builder(this)
+            .setTitle("Delete Category")
+            .setMessage("Are you sure you want to delete the category \"$categoryName\"?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                deleteCategoryFromFirestore(categoryId, position)
+                dialog.dismiss()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    private fun deleteCategoryFromFirestore(categoryId: String, position: Int) {
         db.collection("ExpenseCategories").document(categoryId)
             .delete()
             .addOnSuccessListener {

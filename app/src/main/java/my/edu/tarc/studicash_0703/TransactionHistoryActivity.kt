@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import my.edu.tarc.studicash_0703.Fragment.EditTransactionFragment
 import my.edu.tarc.studicash_0703.Models.Transaction
 import my.edu.tarc.studicash_0703.adapter.TransactionAdapter
 import my.edu.tarc.studicash_0703.databinding.ActivityTransactionHistoryBinding
@@ -47,10 +47,8 @@ class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTra
         }
 
         transactionAdapter = TransactionAdapter(this, mutableListOf(), this)
-        binding.historyRecycleView.apply {
-            layoutManager = LinearLayoutManager(this@TransactionHistoryActivity)
-            adapter = transactionAdapter
-        }
+        binding.historyRecycleView.layoutManager = LinearLayoutManager(this)
+        binding.historyRecycleView.adapter = transactionAdapter
 
         binding.allButtonMain.setOnClickListener {
             fetchAllTransactionsFromFirestore()
@@ -94,37 +92,33 @@ class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTra
             .addOnSuccessListener { result ->
                 expenseTransactions.clear()
                 for (document in result) {
-                    val transaction = document.toObject(Transaction::class.java).copy(
-                        id = document.id // Ensure the ID is set from Firestore
-                    )
+                    val transaction = document.toObject(Transaction::class.java).copy(id = document.id)
                     expenseTransactions.add(transaction)
                 }
                 updateRecyclerView()
-                Log.d(ExpensesHistoryActivity.TAG, "Expense transactions fetched: ${expenseTransactions.size}")
+                Log.d(TAG, "Expense transactions fetched: ${expenseTransactions.size}")
             }
             .addOnFailureListener { exception ->
-                Log.e(ExpensesHistoryActivity.TAG, "Error fetching expense transactions", exception)
+                Log.e(TAG, "Error fetching expense transactions", exception)
             }
     }
 
     private fun fetchIncomeTransactions() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val incomeCollection = FirebaseFirestore.getInstance().collection("incomeTransactions")
+        val incomeCollection = db.collection("incomeTransactions")
             .whereEqualTo("userId", userId)
 
         incomeCollection.get()
             .addOnSuccessListener { result ->
                 incomeTransactions.clear()
                 for (document in result) {
-                    val transaction = document.toObject(Transaction::class.java).copy(
-                        id = document.id // Ensure the ID is set from Firestore
-                    )
+                    val transaction = document.toObject(Transaction::class.java).copy(id = document.id)
                     incomeTransactions.add(transaction)
                 }
                 updateRecyclerView()
             }
             .addOnFailureListener { exception ->
-                // Handle failure
+                Log.e(TAG, "Error fetching income transactions", exception)
             }
     }
 
@@ -132,7 +126,6 @@ class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTra
         val allTransactions = mutableListOf<Transaction>()
         allTransactions.addAll(expenseTransactions)
         allTransactions.addAll(incomeTransactions)
-
         allTransactions.sortByDescending { it.date }
 
         transactionAdapter.updateData(allTransactions)
@@ -140,12 +133,12 @@ class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTra
 
     private fun fetchTransactionsWithinDateRange(startDate: String?, endDate: String?) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val expenseCollection = FirebaseFirestore.getInstance().collection("expenseTransactions")
+        val expenseCollection = db.collection("expenseTransactions")
             .whereEqualTo("userId", userId)
             .whereGreaterThanOrEqualTo("date", startDate ?: "")
             .whereLessThanOrEqualTo("date", endDate ?: "")
 
-        val incomeCollection = FirebaseFirestore.getInstance().collection("incomeTransactions")
+        val incomeCollection = db.collection("incomeTransactions")
             .whereEqualTo("userId", userId)
             .whereGreaterThanOrEqualTo("date", startDate ?: "")
             .whereLessThanOrEqualTo("date", endDate ?: "")
@@ -155,30 +148,25 @@ class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTra
         expenseCollection.get()
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    val transaction = document.toObject(Transaction::class.java).copy(
-                        id = document.id
-                    )
+                    val transaction = document.toObject(Transaction::class.java).copy(id = document.id)
                     allTransactions.add(transaction)
                 }
 
                 incomeCollection.get()
                     .addOnSuccessListener { result ->
                         for (document in result) {
-                            val transaction = document.toObject(Transaction::class.java).copy(
-                                id = document.id
-                            )
+                            val transaction = document.toObject(Transaction::class.java).copy(id = document.id)
                             allTransactions.add(transaction)
                         }
-
                         allTransactions.sortByDescending { it.date }
                         transactionAdapter.updateData(allTransactions)
                     }
                     .addOnFailureListener { exception ->
-                        // Handle failure
+                        Log.e(TAG, "Error fetching income transactions", exception)
                     }
             }
             .addOnFailureListener { exception ->
-                // Handle failure
+                Log.e(TAG, "Error fetching expense transactions", exception)
             }
     }
 
@@ -202,24 +190,33 @@ class TransactionHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTra
     }
 
     override fun onEdit(transactionId: String) {
-        // Handle edit transaction
+        showEditTransactionDialog(transactionId)
+    }
+
+    private fun showEditTransactionDialog(transactionId: String) {
+        val fragmentManager = supportFragmentManager
+        val editTransactionFragment = EditTransactionFragment.newInstance(transactionId)
+        editTransactionFragment.show(fragmentManager, "edit_transaction")
     }
 
     private fun deleteTransaction(transactionId: String, isExpense: Boolean) {
         val collection = if (isExpense) {
-            FirebaseFirestore.getInstance().collection("expenseTransactions")
+            db.collection("expenseTransactions")
         } else {
-            FirebaseFirestore.getInstance().collection("incomeTransactions")
+            db.collection("incomeTransactions")
         }
 
         collection.document(transactionId).delete()
             .addOnSuccessListener {
-                Log.d(ExpensesHistoryActivity.TAG, "Transaction deleted successfully.")
-                fetchExpenseTransactions() // Refresh expenses
-                fetchIncomeTransactions() // Refresh incomes if needed
+                Log.d(TAG, "Transaction deleted successfully.")
+                fetchAllTransactionsFromFirestore() // Refresh all transactions
             }
             .addOnFailureListener { exception ->
-                Log.e(ExpensesHistoryActivity.TAG, "Error deleting transaction: ${exception.message}", exception)
+                Log.e(TAG, "Error deleting transaction: ${exception.message}", exception)
             }
+    }
+
+    companion object {
+        private const val TAG = "TransactionHistoryActivity"
     }
 }

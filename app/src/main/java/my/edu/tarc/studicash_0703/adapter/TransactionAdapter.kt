@@ -73,9 +73,9 @@ class TransactionAdapter(
             paymentMethodTextView.text = transaction.paymentMethod ?: ""
 
             val indicatorDrawable = if (transaction.expense) {
-                ContextCompat.getDrawable(context, transaction.expenseColorRes)
+                ContextCompat.getDrawable(context, R.drawable.expense) // Replace with actual expense drawable resource ID
             } else {
-                ContextCompat.getDrawable(context, transaction.incomeColorRes)
+                ContextCompat.getDrawable(context, R.drawable.income) // Replace with actual income drawable resource ID
             }
             indicatorView.setImageDrawable(indicatorDrawable) // Use setImageDrawable for ImageView
         }
@@ -91,5 +91,4 @@ class TransactionAdapter(
             }
         }
     }
-
 }

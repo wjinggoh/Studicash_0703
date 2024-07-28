@@ -2,6 +2,7 @@ package my.edu.tarc.studicash_0703
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -76,23 +77,64 @@ class CreateBudgetActivity : AppCompatActivity() {
     }
 
     private fun fetchCategories() {
-        firestore.collection("ExpenseCategories")
+        // First, fetch the goal collection documents to get their names
+        firestore.collection("Goal")
             .get()
-            .addOnSuccessListener { result ->
-                val fetchedCategories = result.map { document ->
-                    val iconName = document.getString("icon") ?: "default_icon"
-                    val iconResId = resources.getIdentifier(iconName, "drawable", packageName)
-                    ExpenseCategory(iconResId, document.getString("name") ?: "")
-                }
-                val predefinedCategories = getExpenseCategories()
-                expenseCategories = fetchedCategories + predefinedCategories
+            .addOnSuccessListener { goalResult ->
+                val goalNames = goalResult.documents.mapNotNull { it.getString("name") }
 
-                setupCategorySpinner(expenseCategories)
+                Log.d("CreateBudgetActivity", "Goal Names: $goalNames") // Debugging line
+
+                // Then, fetch the ExpenseCategories and filter out those matching goal names
+                firestore.collection("ExpenseCategories")
+                    .get()
+                    .addOnSuccessListener { result ->
+                        val fetchedCategories = result.mapNotNull { document ->
+                            val iconField = document.get("icon")
+                            val iconResId = when (iconField) {
+                                is String -> {
+                                    // Handle string type
+                                    resources.getIdentifier(iconField, "drawable", packageName)
+                                }
+                                is Long -> {
+                                    // Handle long type (assuming these are valid resource IDs)
+                                    iconField.toInt()
+                                }
+                                else -> {
+                                    // Log the unexpected type for debugging purposes
+                                    Log.e("CreateBudgetActivity", "Unexpected type for 'icon': ${iconField?.javaClass?.name}")
+                                    R.drawable.money // Use a default icon resource
+                                }
+                            }
+                            val name = document.getString("name") ?: ""
+                            if (goalNames.contains(name)) {
+                                // Log the excluded category for debugging
+                                Log.d("CreateBudgetActivity", "Excluding category: $name")
+                                // Return null if the category name matches any goal name
+                                null
+                            } else {
+                                ExpenseCategory(iconResId, name)
+                            }
+                        }.filterNotNull()
+
+                        val predefinedCategories = getExpenseCategories()
+                        expenseCategories = predefinedCategories + fetchedCategories
+
+                        Log.d("CreateBudgetActivity", "Expense Categories: $expenseCategories") // Debugging line
+
+                        setupCategorySpinner(expenseCategories)
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Error fetching categories: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Error fetching categories: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error fetching goal names: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
+
+
 
     private fun getExpenseCategories(): List<ExpenseCategory> {
         // Return your predefined categories here
@@ -106,7 +148,7 @@ class CreateBudgetActivity : AppCompatActivity() {
     }
 
     private fun saveBudget() {
-        val name=binding.budgetNameCreateBudget.text.toString()
+        val name = binding.budgetNameCreateBudget.text.toString()
         val selectedCategory = binding.spinnerCategory.selectedItem as ExpenseCategory
         val amount = binding.editTextAmount.text.toString().toDoubleOrNull()
         val startDate = binding.editTextStartDate.text.toString()

@@ -2,10 +2,6 @@ package my.edu.tarc.studicash_0703
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.text.TextUtils
-import android.util.Log
-import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
@@ -17,7 +13,6 @@ import my.edu.tarc.studicash_0703.databinding.ActivityCreateGoalBinding
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import kotlin.math.ceil
 
 class CreateGoalActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCreateGoalBinding
@@ -46,6 +41,8 @@ class CreateGoalActivity : AppCompatActivity() {
 
         binding.buttonSave.setOnClickListener {
             saveGoal()
+            finish()
+
         }
 
         binding.buttonCancel.setOnClickListener {
@@ -111,15 +108,13 @@ class CreateGoalActivity : AppCompatActivity() {
             }
     }
 
-
-
     private fun saveGoal() {
         val name = binding.GoalName.text.toString()
         val amount = binding.editGoalTextAmount.text.toString().toDoubleOrNull()
         val startDate = binding.editTextStartDate.text.toString()
         val endDate = binding.editTextEndDate.text.toString()
         val monthlyIncome = binding.textViewMonthlyIncome.text.toString().toDoubleOrNull()
-        val goalIconResId = R.drawable.goal
+        val goalIconResId = R.drawable.goal // Use the resource ID of your goal icon
         val savingFrequency = binding.spinnerSavingFrequency.selectedItem.toString()
 
         if (amount != null && startDate.isNotEmpty() && endDate.isNotEmpty() && monthlyIncome != null) {
@@ -130,13 +125,18 @@ class CreateGoalActivity : AppCompatActivity() {
                 return
             }
 
+            // Calculate the average savings per period and display it
+            val averageSavingsPerPeriod = calculateAverageSavingsPerFrequency(amount, startDate, endDate, savingFrequency)
+            binding.averageAmtperPeriodView.text = String.format("%.2f", averageSavingsPerPeriod)
+
             val goalData = mapOf(
                 "name" to name,
                 "amount" to amount,
                 "startDate" to startDate,
                 "endDate" to endDate,
                 "monthlyIncome" to monthlyIncome,
-                "savingFrequency" to savingFrequency
+                "savingFrequency" to savingFrequency,
+                "savedAmount" to 0.0 // Initialize the saved amount to 0
             )
 
             firestore.collection("Goal")
@@ -158,10 +158,24 @@ class CreateGoalActivity : AppCompatActivity() {
         var totalIncome = 0.0
         for (document in documents) {
             val amount = document.getDouble("amount") ?: 0.0
-            Log.d("CalculateTotalIncome", "Amount: $amount")
             totalIncome += amount
         }
         return totalIncome
+    }
+
+    private fun calculateAverageSavingsPerFrequency(goalAmount: Double, startDate: String, endDate: String, frequency: String): Double {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        val start = sdf.parse(startDate)
+        val end = sdf.parse(endDate)
+        val days = ((end.time - start.time) / (1000 * 60 * 60 * 24)).toInt()
+
+        return when (frequency) {
+            "Weekly" -> goalAmount / (days / 7.0)
+            "Bi-weekly" -> goalAmount / (days / 14.0)
+            "Monthly" -> goalAmount / (days / 30.0)
+            "Quarterly" -> goalAmount / (days / 90.0)
+            else -> 0.0
+        }
     }
 
     private fun calculateSavings(goalAmount: Double, startDate: String, endDate: String, frequency: String): Double {
@@ -191,62 +205,51 @@ class CreateGoalActivity : AppCompatActivity() {
         }
     }
 
-    private fun addExpenseCategory(name: String, iconResId: Int) {
+    private fun addExpenseCategory(name: String, goalIconResId: Int) {
         val expenseCategory = ExpenseCategory(
             name = name,
-            icon = iconResId // Storing resource ID as integer
+            icon = goalIconResId
         )
 
         firestore.collection("ExpenseCategories")
-            .add(expenseCategory.toMap())
+            .add(expenseCategory)
             .addOnSuccessListener {
-                Toast.makeText(this, "Expense Category saved successfully", Toast.LENGTH_SHORT).show()
-                finish()
+                Toast.makeText(this, "Expense category added successfully", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Error saving Expense Category: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error adding expense category: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
-    private fun createAutomatedTransactions(name: String, goalAmount: Double, startDate: String, endDate: String, frequency: String, savingsNeeded: Double) {
+    private fun createAutomatedTransactions(goalName: String, goalAmount: Double, startDate: String, endDate: String, frequency: String, savingsNeeded: Double) {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
         val start = sdf.parse(startDate)
         val end = sdf.parse(endDate)
-        val transactions = mutableListOf<Map<String, Any>>()
+        val calendar = Calendar.getInstance()
+        calendar.time = start
 
-        var current = start
-        while (current.before(end) || current.equals(end)) {
-            val transaction = mapOf(
-                "category" to name,
+        while (calendar.time.before(end)) {
+            val transactionData = mapOf(
+                "category" to goalName,
                 "amount" to savingsNeeded,
-                "date" to sdf.format(current),
-                "type" to "Savings"
+                "timestamp" to calendar.time
             )
-            transactions.add(transaction)
-            current = getNextDate(current, frequency)
-        }
 
-        for (transaction in transactions) {
             firestore.collection("expenseTransactions")
-                .add(transaction)
+                .add(transactionData)
                 .addOnSuccessListener {
-                    // Successfully added
+                    // Automated transaction added successfully
                 }
                 .addOnFailureListener { e ->
-                    Toast.makeText(this, "Error saving transaction: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Error adding automated transaction: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
-        }
-    }
 
-    private fun getNextDate(currentDate: java.util.Date, frequency: String): java.util.Date {
-        val calendar = Calendar.getInstance()
-        calendar.time = currentDate
-        when (frequency) {
-            "Weekly" -> calendar.add(Calendar.WEEK_OF_YEAR, 1)
-            "Bi-weekly" -> calendar.add(Calendar.WEEK_OF_YEAR, 2)
-            "Monthly" -> calendar.add(Calendar.MONTH, 1)
-            "Quarterly" -> calendar.add(Calendar.MONTH, 3)
+            when (frequency) {
+                "Weekly" -> calendar.add(Calendar.WEEK_OF_YEAR, 1)
+                "Bi-weekly" -> calendar.add(Calendar.WEEK_OF_YEAR, 2)
+                "Monthly" -> calendar.add(Calendar.MONTH, 1)
+                "Quarterly" -> calendar.add(Calendar.MONTH, 3)
+            }
         }
-        return calendar.time
     }
 }

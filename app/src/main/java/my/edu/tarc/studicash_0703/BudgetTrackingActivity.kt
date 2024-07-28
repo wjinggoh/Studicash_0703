@@ -183,12 +183,7 @@ class BudgetTrackingActivity : AppCompatActivity() {
 
     private fun editBudget(budgetItem: BudgetItem) {
         val intent = Intent(this, EditBudgetActivity::class.java).apply {
-            putExtra("id", budgetItem.id)
-            putExtra("category", budgetItem.category)
-            putExtra("amount", budgetItem.amount)
-            putExtra("startDate", budgetItem.startDate)
-            putExtra("endDate", budgetItem.endDate)
-            putExtra("icon", budgetItem.icon)
+            putExtra("BUDGET_ID", budgetItem.id)
         }
         startActivity(intent)
     }

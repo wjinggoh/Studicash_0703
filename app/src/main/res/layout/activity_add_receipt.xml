@@ -1,110 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:backgroundTint="#FFFFFF"
-    tools:context=".AddReceiptActivity">
+    android:background="@android:color/white"
+    android:fillViewport="true"
+    android:padding="20dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imageView"
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barTotal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:background="@drawable/background_with_border_grey"
-            android:elevation="10dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
-        <Button
-            android:id="@+id/selectImage"
-            android:layout_width="165dp"
-            android:layout_height="55dp"
-            android:layout_margin="16dp"
-            android:backgroundTint="#01579B"
-            android:fontFamily="@font/concert_one"
-            android:text="Select Image"
-            android:textSize="17sp"
-            app:cornerRadius="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageView" />
-
-        <Button
-            android:id="@+id/recognizeText"
-            android:layout_width="165dp"
-            android:layout_height="55dp"
-            android:layout_margin="16dp"
-            android:backgroundTint="#01579B"
-            android:fontFamily="@font/concert_one"
-            android:text="Recognize Text"
-            android:textSize="17sp"
-            app:cornerRadius="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/selectImage" />
+            app:barrierDirection="right"
+            app:constraint_referenced_ids="txtTotal,editTotal" />
 
         <TextView
-            android:id="@+id/itemsTextView"
+            android:id="@+id/txtCamera"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:background="@drawable/background_with_border_grey_no_corner"
-            android:elevation="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@color/ff01579b"
             android:gravity="center"
-            android:shadowRadius="10"
-            android:text="Recognized Items"
-            android:textSize="25sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recognizeText" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/background_with_border_grey"
-            android:elevation="3dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/itemsTextView" />
-
-        <Button
-            android:id="@+id/saveButton"
-            android:layout_width="165dp"
-            android:layout_height="55dp"
-            android:layout_margin="16dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="32dp"
-            android:backgroundTint="#FF01579B"
-            android:fontFamily="@font/concert_one"
-            android:text="Save Receipt"
-            android:textSize="17sp"
-            app:cornerRadius="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerView2" />
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/baseline_arrow_back_48"
+            android:padding="10dp"
+            android:text="Camera"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/txtUpload"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/txtUpload"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@color/ff01579b"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Upload"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/txtCamera"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageResult"
+            android:layout_width="0dp"
+            android:layout_height="300dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/quantum_grey"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtCamera" />
+
+        <TextView
+            android:id="@+id/txtTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Total"
+            android:textColor="@color/quantum_grey"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageResult" />
+
+        <EditText
+            android:id="@+id/editTotal"
+            android:layout_width="200dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:padding="10dp"
+            android:textColor="@color/quantum_grey50"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/txtTotal"
+            app:layout_constraintTop_toBottomOf="@id/imageResult"
+            tools:text="Total" />
+
+        <TextView
+            android:id="@+id/txtTAX"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Tax"
+            android:textColor="@color/quantum_grey"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtTotal" />
+
+        <EditText
+            android:id="@+id/editTAX"
+            android:layout_width="200dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:padding="10dp"
+            android:textColor="@color/quantum_grey"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/txtTotal"
+            app:layout_constraintTop_toBottomOf="@id/txtTotal"
+            tools:text="Tax" />
+
+        <TextView
+            android:id="@+id/txtLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Type"
+            android:textColor="#9D9D9D"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtTAX" />
+
+        <EditText
+            android:id="@+id/editLocation"
+            android:layout_width="200dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:padding="10dp"
+            android:textColor="@color/quantum_grey"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/txtTotal"
+            app:layout_constraintTop_toBottomOf="@id/txtTAX"
+            tools:text="Type" />
+
+        <Button
+            android:id="@+id/btnConfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:text="Save Receipt"
+            app:layout_constraintBottom_toBottomOf="@+id/btnCancel"
+            app:layout_constraintStart_toEndOf="@+id/btnCancel"
+            app:layout_constraintTop_toTopOf="@+id/btnCancel" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:text="Cancel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editLocation" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

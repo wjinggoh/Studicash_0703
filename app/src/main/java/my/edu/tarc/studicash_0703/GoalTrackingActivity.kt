@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.PeriodicWorkRequestBuilder
@@ -56,11 +57,11 @@ class GoalTrackingActivity : AppCompatActivity() {
             }
         }
 
-        binding.goalTrackingBackBtn.setOnClickListener{
+        binding.goalTrackingBackBtn.setOnClickListener {
             finish()
         }
 
-        binding.addGoalTrackingBtn.setOnClickListener{
+        binding.addGoalTrackingBtn.setOnClickListener {
             val intent = Intent(this, CreateGoalActivity::class.java)
             startActivity(intent)
         }
@@ -163,15 +164,45 @@ class GoalTrackingActivity : AppCompatActivity() {
                 startActivity(intent)
             },
             onDeleteClick = { goal ->
-                // Delete the goal
-                firestore.collection("Goal").document(goal.id).delete().addOnSuccessListener {
+                showDeleteConfirmationDialog(goal.id, goal.name)
+            }
+        )
+    }
+
+    private fun showDeleteConfirmationDialog(goalId: String, goalName: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Delete Goal")
+            .setMessage("Are you sure you want to delete this goal?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                deleteGoal(goalId, goalName)
+                dialog.dismiss()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    private fun deleteGoal(goalId: String, goalName: String) {
+        // Delete the goal from the Goal collection
+        firestore.collection("Goal").document(goalId).delete().addOnSuccessListener {
+            // Delete the corresponding expense category
+            firestore.collection("ExpenseCategories")
+                .whereEqualTo("name", goalName)
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    for (document in querySnapshot.documents) {
+                        document.reference.delete()
+                    }
                     // Refresh the goal list after deletion
                     fetchAndDisplayGoals()
                 }.addOnFailureListener { exception ->
-                    handleError("Error deleting goal: ${exception.message}")
+                    handleError("Error deleting expense category: ${exception.message}")
                 }
-            }
-        )
+        }.addOnFailureListener { exception ->
+            handleError("Error deleting goal: ${exception.message}")
+        }
     }
 
     private fun handleError(message: String) {

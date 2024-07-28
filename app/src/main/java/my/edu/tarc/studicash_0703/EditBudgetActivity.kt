@@ -19,105 +19,90 @@ class EditBudgetActivity : AppCompatActivity() {
         binding = ActivityEditBudgetBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize selectedBudgetId from intent extras
         selectedBudgetId = intent.getStringExtra("BUDGET_ID")
 
-        // Check if selectedBudgetId is null
-        if (selectedBudgetId == null) {
-            // Handle case where ID is not provided
-            // For example, show an error message or finish the activity
-            finish()
-            return
-        }
-
-        // Initialize data and views
         setupSpinner()
         loadBudgetData()
-
-        binding.saveBudgetBtn.setOnClickListener {
-            saveBudget()
-        }
-
-        binding.imageView11.setOnClickListener {
-            onBackPressed()
-        }
+        setupSaveButton()
     }
 
     private fun setupSpinner() {
-        val budgetCollection = firestore.collection("Budget")
-
-        budgetCollection.get().addOnSuccessListener { result ->
-            val budgetItems = mutableListOf<String>()
-            val budgetIds = mutableListOf<String>()
-
+        firestore.collection("Goal").get().addOnSuccessListener { result ->
+            val items = mutableListOf<String>()
             for (document in result) {
-                val category = document.getString("category") ?: "" // Adjust field name as needed
-                val id = document.id
-                budgetItems.add(category)
-                budgetIds.add(id)
+                val name = document.getString("name") ?: ""
+                items.add(name)
             }
-
-            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, budgetItems)
+            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.editBudgetSpinner.adapter = adapter
 
             binding.editBudgetSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    selectedBudgetId = budgetIds[position]
-                    loadBudgetData() // Load the data for the selected budget
+                override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                    // Handle item selection if needed
                 }
 
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    // Handle case where nothing is selected
-                }
+                override fun onNothingSelected(parent: AdapterView<*>) {}
             }
         }.addOnFailureListener { exception ->
-            // Handle failure
+            // Handle the error
+            exception.printStackTrace()
         }
     }
 
     private fun loadBudgetData() {
-        selectedBudgetId?.let {
-            firestore.collection("budgets").document(it).get()
-                .addOnSuccessListener { document ->
-                    if (document != null) {
-                        binding.budgetAmount.setText(document.getDouble("amount")?.toString())
-                        binding.budgetStartDate.setText(document.getString("start_date"))
-                        binding.budgetEndDate.setText(document.getString("end_date"))
-                    }
+        selectedBudgetId?.let { budgetId ->
+            firestore.collection("Budget").document(budgetId).get().addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val name = document.getString("name") ?: ""
+                    val category = document.getString("category") ?: ""
+                    val amount = document.getDouble("amount") ?: 0.0
+                    val startDate = document.getString("startDate") ?: ""
+                    val endDate = document.getString("endDate") ?: ""
+
+                    binding.budgetNameEditText.setText(name)
+                    binding.budgetAmountEditText.setText(amount.toString())
+                    binding.startDateEditText.setText(startDate)
+                    binding.endDateEditText.setText(endDate)
+
+                    val categoryPosition = (binding.editBudgetSpinner.adapter as ArrayAdapter<String>).getPosition(category)
+                    binding.editBudgetSpinner.setSelection(categoryPosition)
                 }
-                .addOnFailureListener { exception ->
-                    // Handle failure
-                }
+            }.addOnFailureListener { exception ->
+                // Handle the error
+                exception.printStackTrace()
+            }
         }
     }
 
-    private fun saveBudget() {
-        val name = binding.editBudgetSpinner.selectedItem.toString() // Get the selected budget name
-        val amount = binding.budgetAmount.text.toString().toDoubleOrNull()
-        val startDate = binding.budgetStartDate.text.toString()
-        val endDate = binding.budgetEndDate.text.toString()
+    private fun setupSaveButton() {
+        binding.saveBudgetButton.setOnClickListener {
+            val name = binding.budgetNameEditText.text.toString()
+            val category = binding.editBudgetSpinner.selectedItem.toString()
+            val amount = binding.budgetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0
+            val startDate = binding.startDateEditText.text.toString()
+            val endDate = binding.endDateEditText.text.toString()
 
-        if (name.isEmpty() || amount == null || startDate.isEmpty() || endDate.isEmpty()) {
-            // Handle invalid input
-            return
-        }
+            val budgetData = mapOf(
+                "name" to name,
+                "category" to category,
+                "amount" to amount,
+                "startDate" to startDate,
+                "endDate" to endDate
+            )
 
-        val budgetData = mapOf(
-            "name" to name,
-            "amount" to amount,
-            "start_date" to startDate,
-            "end_date" to endDate
-        )
-
-        selectedBudgetId?.let {
-            firestore.collection("budgets").document(it).set(budgetData)
-                .addOnSuccessListener {
-                    finish() // Handle success (e.g., show a toast or navigate back)
-                }
-                .addOnFailureListener { e ->
-                    // Handle failure (e.g., show an error message)
-                }
+            selectedBudgetId?.let { budgetId ->
+                firestore.collection("Budget").document(budgetId)
+                    .set(budgetData)
+                    .addOnSuccessListener {
+                        // Handle successful save
+                        finish()
+                    }
+                    .addOnFailureListener { exception ->
+                        // Handle failed save
+                        exception.printStackTrace()
+                    }
+            }
         }
     }
 }

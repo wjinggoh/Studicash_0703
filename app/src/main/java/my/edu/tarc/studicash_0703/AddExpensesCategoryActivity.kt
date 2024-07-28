@@ -33,6 +33,10 @@ class AddExpensesCategoryActivity : AppCompatActivity() {
             val intent = Intent(this, EditExpensesCategoryActivity::class.java)
             startActivity(intent)
         }
+        binding.chooseIconBtn.setOnClickListener{
+            val intent = Intent(this, ChooseIconFragment::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun saveCategory(categoryName: String) {
