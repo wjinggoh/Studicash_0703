@@ -39,31 +39,31 @@
         <!-- Activities -->
         <activity android:name=".EditGoalActivity" android:exported="false" />
         <activity android:name=".CheckListActivity" android:exported="false" />
-        <activity android:name=".EditBudgetActivity" android:exported="false" />
+        <activity android:name=".Budget.EditBudgetActivity" android:exported="false" />
         <activity android:name=".ChangeCurrencyActivity" android:exported="false" />
         <activity android:name=".SpinnerActivity" android:exported="false" />
         <activity android:name=".GoalTrackingActivity" android:exported="false" />
-        <activity android:name=".CreateBudgetActivity" android:exported="false" />
+        <activity android:name=".Budget.CreateBudgetActivity" android:exported="false" />
         <activity android:name=".CreateGoalActivity" android:exported="false" />
-        <activity android:name=".EditExpensesCategoryActivity" android:exported="false" />
-        <activity android:name=".EditIncomeCategoryActivity" android:exported="false" />
-        <activity android:name=".TransactionHistoryAddDurationActivity" android:exported="false" />
+        <activity android:name=".Transaction.EditExpensesCategoryActivity" android:exported="false" />
+        <activity android:name=".Transaction.EditIncomeCategoryActivity" android:exported="false" />
+        <activity android:name=".Transaction.TransactionHistoryAddDurationActivity" android:exported="false" />
         <activity android:name=".IncomeHistoryActivity" android:exported="false" />
         <activity android:name=".ExpensesHistoryActivity" android:exported="false" />
-        <activity android:name=".TransactionHistoryActivity" android:exported="false" />
-        <activity android:name=".AddBudgetActivity" android:exported="false" />
+        <activity android:name=".Transaction.TransactionHistoryActivity" android:exported="false" />
+        <activity android:name=".Budget.AddBudgetActivity" android:exported="false" />
         <activity android:name=".ReportActivity" android:exported="false" />
         <activity android:name=".sidebar.ContactUsActivity" android:exported="false" />
         <activity android:name=".sidebar.FeedbackActivity" android:exported="false" />
         <activity android:name=".sidebar.HelpActivity" android:exported="false" />
         <activity android:name=".EditProfileActivity" android:exported="false" />
         <activity android:name=".sidebar.NotificationsActivity" android:exported="false" />
-        <activity android:name=".BudgetTrackingActivity" android:exported="false" />
-        <activity android:name=".AddIncomeCategoryActivity" android:exported="false" />
-        <activity android:name=".AddPaymentMethodActivity" android:exported="false" />
-        <activity android:name=".AddExpensesCategoryActivity" android:exported="false" />
+        <activity android:name=".Budget.BudgetTrackingActivity" android:exported="false" />
+        <activity android:name=".Transaction.AddIncomeCategoryActivity" android:exported="false" />
+        <activity android:name=".PaymentMethod.AddPaymentMethodActivity" android:exported="false" />
+        <activity android:name=".Transaction.AddExpensesCategoryActivity" android:exported="false" />
         <activity android:name=".AddReceiptActivity" android:exported="false" />
-        <activity android:name=".AddTransactionActivity" android:exported="false" />
+        <activity android:name=".Transaction.AddTransactionActivity" android:exported="false" />
         <activity android:name=".forgotPasswordActivity" android:exported="false" />
         <activity android:name=".RegisterAccountActivity" android:exported="false" />
         <activity android:name=".HomeActivity" android:exported="false" />
@@ -97,6 +97,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
+        <receiver android:name=".GoalNotificationsReceiver" android:exported="false"/>
     </application>
 </manifest>

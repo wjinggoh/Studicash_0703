@@ -17,6 +17,7 @@ import my.edu.tarc.studicash_0703.EditProfileActivity
 import my.edu.tarc.studicash_0703.Models.User
 import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.FragmentProfileBinding
+import my.edu.tarc.studicash_0703.sidebar.NotificationsActivity
 import my.edu.tarc.studicash_0703.utils.USER_NODE
 import java.text.DecimalFormat
 
@@ -39,6 +40,11 @@ class ProfileFragment : Fragment() {
 
         binding.editBtn.setOnClickListener {
             val intent = Intent(requireContext(), EditProfileActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.notificationBtn.setOnClickListener {
+            val intent = Intent(requireContext(), NotificationsActivity::class.java)
             startActivity(intent)
         }
         return binding.root

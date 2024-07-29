@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
@@ -18,7 +19,6 @@ import my.edu.tarc.studicash_0703.Models.Receipt
 import my.edu.tarc.studicash_0703.Models.ReceiptsViewModel
 import my.edu.tarc.studicash_0703.databinding.ActivityAddReceiptBinding
 import java.io.FileNotFoundException
-import javax.inject.Inject
 
 class AddReceiptActivity : AppCompatActivity() {
 
@@ -28,18 +28,15 @@ class AddReceiptActivity : AppCompatActivity() {
     private lateinit var photoImage: Bitmap
     private lateinit var firebaseImage: FirebaseVisionImage
     private lateinit var binding: ActivityAddReceiptBinding
-
-    @Inject
-    lateinit var receiptsViewModel: ReceiptsViewModel
+    private lateinit var receiptsViewModel: ReceiptsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddReceiptBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize ViewModel if using Dependency Injection
-        // If not using DI, initialize ViewModel here:
-        // receiptsViewModel = ViewModelProvider(this).get(ReceiptsViewModel::class.java)
+        // Initialize the ViewModel
+        receiptsViewModel = ViewModelProvider(this).get(ReceiptsViewModel::class.java)
 
         // Check permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {

@@ -9,10 +9,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
-import my.edu.tarc.studicash_0703.AddPaymentMethodActivity
+import my.edu.tarc.studicash_0703.PaymentMethod.AddPaymentMethodActivity
 import my.edu.tarc.studicash_0703.ChangeCurrencyActivity
 import my.edu.tarc.studicash_0703.sidebar.HelpActivity
-import my.edu.tarc.studicash_0703.MainActivity
 import my.edu.tarc.studicash_0703.databinding.FragmentSettingsBinding
 
 class SettingsFragment : Fragment() {

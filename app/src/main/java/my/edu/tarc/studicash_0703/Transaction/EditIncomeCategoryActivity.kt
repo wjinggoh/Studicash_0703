@@ -1,4 +1,4 @@
-package my.edu.tarc.studicash_0703
+package my.edu.tarc.studicash_0703.Transaction
 
 import android.os.Bundle
 import android.widget.Toast
@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.adapter.IncomeCategoryAdapter
 import my.edu.tarc.studicash_0703.Models.IncomeCategory
+import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.ActivityEditIncomeCategoryBinding
 
 class EditIncomeCategoryActivity : AppCompatActivity() {

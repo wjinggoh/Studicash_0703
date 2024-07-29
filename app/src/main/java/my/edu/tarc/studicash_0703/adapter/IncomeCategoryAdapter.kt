@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import my.edu.tarc.studicash_0703.EditIncomeCategoryActivity
+import my.edu.tarc.studicash_0703.Transaction.EditIncomeCategoryActivity
 import my.edu.tarc.studicash_0703.Models.IncomeCategory
 import my.edu.tarc.studicash_0703.databinding.CategoryItemBinding
 

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import androidx.core.content.ContextCompat
 import my.edu.tarc.studicash_0703.Models.ExpenseCategory
 import my.edu.tarc.studicash_0703.Models.IncomeCategory
@@ -17,31 +18,45 @@ class CategorySpinnerAdapter(
     private val categories: List<Any>
 ) : BaseAdapter() {
 
-    override fun getCount(): Int {
-        return categories.size
-    }
+    override fun getCount(): Int = categories.size
 
-    override fun getItem(position: Int): Any {
-        return categories[position]
-    }
+    override fun getItem(position: Int): Any = categories[position]
 
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
+    override fun getItemId(position: Int): Long = position.toLong()
+
+    fun getPosition(category: Any): Int {
+        return categories.indexOf(category)
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val view: View = convertView ?: LayoutInflater.from(context).inflate(R.layout.spinner_items, parent, false)
-
+        val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.spinner_items, parent, false)
         val category = categories[position]
         val icon = view.findViewById<ImageView>(R.id.categoryIcon)
         val name = view.findViewById<TextView>(R.id.categoryName)
 
-        if (category is ExpenseCategory) {
-            icon.setImageDrawable(ContextCompat.getDrawable(context, category.icon))
-            name.text = category.name
-        } else if (category is IncomeCategory) {
-            icon.setImageDrawable(ContextCompat.getDrawable(context, category.icon))
-            name.text = category.name
+        when (category) {
+            is ExpenseCategory -> {
+                if (category.iconUri != null) {
+                    Glide.with(context)
+                        .load(category.iconUri)
+                        .placeholder(R.drawable.img) // Optional placeholder
+                        .into(icon)
+                } else {
+                    icon.setImageDrawable(ContextCompat.getDrawable(context, category.icon))
+                }
+                name.text = category.name
+            }
+            is IncomeCategory -> {
+                if (category.iconUri != null) {
+                    Glide.with(context)
+                        .load(category.iconUri)
+                        .placeholder(R.drawable.img) // Optional placeholder
+                        .into(icon)
+                } else {
+                    icon.setImageDrawable(ContextCompat.getDrawable(context, category.icon))
+                }
+                name.text = category.name
+            }
         }
 
         return view

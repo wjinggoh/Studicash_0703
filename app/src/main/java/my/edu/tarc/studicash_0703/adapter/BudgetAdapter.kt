@@ -1,12 +1,12 @@
 package my.edu.tarc.studicash_0703.adapter
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import my.edu.tarc.studicash_0703.EditBudgetActivity
+import my.edu.tarc.studicash_0703.Budget.EditBudgetFragment
 import my.edu.tarc.studicash_0703.Models.BudgetItem
+import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.BudgetItemBinding
 
 class BudgetAdapter(
@@ -20,7 +20,7 @@ class BudgetAdapter(
         fun bind(budget: BudgetItem) {
             // Set text for each TextView from BudgetItem
             binding.budgetCategory.text = budget.category
-            binding.budgetItemName.text=budget.name
+            binding.budgetItemName.text = budget.name
             binding.budgetAmount.text = "RM ${budget.amount}"
             binding.budgetStartDate.text = budget.startDate
             binding.budgetEndDate.text = budget.endDate
@@ -32,27 +32,19 @@ class BudgetAdapter(
 
             // Edit button click listener
             binding.editBudgetBtn.setOnClickListener {
-                val intent = Intent(context, EditBudgetActivity::class.java).apply {
-                    putExtra("id", budget.id)
-                    putExtra("title", budget.name)
-                    putExtra("category", budget.category)
-                    putExtra("amount", budget.amount)
-                    putExtra("startDate", budget.startDate)
-                    putExtra("endDate", budget.endDate)
-                    putExtra("icon", budget.icon)
+                // Convert context to FragmentActivity to get FragmentManager
+                if (context is androidx.fragment.app.FragmentActivity) {
+                    val fragment = EditBudgetFragment.newInstance(budget.id)
+                    context.supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, fragment) // Replace with your actual container ID
+                        .addToBackStack(null)
+                        .commit()
                 }
-                context.startActivity(intent)
             }
 
             // Delete button click listener
             binding.deleteBudgetBtn.setOnClickListener {
                 onDeleteClick(budget)
-            }
-
-            binding.editBudgetBtn.setOnClickListener{
-                val intent=Intent(context,EditBudgetActivity::class.java)
-                intent.putExtra("id",budget.id)
-                context.startActivity(intent)
             }
         }
     }
@@ -66,7 +58,5 @@ class BudgetAdapter(
         holder.bind(budgets[position])
     }
 
-    override fun getItemCount(): Int {
-        return budgets.size
-    }
+    override fun getItemCount(): Int = budgets.size
 }

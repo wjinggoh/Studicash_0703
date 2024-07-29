@@ -4,7 +4,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import my.edu.tarc.studicash_0703.EditExpensesCategoryActivity
+import com.bumptech.glide.Glide
+import my.edu.tarc.studicash_0703.Transaction.EditExpensesCategoryActivity
 import my.edu.tarc.studicash_0703.Models.ExpenseCategory
 import my.edu.tarc.studicash_0703.databinding.CategoryItemBinding
 
@@ -22,13 +23,19 @@ class ExpenseCategoryAdapter(
 
     override fun onBindViewHolder(holder: ExpenseCategoryViewHolder, position: Int) {
         val category = expenseCategories[position]
-        holder.binding.categoryIcon.setImageResource(category.icon)
+        if (category.iconUri.isNullOrEmpty()) {
+            holder.binding.categoryIcon.setImageResource(category.icon)
+        } else {
+            Glide.with(context)
+                .load(category.iconUri)
+                .placeholder(category.icon)
+                .into(holder.binding.categoryIcon)
+        }
         holder.binding.categoryName.text = category.name
 
         holder.binding.editCategoryButton.setOnClickListener {
-            // Implement edit functionality
             if (context is EditExpensesCategoryActivity) {
-                // context.updateCategory(updatedCategory, position)
+                // Implement edit functionality if needed
             }
         }
 

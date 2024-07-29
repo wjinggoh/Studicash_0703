@@ -19,7 +19,7 @@
         app:cornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/upload_studentIdPhoto" />
+        app:layout_constraintTop_toBottomOf="@+id/profileImage" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImage"
@@ -32,19 +32,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/upload_studentIdPhoto"
-        android:layout_width="220dp"
-        android:layout_height="28dp"
-        android:layout_marginStart="178dp"
-        android:layout_marginTop="13dp"
-        android:layout_marginEnd="175dp"
-        android:text="@string/studentId_Image"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileImage" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/email"

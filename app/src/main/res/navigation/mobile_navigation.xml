@@ -56,13 +56,13 @@
 
     <fragment
         android:id="@+id/fragment_choose"
-        android:name="my.edu.tarc.studicash_0703.Fragment.ChooseTransactionFragment"
+        android:name="my.edu.tarc.studicash_0703.Transaction.ChooseTransactionFragment"
         android:label="@string/choose"
         tools:layout="@layout/fragment_choose_transaction" />
 
     <fragment
         android:id="@+id/addPaymentMethodFragment"
-        android:name="my.edu.tarc.studicash_0703.Fragment.DialogNewPaymentMethodFragment"
+        android:name="my.edu.tarc.studicash_0703.PaymentMethod.DialogNewPaymentMethodFragment"
         android:label="Add Payment Method"
         tools:layout="@layout/activity_add_payment_method" />
     <fragment

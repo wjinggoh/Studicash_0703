@@ -1,4 +1,4 @@
-package my.edu.tarc.studicash_0703
+package my.edu.tarc.studicash_0703.Budget
 
 import android.app.DatePickerDialog
 import android.os.Bundle

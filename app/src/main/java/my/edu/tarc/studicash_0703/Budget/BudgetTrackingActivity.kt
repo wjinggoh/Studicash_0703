@@ -1,5 +1,4 @@
-// BudgetTrackingActivity.kt
-package my.edu.tarc.studicash_0703
+package my.edu.tarc.studicash_0703.Budget
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,8 +12,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import my.edu.tarc.studicash_0703.GoalTrackingActivity
+import my.edu.tarc.studicash_0703.MainActivity
 import my.edu.tarc.studicash_0703.Models.BudgetItem
+import my.edu.tarc.studicash_0703.NotificationHelper
+import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.adapter.BudgetAdapter
 import my.edu.tarc.studicash_0703.databinding.ActivityBudgetTrackingBinding
 
@@ -22,6 +26,7 @@ class BudgetTrackingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBudgetTrackingBinding
     private val firestore = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,86 +74,89 @@ class BudgetTrackingActivity : AppCompatActivity() {
     }
 
     private fun fetchAndDisplayBudgets() {
+        val uid = auth.currentUser?.uid ?: run {
+            handleError("User not logged in")
+            return
+        }
+
         val budgetCollection = firestore.collection("Budget")
-        budgetCollection.get().addOnSuccessListener { result ->
-            Log.d("BudgetTrackingActivity", "Fetched ${result.size()} budgets")
+        budgetCollection.whereEqualTo("uid", uid) // Filter by UID
+            .get()
+            .addOnSuccessListener { result ->
+                Log.d("BudgetTrackingActivity", "Fetched ${result.size()} budgets")
 
-            val budgets = mutableListOf<BudgetItem>()
-            val budgetTasks = mutableListOf<Task<Pair<BudgetItem, Double>>>()
-            val reminderBudgets = mutableListOf<BudgetItem>()
+                val budgets = mutableListOf<BudgetItem>()
+                val budgetTasks = mutableListOf<Task<Pair<BudgetItem, Double>>>()
+                val reminderBudgets = mutableListOf<BudgetItem>()
 
-            if (result.isEmpty) {
-                Log.d("BudgetTrackingActivity", "No budgets found.")
-            }
-
-            for (document in result) {
-                val id = document.id
-                val name = document.getString("name") ?: ""
-                val category = document.getString("category") ?: ""
-                val amount = document.getDouble("amount") ?: 0.0
-                val startDate = document.getString("startDate") ?: ""
-                val endDate = document.getString("endDate") ?: ""
-                val icon = document.getLong("icon")?.toInt() ?: 0
-
-                val budgetItem = BudgetItem(
-                    id = id,
-                    name = name,
-                    category = category,
-                    amount = amount,
-                    spent = 0.0,
-                    progress = 0,
-                    startDate = startDate,
-                    endDate = endDate,
-                    icon = icon
-                )
-
-                val task = fetchTotalSpentForBudget(category).continueWith { totalSpent ->
-                    val progress = if (budgetItem.amount > 0) ((totalSpent.result / budgetItem.amount) * 100).toInt() else 0
-                    budgetItem.spent = totalSpent.result
-                    budgetItem.progress = progress
-                    budgetItem to totalSpent.result
+                if (result.isEmpty) {
+                    Log.d("BudgetTrackingActivity", "No budgets found.")
                 }
-                budgetTasks.add(task)
-            }
 
-            Tasks.whenAllComplete(budgetTasks).addOnCompleteListener { tasks ->
-                val results = tasks.result
-                val updatedBudgets = mutableListOf<BudgetItem>()
+                for (document in result) {
+                    val id = document.id
+                    val name = document.getString("name") ?: ""
+                    val category = document.getString("category") ?: ""
+                    val amount = document.getDouble("amount") ?: 0.0
+                    val startDate = document.getString("startDate") ?: ""
+                    val endDate = document.getString("endDate") ?: ""
+                    val icon = document.getLong("icon")?.toInt() ?: 0
 
-                results.forEach { task ->
-                    val (budgetItem, _) = task.result as Pair<BudgetItem, Double>
-                    updatedBudgets.add(budgetItem)
+                    val budgetItem = BudgetItem(
+                        id = id,
+                        name = name,
+                        category = category,
+                        amount = amount,
+                        spent = 0.0,
+                        progress = 0,
+                        startDate = startDate,
+                        endDate = endDate,
+                        icon = icon
+                    )
 
-                    // Check if usage exceeds 80%
-                    if (budgetItem.progress > 80) {
-                        reminderBudgets.add(budgetItem)
+                    val task = fetchTotalSpentForBudget(category).continueWith { totalSpent ->
+                        val progress = if (budgetItem.amount > 0) ((totalSpent.result / budgetItem.amount) * 100).toInt() else 0
+                        budgetItem.spent = totalSpent.result
+                        budgetItem.progress = progress
+                        budgetItem to totalSpent.result
                     }
+                    budgetTasks.add(task)
                 }
 
-                Log.d("BudgetTrackingActivity", "Budgets to display: ${updatedBudgets.size}")
-                if (updatedBudgets.isEmpty()) {
-                    binding.budgetTrackingRecycleView.visibility = View.GONE
-                    binding.noBudgetsMessage.visibility = View.VISIBLE
-                } else {
-                    binding.budgetTrackingRecycleView.visibility = View.VISIBLE
-                    binding.noBudgetsMessage.visibility = View.GONE
-                    setupRecyclerView(updatedBudgets)
-                }
+                Tasks.whenAllComplete(budgetTasks).addOnCompleteListener { tasks ->
+                    val results = tasks.result
+                    val updatedBudgets = mutableListOf<BudgetItem>()
 
-                // Trigger notification for budgets that exceed 80% usage
-                if (reminderBudgets.isNotEmpty()) {
-                    showReminderNotification(reminderBudgets)
+                    results.forEach { task ->
+                        val (budgetItem, _) = task.result as Pair<BudgetItem, Double>
+                        updatedBudgets.add(budgetItem)
+
+                        // Check if usage exceeds 80%
+                        if (budgetItem.progress > 80) {
+                            reminderBudgets.add(budgetItem)
+                        }
+                    }
+
+                    Log.d("BudgetTrackingActivity", "Budgets to display: ${updatedBudgets.size}")
+                    if (updatedBudgets.isEmpty()) {
+                        binding.budgetTrackingRecycleView.visibility = View.GONE
+                        binding.noBudgetsMessage.visibility = View.VISIBLE
+                    } else {
+                        binding.budgetTrackingRecycleView.visibility = View.VISIBLE
+                        binding.noBudgetsMessage.visibility = View.GONE
+                        setupRecyclerView(updatedBudgets)
+                    }
+
+                    // Trigger notification for budgets that exceed 80% usage
+                    if (reminderBudgets.isNotEmpty()) {
+                        showReminderNotification(reminderBudgets)
+                    }
+                }.addOnFailureListener { exception ->
+                    handleError("Error fetching budgets: ${exception.message}")
                 }
             }.addOnFailureListener { exception ->
-                binding.budgetTrackingRecycleView.visibility = View.GONE
-                binding.noBudgetsMessage.visibility = View.VISIBLE
-                binding.noBudgetsMessage.text = "Error fetching budgets: ${exception.message}"
+                handleError("Error fetching budgets: ${exception.message}")
             }
-        }.addOnFailureListener { exception ->
-            binding.budgetTrackingRecycleView.visibility = View.GONE
-            binding.noBudgetsMessage.visibility = View.VISIBLE
-            binding.noBudgetsMessage.text = "Error fetching budgets: ${exception.message}"
-        }
     }
 
     private fun fetchTotalSpentForBudget(budgetName: String): Task<Double> {
@@ -182,11 +190,13 @@ class BudgetTrackingActivity : AppCompatActivity() {
     }
 
     private fun editBudget(budgetItem: BudgetItem) {
-        val intent = Intent(this, EditBudgetActivity::class.java).apply {
-            putExtra("BUDGET_ID", budgetItem.id)
-        }
-        startActivity(intent)
+        val fragment = EditBudgetFragment.newInstance(budgetItem.id)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment) // Ensure R.id.fragment_container is the ID of your fragment container
+            .addToBackStack(null) // Optional: to add the fragment to the back stack
+            .commit()
     }
+
 
     private fun deleteBudget(budgetItem: BudgetItem) {
         AlertDialog.Builder(this)

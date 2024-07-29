@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.Transaction
+import my.edu.tarc.studicash_0703.Transaction.TransactionHistoryActivity
+import my.edu.tarc.studicash_0703.Transaction.TransactionHistoryAddDurationActivity
 import my.edu.tarc.studicash_0703.adapter.TransactionAdapter
 import my.edu.tarc.studicash_0703.databinding.ActivityIncomeHistoryBinding
 
@@ -52,7 +53,7 @@ class IncomeHistoryActivity : AppCompatActivity(), TransactionAdapter.OnTransact
         }
 
         binding.allButton.setOnClickListener {
-            val intent=Intent(this,TransactionHistoryActivity::class.java)
+            val intent=Intent(this, TransactionHistoryActivity::class.java)
             startActivity(intent)
             finish()
         }

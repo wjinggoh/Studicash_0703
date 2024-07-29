@@ -1,4 +1,4 @@
-package my.edu.tarc.studicash_0703
+package my.edu.tarc.studicash_0703.Budget
 
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -6,8 +6,10 @@ import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.ExpenseCategory
+import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.adapter.CategorySpinnerAdapter
 import my.edu.tarc.studicash_0703.databinding.ActivityCreateBudgetBinding
 import java.text.SimpleDateFormat
@@ -77,7 +79,6 @@ class CreateBudgetActivity : AppCompatActivity() {
     }
 
     private fun fetchCategories() {
-        // First, fetch the goal collection documents to get their names
         firestore.collection("Goal")
             .get()
             .addOnSuccessListener { goalResult ->
@@ -85,7 +86,6 @@ class CreateBudgetActivity : AppCompatActivity() {
 
                 Log.d("CreateBudgetActivity", "Goal Names: $goalNames") // Debugging line
 
-                // Then, fetch the ExpenseCategories and filter out those matching goal names
                 firestore.collection("ExpenseCategories")
                     .get()
                     .addOnSuccessListener { result ->
@@ -93,24 +93,19 @@ class CreateBudgetActivity : AppCompatActivity() {
                             val iconField = document.get("icon")
                             val iconResId = when (iconField) {
                                 is String -> {
-                                    // Handle string type
                                     resources.getIdentifier(iconField, "drawable", packageName)
                                 }
                                 is Long -> {
-                                    // Handle long type (assuming these are valid resource IDs)
                                     iconField.toInt()
                                 }
                                 else -> {
-                                    // Log the unexpected type for debugging purposes
                                     Log.e("CreateBudgetActivity", "Unexpected type for 'icon': ${iconField?.javaClass?.name}")
                                     R.drawable.money // Use a default icon resource
                                 }
                             }
                             val name = document.getString("name") ?: ""
                             if (goalNames.contains(name)) {
-                                // Log the excluded category for debugging
                                 Log.d("CreateBudgetActivity", "Excluding category: $name")
-                                // Return null if the category name matches any goal name
                                 null
                             } else {
                                 ExpenseCategory(iconResId, name)
@@ -133,11 +128,7 @@ class CreateBudgetActivity : AppCompatActivity() {
             }
     }
 
-
-
-
     private fun getExpenseCategories(): List<ExpenseCategory> {
-        // Return your predefined categories here
         return listOf(
             ExpenseCategory(R.drawable.food, "Food"),
             ExpenseCategory(R.drawable.fees, "Fees"),
@@ -148,25 +139,28 @@ class CreateBudgetActivity : AppCompatActivity() {
     }
 
     private fun saveBudget() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
         val name = binding.budgetNameCreateBudget.text.toString()
         val selectedCategory = binding.spinnerCategory.selectedItem as ExpenseCategory
         val amount = binding.editTextAmount.text.toString().toDoubleOrNull()
         val startDate = binding.editTextStartDate.text.toString()
         val endDate = binding.editTextEndDate.text.toString()
 
-        if (amount != null && startDate.isNotEmpty() && endDate.isNotEmpty()) {
+        if (amount != null && startDate.isNotEmpty() && endDate.isNotEmpty() && userId != null) {
             val budgetData = mapOf(
                 "name" to name,
                 "category" to selectedCategory.name,
                 "amount" to amount,
                 "startDate" to startDate,
-                "endDate" to endDate
+                "endDate" to endDate,
+                "uid" to userId // Add UID to the budget data
             )
 
-            firestore.collection("Budget")
-                .add(budgetData)
-                .addOnSuccessListener {
-                    Toast.makeText(this, "Budget saved successfully", Toast.LENGTH_SHORT).show()
+            // Generate a new document ID and save the budget
+            firestore.collection("Budget").add(budgetData)
+                .addOnSuccessListener { documentReference ->
+                    val budgetId = documentReference.id
+                    Toast.makeText(this, "Budget saved successfully with ID: $budgetId", Toast.LENGTH_SHORT).show()
                     finish()
                 }
                 .addOnFailureListener { e ->

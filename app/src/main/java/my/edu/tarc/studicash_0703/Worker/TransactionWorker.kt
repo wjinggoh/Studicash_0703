@@ -20,15 +20,18 @@ class TransactionWorker(context: Context, params: WorkerParameters) : Worker(con
             "timestamp" to Date(timestamp)
         )
 
-        firestore.collection("expenseTransactions")
-            .add(transactionData)
-            .addOnSuccessListener {
-                // Automated transaction added successfully
-            }
-            .addOnFailureListener { e ->
-                // Handle failure
-            }
+        return try {
+            firestore.collection("expenseTransactions")
+                .add(transactionData)
+                .addOnSuccessListener {
 
-        return Result.success()
+                }
+                .addOnFailureListener { e ->
+                    // Handle failure
+                }
+            Result.success()
+        } catch (e: Exception) {
+            Result.failure()
+        }
     }
 }

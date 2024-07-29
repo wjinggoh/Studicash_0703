@@ -1,12 +1,12 @@
-package my.edu.tarc.studicash_0703.Fragment
+package my.edu.tarc.studicash_0703.PaymentMethod
 
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import my.edu.tarc.studicash_0703.Models.PaymentMethod
 import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.FragmentDialogNewPaymentMethodBinding
 
@@ -53,23 +53,28 @@ class DialogNewPaymentMethodFragment : DialogFragment() {
     }
 
     private fun savePaymentMethod() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
         val paymentMethod = when (binding.radioGroupPaymentType.checkedRadioButtonId) {
             R.id.radio_card -> {
                 PaymentMethod(
                     type = "Card",
-                    details = "Bank: ${binding.etBankName.text}, Card Number: ${binding.etCardNumber.text}"
+                    details = "${binding.etBankName.text}, ${binding.etCardNumber.text}",
+                    uid = uid
                 )
             }
             R.id.radio_ewallet -> {
                 PaymentMethod(
                     type = "E-Wallet",
-                    details = "Wallet: ${binding.etWalletName.text}"
+                    details = " ${binding.etWalletName.text}",
+                    uid = uid
                 )
             }
             R.id.radio_cash -> {
                 PaymentMethod(
                     type = "Cash",
-                    details = "Details: ${binding.etCashDetails.text}"
+                    details = " ${binding.etCashDetails.text}",
+                    uid = uid
                 )
             }
             else -> return

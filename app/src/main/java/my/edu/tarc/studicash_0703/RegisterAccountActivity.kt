@@ -173,10 +173,6 @@ class RegisterAccountActivity : AppCompatActivity() {
                 }
             }
 
-            binding.uploadStudentIdPhoto.setOnClickListener(){
-                launcher.launch("image/*")
-            }
-
             binding.backSignIn.setOnClickListener {
                 val intent = Intent(this@RegisterAccountActivity, my.edu.tarc.studicash_0703.MainActivity::class.java)
                 startActivity(intent)

@@ -5,9 +5,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import my.edu.tarc.studicash_0703.Worker.TransactionWorker
 import my.edu.tarc.studicash_0703.databinding.ActivityMainBinding
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -61,5 +67,28 @@ class MainActivity : AppCompatActivity() {
         binding.forgotPage.setOnClickListener {
             startActivity(Intent(this@MainActivity, my.edu.tarc.studicash_0703.forgotPasswordActivity::class.java))
         }
+
+        scheduleTransactionWorker()
+    }
+
+    private fun scheduleTransactionWorker() {
+        // Set up the input data for the worker
+        val inputData = workDataOf(
+            "goalName" to "Savings Goal",
+            "savingsNeeded" to 50.0, // Change as needed
+            "timestamp" to System.currentTimeMillis()
+        )
+
+        // Create a PeriodicWorkRequest
+        val transactionWorkRequest = PeriodicWorkRequestBuilder<TransactionWorker>(1, TimeUnit.DAYS)
+            .setInputData(inputData)
+            .build()
+
+        // Enqueue the worker
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "TransactionWorker",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            transactionWorkRequest
+        )
     }
 }

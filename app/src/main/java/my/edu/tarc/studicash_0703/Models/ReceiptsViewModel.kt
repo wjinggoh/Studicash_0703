@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
+import androidx.lifecycle.ViewModel
 import com.google.android.gms.tasks.Task
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer
@@ -18,12 +19,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-class ReceiptsViewModel @Inject constructor() {
+class ReceiptsViewModel @Inject constructor() : ViewModel() { // Extending ViewModel
     val textDeviceDetector: FirebaseVisionTextRecognizer
     lateinit var imageURI: Uri
 
     init {
-        textDeviceDetector = FirebaseVision.getInstance().getOnDeviceTextRecognizer()
+        textDeviceDetector = FirebaseVision.getInstance().onDeviceTextRecognizer
     }
 
     fun uploadIntent(): Intent {

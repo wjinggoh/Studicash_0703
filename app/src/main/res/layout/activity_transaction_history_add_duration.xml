@@ -6,7 +6,7 @@
     android:layout_width="400dp"
     android:layout_height="380dp"
     android:background="#FFFFFF"
-    tools:context=".TransactionHistoryAddDurationActivity">
+    tools:context=".Transaction.TransactionHistoryAddDurationActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout1"

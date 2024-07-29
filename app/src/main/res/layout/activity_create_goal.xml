@@ -235,15 +235,15 @@
 
     <TextView
         android:id="@+id/averageAmtperPeriodView"
-        android:layout_width="wrap_content"
+        android:layout_width="170dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
         android:fontFamily="@font/concert_one"
         android:text="Amount"
         android:textColor="#0027FF"
         android:textSize="20sp"
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toBottomOf="@+id/textView21"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView21"
         app:layout_constraintTop_toTopOf="@+id/textView21" />
 

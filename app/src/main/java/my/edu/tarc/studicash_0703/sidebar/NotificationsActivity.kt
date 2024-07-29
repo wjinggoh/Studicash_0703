@@ -23,12 +23,14 @@ class NotificationsActivity : AppCompatActivity() {
         binding = ActivityNotificationsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Initialize RecyclerView
+        binding.notificationRecyclerView.layoutManager = LinearLayoutManager(this)
+
         // Fetch notifications
         fetchBudgetExceededNotifications().addOnSuccessListener { notifications ->
             if (notifications.isNotEmpty()) {
                 val adapter = NotificationAdapter(this, notifications)
                 binding.notificationRecyclerView.adapter = adapter
-                binding.notificationRecyclerView.layoutManager = LinearLayoutManager(this)
                 binding.noNotificationsMessage.visibility = View.GONE
                 binding.notificationRecyclerView.visibility = View.VISIBLE
             } else {
@@ -48,9 +50,11 @@ class NotificationsActivity : AppCompatActivity() {
         val firestore = FirebaseFirestore.getInstance()
         val budgetCollection = firestore.collection("Budget")
 
-        return budgetCollection.get().continueWithTask { result ->
+        val taskCompletionSource = TaskCompletionSource<List<NotificationItem>>()
+
+        budgetCollection.get().addOnSuccessListener { result ->
             val tasks = mutableListOf<Task<Triple<String, Double, Double>>>()
-            for (document in result.result!!) {
+            for (document in result) {
                 val amount = document.getDouble("amount") ?: 0.0
                 val name = document.getString("name") ?: ""
                 val category = document.getString("category") ?: ""
@@ -77,11 +81,17 @@ class NotificationsActivity : AppCompatActivity() {
                         )
                     }
                 }
+                taskCompletionSource.setResult(notificationList)
             }.addOnFailureListener { exception ->
                 Log.e("NotificationsActivity", "Error processing budget data: ${exception.message}")
+                taskCompletionSource.setException(exception)
             }
-            Tasks.forResult(notificationList)
+        }.addOnFailureListener { exception ->
+            Log.e("NotificationsActivity", "Error fetching budgets: ${exception.message}")
+            taskCompletionSource.setException(exception)
         }
+
+        return taskCompletionSource.task
     }
 
     private fun fetchTotalSpentForBudget(budgetName: String): Task<Double> {

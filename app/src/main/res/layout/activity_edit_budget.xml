@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:padding="16dp"
-    tools:context=".EditBudgetActivity">
+    tools:context=".Budget.EditBudgetActivity">
 
     <ImageView
         android:id="@+id/editBudgetBackBtn"
@@ -53,42 +53,100 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/budgetNameEditText" />
 
-    <EditText
-        android:id="@+id/startDateEditText"
-        android:layout_width="350dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/background_with_border_grey"
-        android:elevation="3dp"
-        android:hint="Start Date"
-        android:paddingLeft="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/budgetAmountEditText" />
-
-    <EditText
-        android:id="@+id/endDateEditText"
-        android:layout_width="350dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/background_with_border_grey"
-        android:elevation="3dp"
-        android:hint="End Date"
-        android:paddingLeft="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/startDateEditText" />
-
     <Button
         android:id="@+id/saveBudgetButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:backgroundTint="#01579B"
         android:text="Save Budget"
         app:cornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/endDateEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextEndDate" />
+
+    <TextView
+        android:id="@+id/textViewStartDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Start Date:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/buttonStartDate"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/budgetAmountEditText" />
+
+    <EditText
+        android:id="@+id/editTextStartDate"
+        android:layout_width="180dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/background_with_border_grey_no_corner"
+        android:elevation="3dp"
+        android:fontFamily="@font/concert_one"
+        android:hint="@string/datehint"
+        android:inputType="date"
+        android:paddingTop="10dp"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@+id/textViewStartDate"
+        app:layout_constraintTop_toBottomOf="@+id/textViewStartDate"
+        app:layout_constraintWidth_percent="0.6" />
+
+    <Button
+        android:id="@+id/buttonStartDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:backgroundTint="#351ACF"
+        android:text="Select Date"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextStartDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editTextStartDate" />
+
+    <TextView
+        android:id="@+id/textViewEndDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="End Date:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/buttonEndDate"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/editTextStartDate"
+        app:layout_constraintTop_toBottomOf="@+id/editTextStartDate" />
+
+    <EditText
+        android:id="@+id/editTextEndDate"
+        android:layout_width="180dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/background_with_border_grey_no_corner"
+        android:elevation="3dp"
+        android:fontFamily="@font/concert_one"
+        android:hint="@string/datehint"
+        android:inputType="date"
+        android:paddingTop="10dp"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@+id/textViewEndDate"
+        app:layout_constraintTop_toBottomOf="@+id/textViewEndDate"
+        app:layout_constraintWidth_percent="0.6" />
+
+    <Button
+        android:id="@+id/buttonEndDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:backgroundTint="#351ACF"
+        android:text="Select Date"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextEndDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editTextEndDate" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

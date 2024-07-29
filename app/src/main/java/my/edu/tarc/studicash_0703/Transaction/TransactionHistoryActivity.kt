@@ -1,4 +1,4 @@
-package my.edu.tarc.studicash_0703
+package my.edu.tarc.studicash_0703.Transaction
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,7 +12,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import my.edu.tarc.studicash_0703.Fragment.EditTransactionFragment
+import my.edu.tarc.studicash_0703.ExpensesHistoryActivity
+import my.edu.tarc.studicash_0703.IncomeHistoryActivity
 import my.edu.tarc.studicash_0703.Models.Transaction
 import my.edu.tarc.studicash_0703.adapter.TransactionAdapter
 import my.edu.tarc.studicash_0703.databinding.ActivityTransactionHistoryBinding

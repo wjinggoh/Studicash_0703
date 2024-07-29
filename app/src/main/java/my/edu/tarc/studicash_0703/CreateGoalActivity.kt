@@ -1,11 +1,20 @@
 package my.edu.tarc.studicash_0703
 
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import my.edu.tarc.studicash_0703.Models.ExpenseCategory
@@ -18,6 +27,7 @@ class CreateGoalActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCreateGoalBinding
     private val calendar = Calendar.getInstance()
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +35,7 @@ class CreateGoalActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
 
         binding.buttonStartDate.setOnClickListener {
             showDatePickerDialog(binding.editTextStartDate)
@@ -41,8 +52,6 @@ class CreateGoalActivity : AppCompatActivity() {
 
         binding.buttonSave.setOnClickListener {
             saveGoal()
-            finish()
-
         }
 
         binding.buttonCancel.setOnClickListener {
@@ -53,8 +62,42 @@ class CreateGoalActivity : AppCompatActivity() {
             finish()
         }
 
-        // Fetch and set the monthly income
         fetchMonthlyIncome()
+
+        binding.editGoalTextAmount.addTextChangedListener(textWatcher)
+        binding.editTextStartDate.addTextChangedListener(textWatcher)
+        binding.editTextEndDate.addTextChangedListener(textWatcher)
+        binding.spinnerSavingFrequency.onItemSelectedListener = frequencySelectedListener
+    }
+
+    private val textWatcher = object : TextWatcher {
+        override fun afterTextChanged(s: Editable?) {
+            updateAverageSavings()
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+    }
+
+    private val frequencySelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+            updateAverageSavings()
+        }
+
+        override fun onNothingSelected(parent: AdapterView<*>) {}
+    }
+
+    private fun updateAverageSavings() {
+        val amount = binding.editGoalTextAmount.text.toString().toDoubleOrNull()
+        val startDate = binding.editTextStartDate.text.toString()
+        val endDate = binding.editTextEndDate.text.toString()
+        val frequency = binding.spinnerSavingFrequency.selectedItem.toString()
+
+        if (amount != null && startDate.isNotEmpty() && endDate.isNotEmpty()) {
+            val averageSavingsPerPeriod = calculateAverageSavingsPerFrequency(amount, startDate, endDate, frequency)
+            binding.averageAmtperPeriodView.text = String.format("%.2f", averageSavingsPerPeriod)
+        }
     }
 
     private fun showDatePickerDialog(dateTextView: TextView) {
@@ -95,17 +138,56 @@ class CreateGoalActivity : AppCompatActivity() {
             set(Calendar.MILLISECOND, 999)
         }.time
 
-        firestore.collection("incomeTransactions")
-            .whereGreaterThanOrEqualTo("timestamp", startOfMonth)
-            .whereLessThanOrEqualTo("timestamp", endOfMonth)
-            .get()
-            .addOnSuccessListener { documents ->
-                val totalIncome = calculateTotalIncome(documents)
-                binding.textViewMonthlyIncome.text = totalIncome.toString()
-            }
-            .addOnFailureListener { exception ->
-                Toast.makeText(this, "Error fetching income: ${exception.message}", Toast.LENGTH_SHORT).show()
-            }
+        val uid = auth.currentUser?.uid
+
+        if (uid != null) {
+            firestore.collection("incomeTransactions")
+                .whereEqualTo("userId", uid)
+                .whereGreaterThanOrEqualTo("timestamp", startOfMonth)
+                .whereLessThanOrEqualTo("timestamp", endOfMonth)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (documents.isEmpty) {
+                        // No income records found for the user
+                        binding.textViewMonthlyIncome.text = "No income recorded for this month"
+                    } else {
+                        val totalIncome = calculateTotalIncome(documents)
+                        binding.textViewMonthlyIncome.text = totalIncome.toString()
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(this, "Error fetching income: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    private fun scheduleGoalNotification(goalName: String, frequency: String) {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, GoalNotificationsReceiver::class.java).apply {
+            putExtra("goalName", goalName)
+            putExtra("notificationId", goalName.hashCode()) // Unique ID for each goal
+        }
+        val pendingIntent = PendingIntent.getBroadcast(this, goalName.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val interval = when (frequency) {
+            "Weekly" -> AlarmManager.INTERVAL_DAY * 7
+            "Bi-weekly" -> AlarmManager.INTERVAL_DAY * 14
+            "Monthly" -> AlarmManager.INTERVAL_DAY * 30
+            "Quarterly" -> AlarmManager.INTERVAL_DAY * 90
+            else -> AlarmManager.INTERVAL_DAY * 30
+        }
+
+        val triggerAtMillis = System.currentTimeMillis() + interval
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            triggerAtMillis,
+            interval,
+            pendingIntent
+        )
     }
 
     private fun saveGoal() {
@@ -114,20 +196,19 @@ class CreateGoalActivity : AppCompatActivity() {
         val startDate = binding.editTextStartDate.text.toString()
         val endDate = binding.editTextEndDate.text.toString()
         val monthlyIncome = binding.textViewMonthlyIncome.text.toString().toDoubleOrNull()
-        val goalIconResId = R.drawable.goal // Use the resource ID of your goal icon
+        val goalIconResId = R.drawable.goal
         val savingFrequency = binding.spinnerSavingFrequency.selectedItem.toString()
+        val uid = auth.currentUser?.uid
 
-        if (amount != null && startDate.isNotEmpty() && endDate.isNotEmpty() && monthlyIncome != null) {
+        if (amount != null && startDate.isNotEmpty() && endDate.isNotEmpty() && monthlyIncome != null && uid != null) {
+            val averageSavingsPerPeriod = calculateAverageSavingsPerFrequency(amount, startDate, endDate, savingFrequency)
+            binding.averageAmtperPeriodView.text = String.format("%.2f", averageSavingsPerPeriod)
+
             val savingsNeeded = calculateSavings(amount, startDate, endDate, savingFrequency)
-
             if (savingsNeeded > 0 && savingsNeeded * getFrequencyMultiplier(savingFrequency) > monthlyIncome * 0.5) {
                 Toast.makeText(this, "Savings amount exceeds 50% of your monthly income. Please adjust the goal amount or the period.", Toast.LENGTH_LONG).show()
                 return
             }
-
-            // Calculate the average savings per period and display it
-            val averageSavingsPerPeriod = calculateAverageSavingsPerFrequency(amount, startDate, endDate, savingFrequency)
-            binding.averageAmtperPeriodView.text = String.format("%.2f", averageSavingsPerPeriod)
 
             val goalData = mapOf(
                 "name" to name,
@@ -136,7 +217,8 @@ class CreateGoalActivity : AppCompatActivity() {
                 "endDate" to endDate,
                 "monthlyIncome" to monthlyIncome,
                 "savingFrequency" to savingFrequency,
-                "savedAmount" to 0.0 // Initialize the saved amount to 0
+                "savedAmount" to 0.0,
+                "uid" to uid
             )
 
             firestore.collection("Goal")
@@ -144,7 +226,8 @@ class CreateGoalActivity : AppCompatActivity() {
                 .addOnSuccessListener {
                     Toast.makeText(this, "Goal saved successfully", Toast.LENGTH_SHORT).show()
                     addExpenseCategory(name, goalIconResId)
-                    createAutomatedTransactions(name, amount, startDate, endDate, savingFrequency, savingsNeeded)
+                    scheduleGoalNotification(name, savingFrequency)
+                    finish()
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(this, "Error saving goal: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -163,35 +246,37 @@ class CreateGoalActivity : AppCompatActivity() {
         return totalIncome
     }
 
-    private fun calculateAverageSavingsPerFrequency(goalAmount: Double, startDate: String, endDate: String, frequency: String): Double {
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-        val start = sdf.parse(startDate)
-        val end = sdf.parse(endDate)
-        val days = ((end.time - start.time) / (1000 * 60 * 60 * 24)).toInt()
+    private fun calculateSavings(amount: Double, startDate: String, endDate: String, frequency: String): Double {
+        val format = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        val start = format.parse(startDate)
+        val end = format.parse(endDate)
+
+        val diffInMillis = end.time - start.time
+        val diffInDays = diffInMillis / (1000 * 60 * 60 * 24)
 
         return when (frequency) {
-            "Weekly" -> goalAmount / (days / 7.0)
-            "Bi-weekly" -> goalAmount / (days / 14.0)
-            "Monthly" -> goalAmount / (days / 30.0)
-            "Quarterly" -> goalAmount / (days / 90.0)
-            else -> 0.0
+            "Weekly" -> amount / (diffInDays / 7.0)
+            "Bi-weekly" -> amount / (diffInDays / 14.0)
+            "Monthly" -> amount / (diffInDays / 30.0)
+            "Quarterly" -> amount / (diffInDays / 90.0)
+            else -> amount / (diffInDays / 30.0)
         }
     }
 
-    private fun calculateSavings(goalAmount: Double, startDate: String, endDate: String, frequency: String): Double {
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-        val start = sdf.parse(startDate)
-        val end = sdf.parse(endDate)
+    private fun calculateAverageSavingsPerFrequency(amount: Double, startDate: String, endDate: String, frequency: String): Double {
+        val format = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        val start = format.parse(startDate)
+        val end = format.parse(endDate)
 
-        val weeks = ((end.time - start.time) / (1000 * 60 * 60 * 24 * 7)).toInt()
-        val months = weeks / 4
+        val diffInMillis = end.time - start.time
+        val diffInDays = diffInMillis / (1000 * 60 * 60 * 24)
 
         return when (frequency) {
-            "Weekly" -> goalAmount / weeks
-            "Bi-weekly" -> goalAmount / (weeks / 2)
-            "Monthly" -> goalAmount / months
-            "Quarterly" -> goalAmount / (months / 3)
-            else -> 0.0
+            "Weekly" -> amount / (diffInDays / 7.0)
+            "Bi-weekly" -> amount / (diffInDays / 14.0)
+            "Monthly" -> amount / (diffInDays / 30.0)
+            "Quarterly" -> amount / (diffInDays / 90.0)
+            else -> amount / (diffInDays / 30.0)
         }
     }
 
@@ -205,51 +290,36 @@ class CreateGoalActivity : AppCompatActivity() {
         }
     }
 
-    private fun addExpenseCategory(name: String, goalIconResId: Int) {
-        val expenseCategory = ExpenseCategory(
-            name = name,
-            icon = goalIconResId
-        )
+    private fun addExpenseCategory(name: String, iconResId: Int) {
+        // Use the iconResId directly as the icon parameter, which should be an Int
+        val category = ExpenseCategory(name = name, icon = iconResId)
+        val uid = auth.currentUser?.uid
 
-        firestore.collection("ExpenseCategories")
-            .add(expenseCategory)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Expense category added successfully", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Error adding expense category: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun createAutomatedTransactions(goalName: String, goalAmount: Double, startDate: String, endDate: String, frequency: String, savingsNeeded: Double) {
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-        val start = sdf.parse(startDate)
-        val end = sdf.parse(endDate)
-        val calendar = Calendar.getInstance()
-        calendar.time = start
-
-        while (calendar.time.before(end)) {
-            val transactionData = mapOf(
-                "category" to goalName,
-                "amount" to savingsNeeded,
-                "timestamp" to calendar.time
-            )
-
-            firestore.collection("expenseTransactions")
-                .add(transactionData)
-                .addOnSuccessListener {
-                    // Automated transaction added successfully
+        if (uid != null) {
+            firestore.collection("ExpenseCategories")
+                .whereEqualTo("name", name)
+                .whereEqualTo("uid", uid)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (documents.isEmpty) {
+                        firestore.collection("ExpenseCategories")
+                            .add(category.toMap())
+                            .addOnSuccessListener {
+                                Toast.makeText(this, "Expense category added successfully", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(this, "Error adding expense category: ${e.message}", Toast.LENGTH_SHORT).show()
+                            }
+                    } else {
+                        Toast.makeText(this, "Expense category already exists", Toast.LENGTH_SHORT).show()
+                    }
                 }
                 .addOnFailureListener { e ->
-                    Toast.makeText(this, "Error adding automated transaction: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Error checking category: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
-
-            when (frequency) {
-                "Weekly" -> calendar.add(Calendar.WEEK_OF_YEAR, 1)
-                "Bi-weekly" -> calendar.add(Calendar.WEEK_OF_YEAR, 2)
-                "Monthly" -> calendar.add(Calendar.MONTH, 1)
-                "Quarterly" -> calendar.add(Calendar.MONTH, 3)
-            }
+        } else {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
         }
     }
+
 }

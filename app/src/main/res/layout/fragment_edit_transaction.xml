@@ -7,7 +7,7 @@
     android:background="@color/white"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".Fragment.EditTransactionFragment">
+    tools:context=".Transaction.EditTransactionFragment">
 
     <EditText
         android:id="@+id/titleEditText"

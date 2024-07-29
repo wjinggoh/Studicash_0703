@@ -1,4 +1,4 @@
-package my.edu.tarc.studicash_0703
+package my.edu.tarc.studicash_0703.Transaction
 
 import android.os.Bundle
 import android.widget.Toast
@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.adapter.ExpenseCategoryAdapter
 import my.edu.tarc.studicash_0703.Models.ExpenseCategory
+import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.ActivityEditExpensesCategoryBinding
 
 class EditExpensesCategoryActivity : AppCompatActivity() {
@@ -32,16 +33,15 @@ class EditExpensesCategoryActivity : AppCompatActivity() {
         }
 
         fetchExpenseCategoriesFromFirestore()
+
     }
 
     private fun fetchExpenseCategoriesFromFirestore() {
-        // Fetch goal categories first
         db.collection("Goal")
             .get()
             .addOnSuccessListener { goalResult ->
                 val goalNames = goalResult.documents.mapNotNull { it.getString("name") }
 
-                // Fetch expense categories
                 db.collection("ExpenseCategories")
                     .get()
                     .addOnSuccessListener { result ->
@@ -49,11 +49,11 @@ class EditExpensesCategoryActivity : AppCompatActivity() {
                         for (document in result) {
                             val icon = document.getLong("icon")?.toInt() ?: R.drawable.baseline_image_48
                             val name = document.getString("name") ?: ""
+                            val iconUri = document.getString("iconUri") ?: ""
                             val id = document.id
 
-                            // Only add the category if its name is not in the goal names
                             if (!goalNames.contains(name)) {
-                                expenseCategories.add(ExpenseCategory(icon, name, id))
+                                expenseCategories.add(ExpenseCategory(icon, name, iconUri, id))
                             }
                         }
                         expenseCategoryAdapter.notifyDataSetChanged()
@@ -103,5 +103,12 @@ class EditExpensesCategoryActivity : AppCompatActivity() {
             .addOnFailureListener { exception ->
                 Toast.makeText(this, "Error deleting category: $exception", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    fun showEditCategoryDialog(category: ExpenseCategory, position: Int) {
+        val dialogFragment = DialogEditCategoryFragment.newInstance(category) { updatedCategory ->
+            updateCategory(updatedCategory, position)
+        }
+        dialogFragment.show(supportFragmentManager, "EditCategoryDialog")
     }
 }

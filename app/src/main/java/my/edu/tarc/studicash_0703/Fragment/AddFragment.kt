@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.Transaction
-import my.edu.tarc.studicash_0703.TransactionHistoryActivity
+import my.edu.tarc.studicash_0703.Transaction.ChooseTransactionFragment
+import my.edu.tarc.studicash_0703.Transaction.EditTransactionFragment
+import my.edu.tarc.studicash_0703.Transaction.TransactionHistoryActivity
 import my.edu.tarc.studicash_0703.adapter.TransactionAdapter
 import my.edu.tarc.studicash_0703.databinding.FragmentAddBinding
 

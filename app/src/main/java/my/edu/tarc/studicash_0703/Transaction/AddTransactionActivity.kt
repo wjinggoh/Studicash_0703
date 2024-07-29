@@ -1,4 +1,4 @@
-package my.edu.tarc.studicash_0703
+package my.edu.tarc.studicash_0703.Transaction
 
 import android.app.DatePickerDialog
 import android.content.Intent
@@ -11,7 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.ExpenseCategory
 import my.edu.tarc.studicash_0703.Models.IncomeCategory
-import my.edu.tarc.studicash_0703.Models.PaymentMethod
+import my.edu.tarc.studicash_0703.PaymentMethod.PaymentMethod
 import my.edu.tarc.studicash_0703.Models.Transaction
 import my.edu.tarc.studicash_0703.databinding.ActivityAddTransactionBinding
 import com.google.firebase.Timestamp
@@ -81,27 +81,47 @@ class AddTransactionActivity : AppCompatActivity() {
     }
 
     private fun fetchCategories() {
-        // Fetch income categories from Firestore
+        val uid = auth.currentUser?.uid ?: return // Exit if UID is null
+
+        // Fetch Income Categories
         firestore.collection("IncomeCategories")
+            .whereEqualTo("uid", uid)
             .get()
             .addOnSuccessListener { result ->
-                incomeCategories = result.map { document ->
-                    IncomeCategory(R.drawable.custom_category, document.getString("name") ?: "")
-                } + getIncomeCategories() // Combine with predefined categories
+                val fetchedIncomeCategories = result.map { document ->
+                    IncomeCategory(
+                        icon = R.drawable.custom_category, // Fallback icon resource
+                        name = document.getString("name") ?: "",
+                        iconUri = document.getString("iconUri") // Fetch icon URL
+                    )
+                }
 
+                // Combine fetched categories with predefined categories (if any)
+                incomeCategories = fetchedIncomeCategories + getIncomeCategories()
+
+                // If the Add Income radio button is checked, update the spinner
                 if (binding.rbAddIncome.isChecked) {
                     setupCategorySpinner(incomeCategories)
                 }
             }
 
-        // Fetch expense categories from Firestore
+        // Fetch Expense Categories
         firestore.collection("ExpenseCategories")
+            .whereEqualTo("uid", uid)
             .get()
             .addOnSuccessListener { result ->
-                expenseCategories = result.map { document ->
-                    ExpenseCategory(R.drawable.custom_category, document.getString("name") ?: "")
-                } + getExpenseCategories() // Combine with predefined categories
+                val fetchedExpenseCategories = result.map { document ->
+                    ExpenseCategory(
+                        icon = R.drawable.custom_category, // Fallback icon resource
+                        name = document.getString("name") ?: "",
+                        iconUri = document.getString("iconUri") // Fetch icon URL
+                    )
+                }
 
+                // Combine fetched categories with predefined categories (if any)
+                expenseCategories = fetchedExpenseCategories + getExpenseCategories()
+
+                // If the Add Expense radio button is checked, update the spinner
                 if (binding.rbAddExpense.isChecked) {
                     setupCategorySpinner(expenseCategories)
                 }
@@ -119,11 +139,19 @@ class AddTransactionActivity : AppCompatActivity() {
     }
 
     private fun fetchPaymentMethods() {
+        val uid = auth.currentUser?.uid
+
+        if (uid == null) {
+            Toast.makeText(this, "User is not logged in!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         firestore.collection("PaymentMethods")
+            .whereEqualTo("uid", uid)
             .get()
             .addOnSuccessListener { result ->
                 if (result.isEmpty) {
-                    Toast.makeText(this, "No payment methods found", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "No payment methods found!", Toast.LENGTH_SHORT).show()
                     return@addOnSuccessListener
                 }
 
@@ -140,6 +168,8 @@ class AddTransactionActivity : AppCompatActivity() {
                 Log.e("Firestore", "Error fetching payment methods", exception)
             }
     }
+
+
 
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
@@ -180,7 +210,15 @@ class AddTransactionActivity : AppCompatActivity() {
     }
 
     private fun setupPaymentMethodSpinner() {
+        val uid = auth.currentUser?.uid
+
+        if (uid == null) {
+            Toast.makeText(this, "User is not logged in!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         firestore.collection("paymentMethods")
+            .whereEqualTo("uid", uid)
             .get()
             .addOnSuccessListener { result ->
                 if (result.isEmpty) {
@@ -189,9 +227,8 @@ class AddTransactionActivity : AppCompatActivity() {
                 }
 
                 paymentMethods = result.map { document ->
-                    val type = document.getString("type") ?: ""
                     val details = document.getString("details") ?: ""
-                    PaymentMethod(type, details)
+                    PaymentMethod(details)
                 }
 
                 // Create an adapter with the fetched payment methods

@@ -10,12 +10,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.GoalItem
 import my.edu.tarc.studicash_0703.databinding.ActivityGoalTrackingBinding
 import java.util.concurrent.TimeUnit
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.launch
+import my.edu.tarc.studicash_0703.Budget.BudgetTrackingActivity
 
 class GoalTrackingActivity : AppCompatActivity() {
 
@@ -75,81 +77,57 @@ class GoalTrackingActivity : AppCompatActivity() {
     }
 
     private fun fetchAndDisplayGoals() {
-        val goalCollection = firestore.collection("Goal")
-        goalCollection.get().addOnSuccessListener { result ->
-            val goalTasks = mutableListOf<Task<Pair<GoalItem, Double>>>()
+        lifecycleScope.launch {
+            try {
+                val goalCollection = firestore.collection("Goal")
+                val goalDocuments = goalCollection.get().await()
 
-            for (document in result) {
-                val id = document.id
-                val name = document.getString("name") ?: ""
-                val amount = document.getDouble("amount") ?: 0.0
-                val startDate = document.getString("startDate") ?: ""
-                val endDate = document.getString("endDate") ?: ""
+                val goalItems = goalDocuments.map { document ->
+                    val id = document.id
+                    val name = document.getString("name") ?: ""
+                    val amount = document.getDouble("amount") ?: 0.0
+                    val startDate = document.getString("startDate") ?: ""
+                    val endDate = document.getString("endDate") ?: ""
 
-                val goalItem = GoalItem(
-                    id = id,
-                    name = name,
-                    amount = amount,
-                    saved = 0.0, // Default value
-                    progress = 0, // Default value
-                    startDate = startDate,
-                    endDate = endDate
-                )
+                    val savedAmount = fetchTotalSavedForGoal(name)
+                    val progress = if (amount > 0) ((savedAmount / amount) * 100).toInt() else 0
 
-                val task = fetchTotalSavedForGoal(name).continueWith { saved ->
-                    val savedAmount = saved.result
-                    val progress = if (goalItem.amount > 0) {
-                        ((savedAmount / goalItem.amount) * 100).toInt()
-                    } else {
-                        0
-                    }
-                    goalItem.saved = savedAmount
-                    goalItem.progress = progress
-                    goalItem to savedAmount
-                }
-                goalTasks.add(task)
-            }
-
-            Tasks.whenAllComplete(goalTasks).addOnCompleteListener { tasks ->
-                val results = tasks.result
-                val updatedGoals = mutableListOf<GoalItem>()
-                results.forEach { task ->
-                    val (goalItem, saved) = task.result as Pair<GoalItem, Double>
-                    updatedGoals.add(goalItem)
+                    GoalItem(
+                        id = id,
+                        name = name,
+                        amount = amount,
+                        saved = savedAmount,
+                        progress = progress,
+                        startDate = startDate,
+                        endDate = endDate
+                    )
                 }
 
-                if (updatedGoals.isEmpty()) {
+                if (goalItems.isEmpty()) {
                     binding.goalTrackingRecycleView.visibility = View.GONE
                     binding.noGoalsMessage.visibility = View.VISIBLE
                 } else {
                     binding.goalTrackingRecycleView.visibility = View.VISIBLE
                     binding.noGoalsMessage.visibility = View.GONE
-                    setupRecyclerView(updatedGoals)
+                    setupRecyclerView(goalItems)
                 }
-            }.addOnFailureListener { exception ->
+            } catch (exception: Exception) {
                 handleError("Error fetching goals: ${exception.message}")
             }
-        }.addOnFailureListener { exception ->
-            handleError("Error fetching goals: ${exception.message}")
         }
     }
 
-    private fun fetchTotalSavedForGoal(goalName: String): Task<Double> {
-        val transactionsCollection = firestore.collection("expenseTransactions") // Adjust if needed
-        val query = transactionsCollection.whereEqualTo("category", goalName)
+    private suspend fun fetchTotalSavedForGoal(goalName: String): Double {
+        return try {
+            val transactionsCollection = firestore.collection("expenseTransactions") // Adjust if needed
+            val querySnapshot = transactionsCollection.whereEqualTo("category", goalName).get().await()
 
-        return query.get().continueWith { task ->
-            if (task.isSuccessful) {
-                val documents = task.result
-                var totalSaved = 0.0
-                for (document in documents) {
-                    val amount = document.getDouble("amount") ?: 0.0
-                    totalSaved += amount
-                }
-                totalSaved
-            } else {
-                0.0
+            querySnapshot.documents.sumOf { document ->
+                document.getDouble("amount") ?: 0.0
             }
+        } catch (exception: Exception) {
+            handleError("Error fetching total saved for goal: ${exception.message}")
+            0.0
         }
     }
 

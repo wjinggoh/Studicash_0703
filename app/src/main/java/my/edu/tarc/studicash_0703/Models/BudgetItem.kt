@@ -1,23 +1,15 @@
 package my.edu.tarc.studicash_0703.Models
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.PropertyName
 
 data class BudgetItem(
-    val id: String = "",
-    val name: String = "",
-    val category: String = "",
-    val amount: Double = 0.0,
-    var spent: Double = 0.0,
-    var progress: Int = 0,
-    val startDate: String = "",
-    val endDate: String = "",
-    val icon: Int = 0
+    @get:PropertyName("id") val id: String = "",
+    @get:PropertyName("name") val name: String = "",
+    @get:PropertyName("category") val category: String = "",
+    @get:PropertyName("amount") val amount: Double = 0.0,
+    @get:PropertyName("spent") var spent: Double = 0.0,
+    @get:PropertyName("progress") var progress: Int = 0,
+    @get:PropertyName("startDate") val startDate: String = "",
+    @get:PropertyName("endDate") val endDate: String = "",
+    @get:PropertyName("icon") val icon: Int = 0
 )
-
-
-

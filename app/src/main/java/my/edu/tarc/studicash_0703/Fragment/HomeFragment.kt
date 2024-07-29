@@ -14,18 +14,19 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import my.edu.tarc.studicash_0703.ReportActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import my.edu.tarc.studicash_0703.BudgetTrackingActivity
+import my.edu.tarc.studicash_0703.Budget.BudgetTrackingActivity
 import my.edu.tarc.studicash_0703.Models.Transaction
+import my.edu.tarc.studicash_0703.ReportActivity
 import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.FragmentHomeBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
 class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener {
+
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
@@ -49,14 +50,13 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         }
 
         binding.goalTrackingBtn.setOnClickListener {
-            val intent = Intent(requireContext(), BudgetTrackingActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(requireContext(), BudgetTrackingActivity::class.java))
         }
 
-        binding.reportBtn.setOnClickListener{
-            val intent = Intent(requireContext(), ReportActivity::class.java)
-            startActivity(intent)
+        binding.reportBtn.setOnClickListener {
+            startActivity(Intent(requireContext(), ReportActivity::class.java))
         }
+
         binding.sidebarDrawer.setNavigationItemSelectedListener(this)
 
         // Fetch and display user details
@@ -65,6 +65,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         // Calculate today's spending
         calculateTodaySpending()
 
+        // Calculate this month's income and expense
         calculateMonthIncomeExpense()
 
         return binding.root
@@ -79,6 +80,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         val userNameTextView = headerView.findViewById<TextView>(R.id.userNameTextView)
         val userEmailTextView = headerView.findViewById<TextView>(R.id.userEmailTextView)
 
+        // Display default user details from FirebaseAuth
         user.displayName?.let {
             userNameTextView.text = it
         }
@@ -87,16 +89,23 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
             userEmailTextView.text = it
         }
 
+        // Display profile picture if available
         user.photoUrl?.let {
-            Glide.with(this).load(it).into(userImageView)
+            Log.d(TAG, "Image URL from FirebaseAuth: $it")
+            Glide.with(requireContext())
+                .load(it)
+                .placeholder(R.drawable.baseline_image_48)
+                .error(R.drawable.profile_user__128dp)
+                .into(userImageView)
         }
 
+        // Fetch additional user details from Firestore
         db.collection("User").document(user.uid).get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val userName = document.getString("name")
                     val userEmail = document.getString("email")
-                    val userImageUrl = document.getString("imageUrl")
+                    val userImageUrl = document.getString("image")
 
                     userName?.let {
                         userNameTextView.text = it
@@ -107,7 +116,12 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
                     }
 
                     userImageUrl?.let {
-                        Glide.with(this).load(it).into(userImageView)
+                        Log.d(TAG, "Image URL from Firestore: $it")
+                        Glide.with(requireContext())
+                            .load(it)
+                            .placeholder(R.drawable.baseline_image_48)
+                            .error(R.drawable.profile_user__128dp)
+                            .into(userImageView)
                     }
                 }
             }
@@ -115,6 +129,8 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
                 Log.e(TAG, "Error fetching user details", e)
             }
     }
+
+
 
     private fun calculateTodaySpending() {
         val user = FirebaseAuth.getInstance().currentUser
@@ -141,7 +157,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
                 var totalSpending = 0.0
                 for (document in documents) {
                     val expense = document.toObject(Transaction::class.java)
-                    expense.amount.let {
+                    expense.amount?.let {
                         totalSpending += it
                     }
                     Log.d(TAG, "Expense: $expense")
@@ -158,49 +174,12 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
             }
     }
 
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.navHome -> {
-                // Handle Home action
-                drawerLayout.closeDrawer(GravityCompat.START)
-                return true
-            }
-            R.id.navNotification -> {
-                // Navigate to ProfileFragment
-                findNavController().navigate(R.id.action_fragment_home_to_notificationsActivity)
-                drawerLayout.closeDrawer(GravityCompat.START)
-                return true
-            }
-            R.id.navHelp->{
-                // Navigate to ProfileFragment
-                findNavController().navigate(R.id.action_fragment_home_to_helpActivity)
-                drawerLayout.closeDrawer(GravityCompat.START)
-                return true
-            }
-
-            R.id.navContact->{
-                // Navigate to ProfileFragment
-                findNavController().navigate(R.id.action_fragment_home_to_contactUsActivity)
-                drawerLayout.closeDrawer(GravityCompat.START)
-                return true
-            }
-            else -> return false
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     private fun calculateMonthIncomeExpense() {
         val user = FirebaseAuth.getInstance().currentUser
         val userId = user?.uid
         val db = FirebaseFirestore.getInstance()
 
         if (userId == null) {
-            // Handle case where user is not logged in
             return
         }
 
@@ -223,19 +202,19 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         db.collection("incomeTransactions")
             .whereEqualTo("userId", userId)
             .whereGreaterThanOrEqualTo("date", startFormattedDate)
+            .whereLessThan("date", endFormattedDate)
             .get()
             .addOnSuccessListener { documents ->
                 var totalIncome = 0.0
                 for (document in documents) {
                     val income = document.toObject(Transaction::class.java)
-                    income.amount.let {
+                    income.amount?.let {
                         totalIncome += it
                     }
                     Log.d(TAG, "Income: $income")
                 }
                 Log.d(TAG, "Total Income This Month: $totalIncome")
 
-                // Update UI with total income
                 binding.monthIncomeAmt.text = String.format(Locale.getDefault(), "%.2f", totalIncome)
             }
             .addOnFailureListener { e ->
@@ -253,14 +232,13 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
                 var totalExpense = 0.0
                 for (document in documents) {
                     val expense = document.toObject(Transaction::class.java)
-                    expense.amount.let {
+                    expense.amount?.let {
                         totalExpense += it
                     }
                     Log.d(TAG, "Expense: $expense")
                 }
                 Log.d(TAG, "Total Expense This Month: $totalExpense")
 
-                // Update UI with total expense
                 binding.monthExpenseAmt.text = String.format(Locale.getDefault(), "%.2f", totalExpense)
             }
             .addOnFailureListener { e ->
@@ -269,9 +247,41 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
             }
     }
 
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.navHome -> {
+                // Handle Home action
+                drawerLayout.closeDrawer(GravityCompat.START)
+                return true
+            }
+            R.id.navNotification -> {
+                // Navigate to NotificationsActivity
+                findNavController().navigate(R.id.action_fragment_home_to_notificationsActivity)
+                drawerLayout.closeDrawer(GravityCompat.START)
+                return true
+            }
+            R.id.navHelp -> {
+                // Navigate to HelpActivity
+                findNavController().navigate(R.id.action_fragment_home_to_helpActivity)
+                drawerLayout.closeDrawer(GravityCompat.START)
+                return true
+            }
+            R.id.navContact -> {
+                // Navigate to ContactUsActivity
+                findNavController().navigate(R.id.action_fragment_home_to_contactUsActivity)
+                drawerLayout.closeDrawer(GravityCompat.START)
+                return true
+            }
+            else -> return false
+        }
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     companion object {
-        const val TAG = "HomeFragment"
+        private const val TAG = "HomeFragment"
     }
 }

@@ -1,12 +1,12 @@
-package my.edu.tarc.studicash_0703.Fragment
+package my.edu.tarc.studicash_0703.PaymentMethod
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import my.edu.tarc.studicash_0703.Models.PaymentMethod
 import my.edu.tarc.studicash_0703.databinding.FragmentDialogEditPaymentMethodBinding
 
 class DialogEditPaymentMethodFragment : DialogFragment() {
@@ -83,23 +83,28 @@ class DialogEditPaymentMethodFragment : DialogFragment() {
     }
 
     private fun savePaymentMethod() {
-        paymentMethod = when (paymentMethod.type) {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        val updatedPaymentMethod = when (paymentMethod.type) {
             "Card" -> {
                 PaymentMethod(
                     type = "Card",
-                    details = "Bank: ${binding.etBankName.text}, Card Number: ${binding.etCardNumber.text}"
+                    details = " ${binding.etBankName.text}, ${binding.etCardNumber.text}",
+                    uid = uid
                 )
             }
             "E-Wallet" -> {
                 PaymentMethod(
                     type = "E-Wallet",
-                    details = "Wallet: ${binding.etWalletName.text}"
+                    details = " ${binding.etWalletName.text}",
+                    uid = uid
                 )
             }
             "Cash" -> {
                 PaymentMethod(
                     type = "Cash",
-                    details = "Details: ${binding.etCashDetails.text}"
+                    details = " ${binding.etCashDetails.text}",
+                    uid = uid
                 )
             }
             else -> return
@@ -107,7 +112,7 @@ class DialogEditPaymentMethodFragment : DialogFragment() {
 
         val firestore = FirebaseFirestore.getInstance()
         firestore.collection("paymentMethods").document(documentId)
-            .set(paymentMethod)
+            .set(updatedPaymentMethod)
             .addOnSuccessListener {
                 dismiss()
             }
