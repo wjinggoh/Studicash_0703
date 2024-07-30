@@ -61,4 +61,5 @@ class CategorySpinnerAdapter(
 
         return view
     }
+
 }

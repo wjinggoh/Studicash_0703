@@ -2,39 +2,25 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="400dp"
+    android:layout_height="wrap_content"
     android:background="#FFFFFF"
-    tools:context=".Budget.EditBudgetFragment">
-
-    <ImageView
-        android:id="@+id/editBudgetBackBtn1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:src="@drawable/baseline_arrow_back_48"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:padding="16dp">
 
     <EditText
         android:id="@+id/budgetNameEditText"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
         android:hint="Budget Name"
+        android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editBudgetBackBtn1" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/budgetAmountEditText"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
         android:hint="Amount"
         android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,9 +31,6 @@
         android:id="@+id/editBudgetSpinner"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/budgetAmountEditText" />
@@ -56,11 +39,9 @@
         android:id="@+id/editTextStartDate"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:focusable="false"
         android:hint="Start Date"
-        app:layout_constraintEnd_toStartOf="@id/buttonStartDate"
+        app:layout_constraintEnd_toStartOf="@+id/buttonStartDate"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editBudgetSpinner" />
 
@@ -68,8 +49,10 @@
         android:id="@+id/buttonStartDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/ff01579b"
         android:text="Pick Start Date"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="@id/editTextStartDate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/editTextStartDate" />
 
@@ -77,11 +60,9 @@
         android:id="@+id/editTextEndDate"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:focusable="false"
         android:hint="End Date"
-        app:layout_constraintEnd_toStartOf="@id/buttonEndDate"
+        app:layout_constraintEnd_toStartOf="@+id/buttonEndDate"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editTextStartDate" />
 
@@ -89,8 +70,10 @@
         android:id="@+id/buttonEndDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/ff01579b"
         android:text="Pick End Date"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="@id/editTextEndDate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/editTextEndDate" />
 
@@ -98,10 +81,9 @@
         android:id="@+id/saveButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/ff01579b"
         android:text="Save"
+        app:cornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editTextEndDate" />

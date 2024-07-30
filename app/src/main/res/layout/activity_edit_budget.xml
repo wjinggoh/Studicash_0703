@@ -1,152 +1,158 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:padding="16dp"
-    tools:context=".Budget.EditBudgetActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/editBudgetBackBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/baseline_arrow_back_48" />
+    <data>
+        <!-- Declare any variables or objects to be used in the binding -->
+    </data>
 
-    <Spinner
-        android:id="@+id/editBudgetSpinner"
-        android:layout_width="300dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/border_for_recycle_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editBudgetBackBtn" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        tools:context=".Budget.EditBudgetActivity">
 
-    <EditText
-        android:id="@+id/budgetNameEditText"
-        android:layout_width="350dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/background_with_border_grey"
-        android:elevation="3dp"
-        android:hint="Budget Name"
-        android:paddingLeft="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editBudgetSpinner" />
+        <ImageView
+            android:id="@+id/editBudgetBackBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:contentDescription="backbtn"
+            android:src="@drawable/baseline_arrow_back_48"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/budgetAmountEditText"
-        android:layout_width="350dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/background_with_border_grey"
-        android:elevation="3dp"
-        android:hint="Amount"
-        android:inputType="numberDecimal"
-        android:paddingLeft="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/budgetNameEditText" />
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Edit Budget"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/saveBudgetButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:backgroundTint="#01579B"
-        android:text="Save Budget"
-        app:cornerRadius="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextEndDate" />
+        <EditText
+            android:id="@+id/budgetNameEditBudget"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_margin="16dp"
+            android:hint="Budget Name"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewTitle" />
 
-    <TextView
-        android:id="@+id/textViewStartDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Start Date:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/buttonStartDate"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/budgetAmountEditText" />
+        <Spinner
+            android:id="@+id/spinnerCategory"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_margin="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/budgetNameEditBudget" />
 
-    <EditText
-        android:id="@+id/editTextStartDate"
-        android:layout_width="180dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/background_with_border_grey_no_corner"
-        android:elevation="3dp"
-        android:fontFamily="@font/concert_one"
-        android:hint="@string/datehint"
-        android:inputType="date"
-        android:paddingTop="10dp"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="@+id/textViewStartDate"
-        app:layout_constraintTop_toBottomOf="@+id/textViewStartDate"
-        app:layout_constraintWidth_percent="0.6" />
+        <EditText
+            android:id="@+id/editTextAmount"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_margin="16dp"
+            android:hint="@string/amount"
+            android:inputType="numberDecimal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spinnerCategory" />
 
-    <Button
-        android:id="@+id/buttonStartDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:backgroundTint="#351ACF"
-        android:text="Select Date"
-        app:cornerRadius="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextStartDate"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/editTextStartDate" />
+        <TextView
+            android:id="@+id/editTextStartDate"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="Start Date"
+            android:inputType="date"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:textAlignment="textStart"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editTextAmount" />
 
-    <TextView
-        android:id="@+id/textViewEndDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="End Date:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/buttonEndDate"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/editTextStartDate"
-        app:layout_constraintTop_toBottomOf="@+id/editTextStartDate" />
+        <Button
+            android:id="@+id/buttonStartDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/ff01579b"
+            android:text="Select Start Date"
+            app:cornerRadius="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editTextStartDate" />
 
-    <EditText
-        android:id="@+id/editTextEndDate"
-        android:layout_width="180dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/background_with_border_grey_no_corner"
-        android:elevation="3dp"
-        android:fontFamily="@font/concert_one"
-        android:hint="@string/datehint"
-        android:inputType="date"
-        android:paddingTop="10dp"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="@+id/textViewEndDate"
-        app:layout_constraintTop_toBottomOf="@+id/textViewEndDate"
-        app:layout_constraintWidth_percent="0.6" />
+        <TextView
+            android:id="@+id/editTextEndDate"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="End Date"
+            android:inputType="date"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:textAlignment="textStart"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/buttonStartDate" />
 
-    <Button
-        android:id="@+id/buttonEndDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:backgroundTint="#351ACF"
-        android:text="Select Date"
-        app:cornerRadius="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextEndDate"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/editTextEndDate" />
+        <Button
+            android:id="@+id/buttonEndDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/ff01579b"
+            android:text="Select End Date"
+            app:cornerRadius="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editTextEndDate" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/buttonSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/ff01579b"
+            android:text="@string/save"
+            app:cornerRadius="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/buttonEndDate" />
+
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/ff01579b"
+            android:text="Cancel"
+            app:cornerRadius="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/buttonEndDate" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/baseline_arrow_back_48" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

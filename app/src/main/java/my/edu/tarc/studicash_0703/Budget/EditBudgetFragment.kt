@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.BudgetItem
+import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.FragmentEditBudgetBinding
 import java.text.SimpleDateFormat
 import java.util.*
@@ -23,7 +24,7 @@ class EditBudgetFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            budgetId = it.getString("budgetId")
+            budgetId = it.getString(ARG_BUDGET_ID)
         }
     }
 
@@ -31,21 +32,27 @@ class EditBudgetFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Initialize the binding
         binding = FragmentEditBudgetBinding.inflate(inflater, container, false)
+        val rootView = binding.root
 
+        // Initialize the dateFormat
         dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
+        // Setup UI components
         setupSpinner()
         setupDatePickers()
         setupSaveButton()
 
+        // Fetch budget details if a budgetId is provided
         budgetId?.let { fetchBudget(it) }
 
+        // Handle back button click
         binding.editBudgetBackBtn1.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        return binding.root
+        return rootView
     }
 
     private fun setupSpinner() {
@@ -153,11 +160,12 @@ class EditBudgetFragment : Fragment() {
     }
 
     companion object {
+        private const val ARG_BUDGET_ID = "budget_id"
+
         fun newInstance(budgetId: String): EditBudgetFragment {
             val fragment = EditBudgetFragment()
-            val args = Bundle().apply {
-                putString("budgetId", budgetId)
-            }
+            val args = Bundle()
+            args.putString(ARG_BUDGET_ID, budgetId)
             fragment.arguments = args
             return fragment
         }

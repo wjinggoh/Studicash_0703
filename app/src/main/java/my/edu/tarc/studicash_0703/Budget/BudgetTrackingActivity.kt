@@ -1,11 +1,13 @@
 package my.edu.tarc.studicash_0703.Budget
 
+import BudgetAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,7 +21,6 @@ import my.edu.tarc.studicash_0703.MainActivity
 import my.edu.tarc.studicash_0703.Models.BudgetItem
 import my.edu.tarc.studicash_0703.NotificationHelper
 import my.edu.tarc.studicash_0703.R
-import my.edu.tarc.studicash_0703.adapter.BudgetAdapter
 import my.edu.tarc.studicash_0703.databinding.ActivityBudgetTrackingBinding
 
 class BudgetTrackingActivity : AppCompatActivity() {
@@ -94,6 +95,7 @@ class BudgetTrackingActivity : AppCompatActivity() {
                 }
 
                 for (document in result) {
+                    Log.d("BudgetTrackingActivity", "Processing document: ${document.id}")
                     val id = document.id
                     val name = document.getString("name") ?: ""
                     val category = document.getString("category") ?: ""
@@ -159,6 +161,8 @@ class BudgetTrackingActivity : AppCompatActivity() {
             }
     }
 
+
+
     private fun fetchTotalSpentForBudget(budgetName: String): Task<Double> {
         val transactionsCollection = firestore.collection("expenseTransactions")
         val taskCompletionSource = TaskCompletionSource<Double>()
@@ -182,36 +186,56 @@ class BudgetTrackingActivity : AppCompatActivity() {
         val adapter = BudgetAdapter(
             this,
             budgets,
-            onEditClick = { budgetItem -> editBudget(budgetItem) },
-            onDeleteClick = { budgetItem -> deleteBudget(budgetItem) }
+            onEditClick = { budgetItem ->
+                // Navigate to EditBudgetActivity
+                val intent = Intent(this, EditBudgetActivity::class.java)
+                intent.putExtra("budgetId", budgetItem.id)
+                startActivity(intent)
+            },
+            onDeleteClick = { budgetItem ->
+                // Show delete confirmation dialog
+                showDeleteConfirmationDialog(budgetItem.id, budgetItem.name)
+            }
         )
         binding.budgetTrackingRecycleView.adapter = adapter
         binding.budgetTrackingRecycleView.layoutManager = LinearLayoutManager(this)
     }
 
+
     private fun editBudget(budgetItem: BudgetItem) {
-        val fragment = EditBudgetFragment.newInstance(budgetItem.id)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment) // Ensure R.id.fragment_container is the ID of your fragment container
-            .addToBackStack(null) // Optional: to add the fragment to the back stack
-            .commit()
+        val intent = Intent(this, EditBudgetActivity::class.java)
+        intent.putExtra("budgetItem", budgetItem)
+        startActivity(intent)
     }
 
 
-    private fun deleteBudget(budgetItem: BudgetItem) {
+
+
+    private fun deleteBudget(budgetId: String) {
+        firestore.collection("Budget").document(budgetId).delete()
+            .addOnSuccessListener {
+                Toast.makeText(this, "Budget deleted successfully", Toast.LENGTH_SHORT).show()
+                // Optionally refresh the RecyclerView
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error deleting budget", Toast.LENGTH_SHORT).show()
+                Log.w("TrackBudgetActivity", "Error deleting document", e)
+            }
+    }
+
+
+    private fun showDeleteConfirmationDialog(budgetId: String, budgetName: String) {
         AlertDialog.Builder(this)
             .setTitle("Delete Budget")
             .setMessage("Are you sure you want to delete this budget?")
-            .setPositiveButton("Yes") { _, _ ->
-                firestore.collection("Budget").document(budgetItem.id).delete()
-                    .addOnSuccessListener {
-                        fetchAndDisplayBudgets()
-                    }
-                    .addOnFailureListener { e ->
-                        handleError("Error deleting budget: ${e.message}")
-                    }
+            .setPositiveButton("Yes") { dialog, _ ->
+                deleteBudget(budgetId)
+                dialog.dismiss()
             }
-            .setNegativeButton("No", null)
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
             .show()
     }
 
