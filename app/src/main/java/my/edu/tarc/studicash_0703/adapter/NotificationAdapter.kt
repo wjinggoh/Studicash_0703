@@ -1,6 +1,6 @@
 package my.edu.tarc.studicash_0703.adapter
 
-import NotificationItem
+import my.edu.tarc.studicash_0703.Models.NotificationItem
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup

@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.adapter.ExpenseCategoryAdapter
 import my.edu.tarc.studicash_0703.Models.ExpenseCategory
@@ -37,12 +38,14 @@ class EditExpensesCategoryActivity : AppCompatActivity() {
     }
 
     private fun fetchExpenseCategoriesFromFirestore() {
+        val currentUserUid = getCurrentUserUid()
         db.collection("Goal")
             .get()
             .addOnSuccessListener { goalResult ->
                 val goalNames = goalResult.documents.mapNotNull { it.getString("name") }
 
                 db.collection("ExpenseCategories")
+                    .whereEqualTo("uid", currentUserUid)
                     .get()
                     .addOnSuccessListener { result ->
                         expenseCategories.clear()
@@ -67,6 +70,11 @@ class EditExpensesCategoryActivity : AppCompatActivity() {
             }
     }
 
+    private fun getCurrentUserUid(): String? {
+        val firebaseAuth = FirebaseAuth.getInstance()
+        val currentUser = firebaseAuth.currentUser
+        return currentUser?.uid
+    }
     fun updateCategory(updatedCategory: ExpenseCategory, position: Int) {
         expenseCategories[position] = updatedCategory
         expenseCategoryAdapter.notifyItemChanged(position)

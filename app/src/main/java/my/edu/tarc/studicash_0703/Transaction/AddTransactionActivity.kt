@@ -1,12 +1,19 @@
 package my.edu.tarc.studicash_0703.Transaction
 
 import android.app.DatePickerDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.ExpenseCategory
@@ -17,6 +24,7 @@ import my.edu.tarc.studicash_0703.databinding.ActivityAddTransactionBinding
 import com.google.firebase.Timestamp
 import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.adapter.CategorySpinnerAdapter
+import my.edu.tarc.studicash_0703.sidebar.NotificationsActivity
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -306,5 +314,38 @@ class AddTransactionActivity : AppCompatActivity() {
             ExpenseCategory(R.drawable.transport, "Transportation"),
             ExpenseCategory(R.drawable.custom_category, "Other")
         )
+    }
+
+    private fun sendNewTransactionNotification(transaction: Transaction) {
+        val channelId = "transaction_notifications"
+        val notificationId = (System.currentTimeMillis() % 10000).toInt()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Transaction Notifications",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Notifications for new transactions"
+            }
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val notificationIntent = Intent(this, NotificationsActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.logo) // Use your app icon
+            .setContentTitle("New Transaction Added")
+            .setContentText("Transaction '${transaction.title}' of amount ${transaction.amount} was added.")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()
+
+        NotificationManagerCompat.from(this).notify(notificationId, notification)
     }
 }

@@ -4,8 +4,10 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import my.edu.tarc.studicash_0703.Transaction.EditIncomeCategoryActivity
 import my.edu.tarc.studicash_0703.Models.IncomeCategory
+import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.CategoryItemBinding
 
 class IncomeCategoryAdapter(
@@ -22,7 +24,13 @@ class IncomeCategoryAdapter(
 
     override fun onBindViewHolder(holder: IncomeCategoryViewHolder, position: Int) {
         val category = incomeCategories[position]
-        holder.binding.categoryIcon.setImageResource(category.icon)
+
+        // Load image from URI using Glide
+        Glide.with(context)
+            .load(category.iconUri) // Assuming `iconUri` is the URI for the image
+            .placeholder(R.drawable.baseline_image_48) // Placeholder image while loading
+            .into(holder.binding.categoryIcon)
+
         holder.binding.categoryName.text = category.name
 
         holder.binding.editCategoryButton.setOnClickListener {

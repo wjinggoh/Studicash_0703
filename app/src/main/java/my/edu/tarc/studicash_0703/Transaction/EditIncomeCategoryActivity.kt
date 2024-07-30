@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.adapter.IncomeCategoryAdapter
 import my.edu.tarc.studicash_0703.Models.IncomeCategory
@@ -35,21 +36,33 @@ class EditIncomeCategoryActivity : AppCompatActivity() {
     }
 
     private fun fetchIncomeCategoriesFromFirestore() {
+        val currentUserUid = getCurrentUserUid() // Get the current user's UID
+
         db.collection("IncomeCategories")
+            .whereEqualTo("uid", currentUserUid) // Filter by UID
             .get()
             .addOnSuccessListener { result ->
                 incomeCategories.clear()
                 for (document in result) {
                     val icon = document.getLong("icon")?.toInt() ?: R.drawable.baseline_image_48
                     val name = document.getString("name") ?: ""
+                    val iconUri = document.getString("iconUri") ?: ""
                     val id = document.id
-                    incomeCategories.add(IncomeCategory(icon, name, id))
+                    val uid = document.getString("uid") // Retrieve UID from Firestore document
+                    incomeCategories.add(IncomeCategory(icon, name,iconUri, id))
                 }
                 incomeCategoryAdapter.notifyDataSetChanged()
             }
             .addOnFailureListener { exception ->
                 Toast.makeText(this, "Error getting documents: $exception", Toast.LENGTH_SHORT).show()
             }
+    }
+
+
+    private fun getCurrentUserUid(): String? {
+        val firebaseAuth = FirebaseAuth.getInstance()
+        val currentUser = firebaseAuth.currentUser
+        return currentUser?.uid
     }
 
     fun updateCategory(updatedCategory: IncomeCategory, position: Int) {
