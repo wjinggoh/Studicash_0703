@@ -5,6 +5,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -70,18 +71,36 @@ class AddPaymentMethodActivity : AppCompatActivity() {
         }
 
         deleteButton.setOnClickListener {
-            val uid = auth.currentUser?.uid ?: return@setOnClickListener // Exit if UID is null
-
-            firestore.collection("paymentMethods").document(documentId)
-                .delete()
-                .addOnSuccessListener {
-                    binding.paymentMethodsContainer.removeView(paymentMethodView)
-                }
-                .addOnFailureListener { exception ->
-                    Toast.makeText(this, "Failed to delete payment method: ${exception.message}", Toast.LENGTH_SHORT).show()
-                }
+            showDeleteConfirmationDialog(documentId, paymentMethod.details)
         }
 
         binding.paymentMethodsContainer.addView(paymentMethodView)
+    }
+
+    private fun showDeleteConfirmationDialog(documentId: String, paymentMethodDetails: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Delete Payment Method")
+            .setMessage("Are you sure you want to delete this payment method: $paymentMethodDetails?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                deletePaymentMethod(documentId)
+                dialog.dismiss()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    private fun deletePaymentMethod(documentId: String) {
+        firestore.collection("paymentMethods").document(documentId)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(this, "Payment method deleted successfully", Toast.LENGTH_SHORT).show()
+                loadPaymentMethods() // Refresh the list
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(this, "Failed to delete payment method: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }

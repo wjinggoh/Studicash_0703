@@ -1,4 +1,3 @@
-<!-- res/layout/dialog_new_payment_method.xml -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -49,13 +48,10 @@
             android:text="Cash" />
     </RadioGroup>
 
-    <EditText
-        android:id="@+id/et_bank_name"
+    <Spinner
+        android:id="@+id/spinner_bank"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:hint="Bank Name"
-        android:inputType="text"
+        android:layout_height="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/radio_group_payment_type" />
@@ -63,21 +59,17 @@
     <EditText
         android:id="@+id/et_card_number"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_height="48dp"
         android:hint="Card Number"
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_bank_name" />
+        app:layout_constraintTop_toBottomOf="@id/spinner_bank" />
 
-    <EditText
-        android:id="@+id/et_wallet_name"
+    <Spinner
+        android:id="@+id/spinner_wallet_name"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:hint="Wallet App Name"
-        android:inputType="text"
+        android:layout_height="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_card_number" />
@@ -85,13 +77,12 @@
     <EditText
         android:id="@+id/et_cash_details"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_height="48dp"
         android:hint="Cash Details"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_wallet_name" />
+        app:layout_constraintTop_toBottomOf="@id/spinner_wallet_name" />
 
     <Button
         android:id="@+id/btn_save_payment_method"

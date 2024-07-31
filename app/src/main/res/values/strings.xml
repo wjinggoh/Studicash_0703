@@ -133,4 +133,39 @@
     <string name="contactusdescription">You can get in touch with us through below platforms. Our Team will reach out to you as soon as it would be possible. </string>
     <string name="customerSupportTitle">Customer Support</string>
     <string name="contactNoTitle">Contact Number</string>
+
+
+    <!-- Bank options for the card -->
+    <string-array name="banks_array">
+        <item>Maybank (Malayan Banking Berhad)</item>
+        <item>CIMB Bank Berhad</item>
+        <item>Public Bank Berhad</item>
+        <item>Hong Leong Bank Berhad</item>
+        <item>RHB Bank Berhad</item>
+        <item>AmBank (AmBank (M) Berhad)</item>
+        <item>UOB Malaysia (United Overseas Bank (Malaysia) Bhd)</item>
+        <item>Bank Islam Malaysia Berhad</item>
+        <item>Bank Rakyat (Bank Kerjasama Rakyat Malaysia Berhad)</item>
+        <item>Standard Chartered Bank Malaysia Berhad</item>
+        <item>HSBC Bank Malaysia Berhad</item>
+        <item>Deutsche Bank (Malaysia) Berhad</item>
+        <item>OCBC Bank</item>
+    </string-array>
+
+    <!-- E-wallet options -->
+    <string-array name="ewallets_array">
+        <item>Touch\'n Go eWallet</item>
+        <item>Boost</item>
+        <item>GrabPay</item>
+        <item>ShopeePay</item>
+        <item>BigPay</item>
+        <item>Maybank2u Pay</item>
+        <item>CIMB Pay</item>
+        <item>Hong Leong Connect</item>
+        <item>UOB Mighty</item>
+        <item>Bank Islam eWallet</item>
+        <item>Bank Rakyat eWallet</item>
+        <item>Standard Chartered eWallet</item>
+        <item>HSBC eWallet</item>
+    </string-array>
 </resources>
