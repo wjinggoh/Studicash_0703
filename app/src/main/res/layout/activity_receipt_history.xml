@@ -8,4 +8,35 @@
     android:background="#FFFFFF"
     tools:context=".ReceiptHistoryActivity">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ReceiptRecyclerView"
+        android:layout_width="400dp"
+        android:layout_height="500dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/receiptHistoryTitle"
+        app:layout_constraintVertical_bias="0.497" />
+
+    <TextView
+        android:id="@+id/receiptHistoryTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:fontFamily="@font/concert_one"
+        android:text="Receipt History"
+        android:textSize="32sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/receiptHistoryBackBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/baseline_arrow_back_48" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,14 +13,18 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.squareup.picasso.Picasso
+import my.edu.tarc.studicash_0703.Models.Receipt
 import my.edu.tarc.studicash_0703.Models.ReceiptsViewModel
 import my.edu.tarc.studicash_0703.databinding.ActivityAddReceiptBinding
+import java.io.ByteArrayInputStream
 import java.io.FileNotFoundException
+import java.io.InputStream
 import java.util.UUID
 
 class AddReceiptActivity : AppCompatActivity() {
@@ -79,19 +83,26 @@ class AddReceiptActivity : AppCompatActivity() {
                 saveReceiptToDatabase()
             } else {
                 // Handle case where no image is selected
+                Log.e("AddReceiptActivity", "No image URI provided")
             }
         }
 
         binding.btnCancel.setOnClickListener {
             finish()
         }
+
+        binding.receiptHistory.setOnClickListener {
+            val intent = Intent(this, ReceiptHistoryActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun uploadAction(data: Intent) {
         try {
             val stream = contentResolver.openInputStream(data.data!!)
+            val resizedBitmap = getResizedBitmap(stream, 1024, 1024)
             if (::photoImage.isInitialized) photoImage.recycle()
-            photoImage = BitmapFactory.decodeStream(stream)
+            photoImage = resizedBitmap
             firebaseImage = FirebaseVisionImage.fromBitmap(photoImage)
             binding.imageResult.setImageBitmap(photoImage)
             imageURI = data.data // Store the image URI
@@ -122,6 +133,7 @@ class AddReceiptActivity : AppCompatActivity() {
             }
             .addOnFailureListener {
                 // Handle failure
+                Log.e("AddReceiptActivity", "Text recognition failed")
             }
     }
 
@@ -137,18 +149,21 @@ class AddReceiptActivity : AppCompatActivity() {
             uploadTask.addOnSuccessListener { taskSnapshot ->
                 // Get the download URL of the uploaded image
                 storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                    val receipt = hashMapOf(
-                        "total" to binding.editTotal.text.toString(),
-                        "tax" to binding.editTAX.text.toString(),
-                        "location" to binding.editLocation.text.toString(),
-                        "imageUrl" to downloadUri.toString()
+                    // Create a Receipt object with the image URI
+                    val receipt = Receipt(
+                        total = binding.editTotal.text.toString(),
+                        tax = binding.editTAX.text.toString(),
+                        type = binding.editLocation.text.toString(),
+                        userId = getCurrentUserId(), // Get the user ID
+                        imageUri = downloadUri.toString() // Change here to match your data class
                     )
 
                     // Save receipt details to Firestore
                     firestoreRef.set(receipt).addOnSuccessListener {
                         // Data saved successfully
                         Log.d("AddReceiptActivity", "Receipt successfully saved to Firestore with ID: $receiptId")
-                        finish()
+                        // Reset UI elements
+                        resetUI()
                     }.addOnFailureListener { e ->
                         // Handle failure
                         Log.e("AddReceiptActivity", "Error saving receipt to Firestore: ${e.message}")
@@ -167,6 +182,23 @@ class AddReceiptActivity : AppCompatActivity() {
         }
     }
 
+
+
+    private fun getCurrentUserId(): String {
+        val firebaseAuth = FirebaseAuth.getInstance()
+        return firebaseAuth.currentUser?.uid ?: "default_user_id" // Handle case where user is not signed in
+    }
+
+    private fun resetUI() {
+        // Clear the image view
+        binding.imageResult.setImageDrawable(null)
+        // Clear the text fields
+        binding.editTotal.text.clear()
+        binding.editTAX.text.clear()
+        binding.editLocation.text.clear()
+        // Reset the imageURI
+        imageURI = null
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -187,4 +219,36 @@ class AddReceiptActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun getResizedBitmap(inputStream: InputStream?, maxWidth: Int, maxHeight: Int): Bitmap {
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+
+        // Read the InputStream into a byte array
+        val byteArray = inputStream?.readBytes() ?: throw IllegalArgumentException("Input stream is null")
+
+        // Create a ByteArrayInputStream for decoding the bounds
+        val byteArrayInputStream1 = ByteArrayInputStream(byteArray)
+        BitmapFactory.decodeStream(byteArrayInputStream1, null, options)
+        val imageWidth = options.outWidth
+        val imageHeight = options.outHeight
+
+        var scaleFactor = 1
+        if (imageWidth > maxWidth || imageHeight > maxHeight) {
+            val halfWidth = imageWidth / 2
+            val halfHeight = imageHeight / 2
+
+            while ((halfWidth / scaleFactor) >= maxWidth && (halfHeight / scaleFactor) >= maxHeight) {
+                scaleFactor *= 2
+            }
+        }
+
+        options.inJustDecodeBounds = false
+        options.inSampleSize = scaleFactor
+
+        // Create another ByteArrayInputStream for decoding the actual bitmap
+        val byteArrayInputStream2 = ByteArrayInputStream(byteArray)
+        return BitmapFactory.decodeStream(byteArrayInputStream2, null, options) ?: throw IllegalArgumentException("Failed to decode bitmap")
+    }
+
 }

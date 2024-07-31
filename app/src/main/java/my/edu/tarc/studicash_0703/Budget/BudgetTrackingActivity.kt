@@ -1,6 +1,6 @@
 package my.edu.tarc.studicash_0703.Budget
 
-import BudgetAdapter
+import my.edu.tarc.studicash_0703.adapter.BudgetAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log

@@ -25,8 +25,8 @@ class ReceiptItemsAdapter(private val items: List<ReceiptItems>) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ReceiptItems) {
-            binding.itemName.text = item.itemName
-            binding.itemAmount.text = item.itemAmount.toString()
+           // binding.itemName.text = item.itemName
+            //binding.itemAmount.text = item.itemAmount.toString()
         }
     }
 }
