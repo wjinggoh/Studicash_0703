@@ -230,7 +230,7 @@ class AddTransactionActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { result ->
                 if (result.isEmpty) {
-                    Toast.makeText(this, "No payment methods found", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "No payment methods found, please add your payment method in Settings!", Toast.LENGTH_SHORT).show()
                     return@addOnSuccessListener
                 }
 
@@ -317,35 +317,41 @@ class AddTransactionActivity : AppCompatActivity() {
     }
 
     private fun sendNewTransactionNotification(transaction: Transaction) {
-        val channelId = "transaction_notifications"
-        val notificationId = (System.currentTimeMillis() % 10000).toInt()
+        try {
+            val channelId = "transaction_notifications"
+            val notificationId = (System.currentTimeMillis() % 10000).toInt()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "Transaction Notifications",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Notifications for new transactions"
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(
+                    channelId,
+                    "Transaction Notifications",
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = "Notifications for new transactions"
+                }
+                val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.createNotificationChannel(channel)
             }
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+
+            val notificationIntent = Intent(this, NotificationsActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            }
+            val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+            val notification = NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.logo) // Use your app icon
+                .setContentTitle("New Transaction Added")
+                .setContentText("Transaction '${transaction.title}' of amount ${transaction.amount} was added.")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .build()
+
+            NotificationManagerCompat.from(this).notify(notificationId, notification)
+        } catch (e: SecurityException) {
+            Toast.makeText(this, "Failed to send notification: ${e.message}", Toast.LENGTH_SHORT).show()
+            Log.e("Notification", "Error sending notification", e)
         }
-
-        val notificationIntent = Intent(this, NotificationsActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        }
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        val notification = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.logo) // Use your app icon
-            .setContentTitle("New Transaction Added")
-            .setContentText("Transaction '${transaction.title}' of amount ${transaction.amount} was added.")
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
-            .build()
-
-        NotificationManagerCompat.from(this).notify(notificationId, notification)
     }
+
 }

@@ -2,12 +2,10 @@ package my.edu.tarc.studicash_0703.adapter
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import my.edu.tarc.studicash_0703.Budget.EditBudgetActivity
-import my.edu.tarc.studicash_0703.Budget.EditBudgetDialogFragment
 import my.edu.tarc.studicash_0703.Models.BudgetItem
 import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.BudgetItemBinding
@@ -36,7 +34,7 @@ class BudgetAdapter(
             // Edit button click listener
             binding.editBudgetBtn.setOnClickListener {
                 val intent = Intent(context, EditBudgetActivity::class.java).apply {
-                    putExtra("budgetId", budget)
+                    putExtra("budgetId", budget.id) // Pass budget ID instead of the whole object
                 }
                 context.startActivity(intent)
             }

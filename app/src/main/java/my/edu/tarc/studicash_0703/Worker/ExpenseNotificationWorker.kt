@@ -1,4 +1,4 @@
-package my.edu.tarc.studicash_0703
+package my.edu.tarc.studicash_0703.Worker
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -8,6 +8,8 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import my.edu.tarc.studicash_0703.MainActivity
+import my.edu.tarc.studicash_0703.R
 
 class ExpenseNotificationWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 

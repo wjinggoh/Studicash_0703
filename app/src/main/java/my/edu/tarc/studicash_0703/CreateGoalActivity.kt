@@ -291,7 +291,6 @@ class CreateGoalActivity : AppCompatActivity() {
     }
 
     private fun addExpenseCategory(name: String, iconResId: Int) {
-        // Use the iconResId directly as the icon parameter, which should be an Int
         val category = ExpenseCategory(name = name, icon = iconResId)
         val uid = auth.currentUser?.uid
 
@@ -303,7 +302,7 @@ class CreateGoalActivity : AppCompatActivity() {
                 .addOnSuccessListener { documents ->
                     if (documents.isEmpty) {
                         firestore.collection("ExpenseCategories")
-                            .add(category.toMap())
+                            .add(category.toMap() + mapOf("uid" to uid))
                             .addOnSuccessListener {
                                 Toast.makeText(this, "Expense category added successfully", Toast.LENGTH_SHORT).show()
                             }
@@ -321,5 +320,6 @@ class CreateGoalActivity : AppCompatActivity() {
             Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
         }
     }
+
 
 }

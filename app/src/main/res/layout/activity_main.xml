@@ -105,6 +105,17 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Add the FragmentContainerView here -->
+    <TextView
+        android:id="@+id/AdminLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Admin? Login here"
+        android:textColor="#1A5E9D"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/create_An_Account" />
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:layout_width="match_parent"

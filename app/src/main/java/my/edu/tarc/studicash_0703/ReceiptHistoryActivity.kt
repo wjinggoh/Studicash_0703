@@ -9,41 +9,42 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
-import my.edu.tarc.studicash_0703.adapter.ReceiptAdapter
 import com.google.firebase.auth.FirebaseAuth
+import my.edu.tarc.studicash_0703.adapter.ReceiptAdapter
+import my.edu.tarc.studicash_0703.databinding.ActivityReceiptHistoryBinding
 
 class ReceiptHistoryActivity : AppCompatActivity() {
 
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var binding: ActivityReceiptHistoryBinding
     private lateinit var adapter: ReceiptAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_receipt_history)
+        binding = ActivityReceiptHistoryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        recyclerView = findViewById(R.id.ReceiptRecyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.ReceiptRecyclerView.layoutManager = LinearLayoutManager(this)
 
         // Initialize with an empty list
         adapter = ReceiptAdapter(emptyList())
-        recyclerView.adapter = adapter
+        binding.ReceiptRecyclerView.adapter = adapter
 
         // Fetch receipts and update adapter
         fetchReceiptsAndUpdateUI()
 
-        val backBtn = findViewById<View>(R.id.receiptHistoryBackBtn)
-        backBtn.setOnClickListener {
+        binding.receiptHistoryBackBtn.setOnClickListener {
             onBackPressed()
         }
+
+
     }
 
     private fun fetchReceiptsAndUpdateUI() {

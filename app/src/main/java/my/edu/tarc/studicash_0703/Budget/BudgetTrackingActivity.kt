@@ -1,6 +1,5 @@
 package my.edu.tarc.studicash_0703.Budget
 
-import my.edu.tarc.studicash_0703.adapter.BudgetAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -21,6 +20,7 @@ import my.edu.tarc.studicash_0703.MainActivity
 import my.edu.tarc.studicash_0703.Models.BudgetItem
 import my.edu.tarc.studicash_0703.NotificationHelper
 import my.edu.tarc.studicash_0703.R
+import my.edu.tarc.studicash_0703.adapter.BudgetAdapter
 import my.edu.tarc.studicash_0703.databinding.ActivityBudgetTrackingBinding
 
 class BudgetTrackingActivity : AppCompatActivity() {
@@ -71,6 +71,7 @@ class BudgetTrackingActivity : AppCompatActivity() {
 
         binding.BudgetTrackingBackBtn.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
+            finish() // Ensure the activity is finished to prevent accidental data operations
         }
     }
 
@@ -161,13 +162,15 @@ class BudgetTrackingActivity : AppCompatActivity() {
             }
     }
 
-
-
     private fun fetchTotalSpentForBudget(budgetName: String): Task<Double> {
         val transactionsCollection = firestore.collection("expenseTransactions")
         val taskCompletionSource = TaskCompletionSource<Double>()
+        val userId = auth.currentUser?.uid
 
-        transactionsCollection.whereEqualTo("category", budgetName).get()
+        transactionsCollection
+            .whereEqualTo("category", budgetName)
+            .whereEqualTo("userId", userId)
+            .get()
             .addOnSuccessListener { result ->
                 var totalSpent = 0.0
                 for (document in result) {
@@ -201,28 +204,17 @@ class BudgetTrackingActivity : AppCompatActivity() {
         binding.budgetTrackingRecycleView.layoutManager = LinearLayoutManager(this)
     }
 
-
-    private fun editBudget(budgetItem: BudgetItem) {
-        val intent = Intent(this, EditBudgetActivity::class.java)
-        intent.putExtra("budgetItem", budgetItem)
-        startActivity(intent)
-    }
-
-
-
-
     private fun deleteBudget(budgetId: String) {
         firestore.collection("Budget").document(budgetId).delete()
             .addOnSuccessListener {
                 Toast.makeText(this, "Budget deleted successfully", Toast.LENGTH_SHORT).show()
-                // Optionally refresh the RecyclerView
+                fetchAndDisplayBudgets() // Refresh the list after deletion
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Error deleting budget", Toast.LENGTH_SHORT).show()
-                Log.w("TrackBudgetActivity", "Error deleting document", e)
+                Log.w("BudgetTrackingActivity", "Error deleting document", e)
             }
     }
-
 
     private fun showDeleteConfirmationDialog(budgetId: String, budgetName: String) {
         AlertDialog.Builder(this)

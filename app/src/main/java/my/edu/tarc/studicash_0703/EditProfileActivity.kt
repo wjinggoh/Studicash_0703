@@ -19,7 +19,6 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
     private lateinit var storage: FirebaseStorage
 
-    private var selectedImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,11 +33,6 @@ class EditProfileActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        binding.ivProfilePicture.setOnClickListener {
-            pickImageFromGallery()
-        }
-
-        // Retrieve user data
         retrieveUserData()
 
         // Set click listener for the save button to update profile
@@ -47,30 +41,22 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun pickImageFromGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, 1000)
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1000 && resultCode == Activity.RESULT_OK) {
-            selectedImageUri = data?.data
-            binding.ivProfilePicture.setImageURI(selectedImageUri)
-        }
     }
 
     private fun retrieveUserData() {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             val userId = currentUser.uid
-            val docRef = db.collection("users").document(userId)
+            val docRef = db.collection("User").document(userId)
             docRef.get()
                 .addOnSuccessListener { document ->
                     if (document != null) {
-                        val username = document.getString("username")
+                        val username = document.getString("name")
                         val email = document.getString("email")
-                        val profileImageUrl = document.getString("profileImageUrl")
+                        val profileImageUrl = document.getString("image")
 
                         binding.etUsername.setText(username)
                         binding.etEmail.setText(email)
@@ -95,42 +81,36 @@ class EditProfileActivity : AppCompatActivity() {
             val email = binding.etEmail.text.toString()
             val newPassword = binding.etPassword.text.toString()
 
-            val userUpdates = hashMapOf(
-                "username" to username,
-                "email" to email
-            )
+            val userUpdates = mutableMapOf<String, Any>()
+            if (username.isNotEmpty()) userUpdates["name"] = username
+            if (email.isNotEmpty()) userUpdates["email"] = email
 
-            if (selectedImageUri != null) {
-                val storageRef = storage.reference.child("profileImages/$userId.jpg")
-                storageRef.putFile(selectedImageUri!!)
-                    .addOnSuccessListener {
-                        storageRef.downloadUrl.addOnSuccessListener { uri ->
-                            userUpdates["profileImageUrl"] = uri.toString()
-                            saveUserUpdates(userId, userUpdates, newPassword)
-                        }
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(this, "Error uploading profile image: $e", Toast.LENGTH_SHORT).show()
-                    }
-            } else {
-                saveUserUpdates(userId, userUpdates, newPassword)
-            }
+            saveUserUpdates(userId, userUpdates, newPassword)
         }
     }
 
+
     private fun saveUserUpdates(userId: String, userUpdates: Map<String, Any>, newPassword: String) {
-        db.collection("users").document(userId)
-            .set(userUpdates)
-            .addOnSuccessListener {
-                if (newPassword.isNotEmpty()) {
-                    updatePassword(newPassword)
-                } else {
-                    Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+        if (userUpdates.isNotEmpty()) {
+            db.collection("User").document(userId)
+                .update(userUpdates)
+                .addOnSuccessListener {
+                    if (newPassword.isNotEmpty()) {
+                        updatePassword(newPassword)
+                    } else {
+                        Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+                    }
                 }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Error updating profile: $e", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            if (newPassword.isNotEmpty()) {
+                updatePassword(newPassword)
+            } else {
+                Toast.makeText(this, "No changes detected", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Error updating profile: $e", Toast.LENGTH_SHORT).show()
-            }
+        }
     }
 
     private fun updatePassword(newPassword: String) {

@@ -155,7 +155,8 @@ class AddReceiptActivity : AppCompatActivity() {
                         tax = binding.editTAX.text.toString(),
                         type = binding.editLocation.text.toString(),
                         userId = getCurrentUserId(), // Get the user ID
-                        imageUri = downloadUri.toString() // Change here to match your data class
+                        imageUri = downloadUri.toString(), // Change here to match your data class
+                        id= receiptId
                     )
 
                     // Save receipt details to Firestore

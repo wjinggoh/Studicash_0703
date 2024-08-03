@@ -10,7 +10,8 @@ data class Receipt(
     var type: String = "",
     val timestamp: Timestamp = Timestamp.now(),
     val userId: String = "",
-    val imageUri: String? = null  // Add imageUri field if applicable
+    val imageUri: String? = null,  // Add imageUri field if applicable
+    val id: String = ""
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
@@ -18,7 +19,8 @@ data class Receipt(
         parcel.readString() ?: "",
         parcel.readParcelable(Timestamp::class.java.classLoader) ?: Timestamp.now(),
         parcel.readString() ?: "",
-        parcel.readString() // For imageUri if you have it
+        parcel.readString(), // For imageUri if you have it
+        parcel.readString() ?: ""
     ) {
     }
 
@@ -29,6 +31,7 @@ data class Receipt(
         parcel.writeParcelable(timestamp, flags)
         parcel.writeString(userId)
         parcel.writeString(imageUri)  // Add imageUri field if applicable
+        parcel.writeString(id)
     }
 
     override fun describeContents(): Int {

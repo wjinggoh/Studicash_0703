@@ -20,8 +20,10 @@
         android:id="@+id/btn_edit_payment_method"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="-35dp"
+        android:backgroundTint="@color/ff01579b"
         android:text="Edit"
-        android:layout_marginRight="-35dp"/>
+        app:cornerRadius="10dp" />
 
     <ImageView
         android:id="@+id/btn_delete_payment_method"

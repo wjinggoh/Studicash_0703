@@ -6,10 +6,11 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ExpenseCategory(
-    val icon: Int,
+    val icon: Int, // This should be an Int for resource IDs
     val name: String,
-    val iconUri: String? = null,
-    val id: String = ""
+    val iconUri: String? = null, // This should be a String? for URIs
+    val id: String = "",
+    val uid: String = ""
 ) : Parcelable {
     override fun toString(): String {
         return name
@@ -19,7 +20,7 @@ data class ExpenseCategory(
         return mapOf(
             "name" to name,
             "icon" to icon,
-            "iconUri" to (iconUri ?: "") // Ensure the field is named iconUri and not iconUrl
+            "iconUri" to (iconUri ?: "")
         )
     }
 }

@@ -205,13 +205,13 @@ class RegisterAccountActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
-                val tarucEmailPattern = "[a-zA-Z0-9._%+-]+@student\\.tarc\\.edu\\.my"
+                val emailPattern = "[a-zA-Z0-9._%+-]+@(student\\.tarc\\.edu\\.my|gmail\\.com)"
 
                 // Email validation
-                if (email.isEmpty() || !email.matches(tarucEmailPattern.toRegex())) {
+                if (email.isEmpty() || !email.matches(emailPattern.toRegex())) {
                     Toast.makeText(
                         this@RegisterAccountActivity,
-                        "Email must follow the TARUMT email format",
+                        "Email must follow the Google email format or TARUMT student email format!",
                         Toast.LENGTH_SHORT
                     ).show()
                     return@setOnClickListener
@@ -231,10 +231,9 @@ class RegisterAccountActivity : AppCompatActivity() {
                 if (confirmPassword.isEmpty() || confirmPassword != password) {
                     Toast.makeText(
                         this@RegisterAccountActivity,
-                        "Confirm password is not match with the password",
+                        "Confirm password does not match the password",
                         Toast.LENGTH_SHORT
-                    )
-                        .show()
+                    ).show()
                     return@setOnClickListener
                 }
 
@@ -265,25 +264,6 @@ class RegisterAccountActivity : AppCompatActivity() {
                             user.password = binding.password.editText?.text.toString()
                             user.gender = binding.gender.editText?.text.toString()
 
-                            firebaseUser.sendEmailVerification()
-                                .addOnCompleteListener { emailVerificationTask ->
-                                    if (emailVerificationTask.isSuccessful) {
-                                        // Email sent, wait for user to verify
-                                        Toast.makeText(
-                                            this@RegisterAccountActivity,
-                                            "Verification email sent. Please verify your email to continue.",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        // Failed to send verification email
-                                        Toast.makeText(
-                                            this@RegisterAccountActivity,
-                                            "Failed to send verification email",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                }
-
                             FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     val token = task.result
@@ -295,16 +275,16 @@ class RegisterAccountActivity : AppCompatActivity() {
                                         .addOnSuccessListener {
                                             Toast.makeText(
                                                 this@RegisterAccountActivity,
-                                                "Register Successful",
+                                                "Registration Successful",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                             startActivity(
                                                 Intent(
                                                     this@RegisterAccountActivity,
-                                                    HomeActivity::class.java
+                                                    MainActivity::class.java
                                                 )
                                             )
-                                            finish()
+                                            finish() // Close the RegisterAccountActivity
                                         }
                                         .addOnFailureListener { e ->
                                             Toast.makeText(
@@ -341,6 +321,8 @@ class RegisterAccountActivity : AppCompatActivity() {
                     }
                 }
             }
+
+
         }
     }
     private fun createImageFileUri(): Uri {

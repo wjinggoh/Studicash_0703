@@ -1,4 +1,4 @@
-package my.edu.tarc.studicash_0703
+package my.edu.tarc.studicash_0703.Worker
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,7 +9,9 @@ import androidx.core.app.NotificationCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.firebase.firestore.FirebaseFirestore
+import my.edu.tarc.studicash_0703.GoalTransactionReceiver
 import my.edu.tarc.studicash_0703.Models.GoalItem
+import my.edu.tarc.studicash_0703.R
 import java.util.*
 
 class GoalTransactionWorker(appContext: Context, workerParams: WorkerParameters) :
@@ -75,4 +77,5 @@ class GoalTransactionWorker(appContext: Context, workerParams: WorkerParameters)
 
         notificationManager.notify(goal.id.hashCode(), notification)
     }
+
 }
