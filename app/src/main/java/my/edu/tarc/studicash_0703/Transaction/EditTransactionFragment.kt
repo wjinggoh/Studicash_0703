@@ -10,6 +10,7 @@ import androidx.fragment.app.DialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.Transaction
+import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.FragmentEditTransactionBinding
 
 class EditTransactionFragment : DialogFragment() {
@@ -18,11 +19,11 @@ class EditTransactionFragment : DialogFragment() {
     private lateinit var transaction: Transaction
 
     private val predefinedExpenseCategories = listOf("Food", "Transport", "Utilities", "Entertainment", "Other")
-    private val predefinedIncomeCategories = listOf("Salary", "Investments", "Gifts", "Other")
-    private val paymentMethods = listOf("Credit Card", "Debit Card", "Cash", "Transfer")
+    private val predefinedIncomeCategories = listOf("Salary", "Allowance", "Freelance", "Other")
 
     private var expenseCategories = mutableListOf<String>()
     private var incomeCategories = mutableListOf<String>()
+    private var paymentMethods = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +37,7 @@ class EditTransactionFragment : DialogFragment() {
         binding = FragmentEditTransactionBinding.inflate(inflater, container, false)
 
         transactionId?.let { fetchTransaction(it) }
-        fetchCategories() // Fetch categories from Firestore
+        fetchCategories() // Fetch categories and payment methods from Firestore
 
         binding.saveButton.setOnClickListener {
             updateTransaction()
@@ -53,7 +54,7 @@ class EditTransactionFragment : DialogFragment() {
 
         // Fetch expense categories
         firestore.collection("ExpenseCategories")
-            .get()
+            .whereEqualTo("userId", FirebaseAuth.getInstance().currentUser?.uid).get()
             .addOnSuccessListener { result ->
                 expenseCategories = (result.map { document ->
                     document.getString("name") ?: ""
@@ -67,11 +68,26 @@ class EditTransactionFragment : DialogFragment() {
 
         // Fetch income categories
         firestore.collection("IncomeCategories")
-            .get()
+            .whereEqualTo("userId", FirebaseAuth.getInstance().currentUser?.uid).get()
             .addOnSuccessListener { result ->
                 incomeCategories = (result.map { document ->
                     document.getString("name") ?: ""
                 }.toMutableList() + predefinedIncomeCategories).toMutableList()
+
+                // If a transaction is loaded, update the spinner
+                if (::transaction.isInitialized) {
+                    setupSpinners()
+                }
+            }
+
+        // Fetch payment methods
+        firestore.collection("paymentMethods")
+            .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser?.uid).get()
+            .addOnSuccessListener { result ->
+                paymentMethods = result.map { document ->
+                    document.getString("details") ?: ""
+                }.toMutableList()
+
                 // If a transaction is loaded, update the spinner
                 if (::transaction.isInitialized) {
                     setupSpinners()

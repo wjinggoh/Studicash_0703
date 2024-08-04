@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
@@ -21,6 +22,7 @@ import com.google.firebase.storage.StorageReference
 import com.squareup.picasso.Picasso
 import my.edu.tarc.studicash_0703.Models.Receipt
 import my.edu.tarc.studicash_0703.Models.ReceiptsViewModel
+import my.edu.tarc.studicash_0703.Models.SharedViewModel
 import my.edu.tarc.studicash_0703.databinding.ActivityAddReceiptBinding
 import java.io.ByteArrayInputStream
 import java.io.FileNotFoundException
@@ -28,6 +30,7 @@ import java.io.InputStream
 import java.util.UUID
 
 class AddReceiptActivity : AppCompatActivity() {
+    private lateinit var viewModel: SharedViewModel
 
     private val UPLOAD_ACTION = 2001
     private val PERMISSION_ACTION = 2002
@@ -57,6 +60,9 @@ class AddReceiptActivity : AppCompatActivity() {
         }
 
         setUI()
+
+        // Initialize ViewModel
+        viewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
     }
 
     private fun setUI() {
@@ -149,39 +155,73 @@ class AddReceiptActivity : AppCompatActivity() {
             uploadTask.addOnSuccessListener { taskSnapshot ->
                 // Get the download URL of the uploaded image
                 storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                    // Create a Receipt object with the image URI
+                    // Create a Receipt object with the image URI and category
                     val receipt = Receipt(
                         total = binding.editTotal.text.toString(),
                         tax = binding.editTAX.text.toString(),
                         type = binding.editLocation.text.toString(),
                         userId = getCurrentUserId(), // Get the user ID
-                        imageUri = downloadUri.toString(), // Change here to match your data class
-                        id= receiptId
+                        imageUri = downloadUri.toString(),
+                        id = receiptId,
+                        category = "Receipt" // Ensure category is set to "Receipt"
                     )
 
                     // Save receipt details to Firestore
                     firestoreRef.set(receipt).addOnSuccessListener {
-                        // Data saved successfully
                         Log.d("AddReceiptActivity", "Receipt successfully saved to Firestore with ID: $receiptId")
+
+                        // Update the transaction with the receipt ID and category
+                        updateTransactionWithReceipt(receiptId, "Receipt")
+
                         // Reset UI elements
                         resetUI()
                     }.addOnFailureListener { e ->
-                        // Handle failure
                         Log.e("AddReceiptActivity", "Error saving receipt to Firestore: ${e.message}")
                     }
                 }.addOnFailureListener { e ->
-                    // Handle failure
                     Log.e("AddReceiptActivity", "Error getting download URL: ${e.message}")
                 }
             }.addOnFailureListener { e ->
-                // Handle failure
                 Log.e("AddReceiptActivity", "Error uploading image to Firebase Storage: ${e.message}")
             }
         } ?: run {
-            // Handle case where imageURI is null
             Log.e("AddReceiptActivity", "No image URI provided")
         }
     }
+
+    private fun updateTransactionWithReceipt(receiptId: String, category: String) {
+        val transactionId = getTransactionId()
+        Log.d("AddReceiptActivity", "Transaction ID: $transactionId")
+
+        if (transactionId.isNotEmpty()) {
+            val transactionRef = firestoreReference.collection("expenseTransactions").document(transactionId)
+
+            transactionRef.update(
+                mapOf(
+                    "receiptId" to receiptId,
+                    "category" to category
+                )
+            )
+                .addOnSuccessListener {
+                    Log.d("AddReceiptActivity", "Transaction successfully updated with receipt ID: $receiptId and category: $category")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("AddReceiptActivity", "Error updating transaction with receipt ID and category: ${e.message}")
+                }
+        } else {
+            Log.e("AddReceiptActivity", "Transaction ID is empty, cannot update transaction")
+        }
+    }
+
+
+
+
+
+
+    private fun getTransactionId(): String {
+        return viewModel.getTransactionId() ?: ""
+    }
+
 
 
 
@@ -251,5 +291,7 @@ class AddReceiptActivity : AppCompatActivity() {
         val byteArrayInputStream2 = ByteArrayInputStream(byteArray)
         return BitmapFactory.decodeStream(byteArrayInputStream2, null, options) ?: throw IllegalArgumentException("Failed to decode bitmap")
     }
+
+
 
 }

@@ -8,6 +8,7 @@ data class Receipt(
     var total: String = "",
     var tax: String = "",
     var type: String = "",
+    var category: String = "", // Add this field
     val timestamp: Timestamp = Timestamp.now(),
     val userId: String = "",
     val imageUri: String? = null,  // Add imageUri field if applicable
@@ -17,6 +18,7 @@ data class Receipt(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
+        parcel.readString() ?: "", // Read category from parcel
         parcel.readParcelable(Timestamp::class.java.classLoader) ?: Timestamp.now(),
         parcel.readString() ?: "",
         parcel.readString(), // For imageUri if you have it
@@ -28,9 +30,10 @@ data class Receipt(
         parcel.writeString(total)
         parcel.writeString(tax)
         parcel.writeString(type)
+        parcel.writeString(category) // Write category to parcel
         parcel.writeParcelable(timestamp, flags)
         parcel.writeString(userId)
-        parcel.writeString(imageUri)  // Add imageUri field if applicable
+        parcel.writeString(imageUri)  // Write imageUri to parcel
         parcel.writeString(id)
     }
 

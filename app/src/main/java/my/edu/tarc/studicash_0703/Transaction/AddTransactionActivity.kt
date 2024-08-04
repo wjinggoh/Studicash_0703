@@ -312,6 +312,7 @@ class AddTransactionActivity : AppCompatActivity() {
             ExpenseCategory(R.drawable.fees, "Fees"),
             ExpenseCategory(R.drawable.shopping, "Shopping"),
             ExpenseCategory(R.drawable.transport, "Transportation"),
+            ExpenseCategory(R.drawable.receipts, "Receipt"),
             ExpenseCategory(R.drawable.custom_category, "Other")
         )
     }

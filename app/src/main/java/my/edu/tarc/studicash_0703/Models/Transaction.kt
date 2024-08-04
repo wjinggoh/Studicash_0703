@@ -15,5 +15,6 @@ data class Transaction(
     val userId: String = "",
     val timestamp: Timestamp = Timestamp.now(),
     val expenseColorRes: Int = R.drawable.expense,
-    val incomeColorRes: Int = R.drawable.income
+    val incomeColorRes: Int = R.drawable.income,
+    val receiptId: String? = null
 )

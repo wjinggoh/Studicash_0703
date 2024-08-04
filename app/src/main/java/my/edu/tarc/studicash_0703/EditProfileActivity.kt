@@ -38,6 +38,7 @@ class EditProfileActivity : AppCompatActivity() {
         // Set click listener for the save button to update profile
         binding.btnSave.setOnClickListener {
             updateUserProfile()
+            finish()
         }
     }
 

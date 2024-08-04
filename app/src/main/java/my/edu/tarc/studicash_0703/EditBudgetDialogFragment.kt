@@ -158,7 +158,6 @@ class EditBudgetDialogFragment : DialogFragment() {
             }
     }
 
-
     private fun saveBudget() {
         val name = binding.budgetNameEditText.text.toString()
         val amount = binding.budgetAmountEditText.text.toString().toDoubleOrNull() ?: 0.0
@@ -193,3 +192,4 @@ class EditBudgetDialogFragment : DialogFragment() {
         }
     }
 }
+
