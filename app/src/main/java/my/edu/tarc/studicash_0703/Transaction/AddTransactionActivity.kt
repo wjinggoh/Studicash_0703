@@ -290,12 +290,14 @@ class AddTransactionActivity : AppCompatActivity() {
             .add(transaction)
             .addOnSuccessListener {
                 Toast.makeText(this, "Transaction saved successfully", Toast.LENGTH_SHORT).show()
+                sendNewTransactionNotification(transaction) // Notify user about the new transaction
                 finish()
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Failed to save transaction: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
 
     private fun getIncomeCategories(): List<IncomeCategory> {
         return listOf(
@@ -354,5 +356,6 @@ class AddTransactionActivity : AppCompatActivity() {
             Log.e("Notification", "Error sending notification", e)
         }
     }
+
 
 }

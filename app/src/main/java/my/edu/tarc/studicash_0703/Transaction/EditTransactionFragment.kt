@@ -54,7 +54,7 @@ class EditTransactionFragment : DialogFragment() {
 
         // Fetch expense categories
         firestore.collection("ExpenseCategories")
-            .whereEqualTo("userId", FirebaseAuth.getInstance().currentUser?.uid).get()
+            .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser?.uid).get()
             .addOnSuccessListener { result ->
                 expenseCategories = (result.map { document ->
                     document.getString("name") ?: ""
@@ -68,7 +68,7 @@ class EditTransactionFragment : DialogFragment() {
 
         // Fetch income categories
         firestore.collection("IncomeCategories")
-            .whereEqualTo("userId", FirebaseAuth.getInstance().currentUser?.uid).get()
+            .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser?.uid).get()
             .addOnSuccessListener { result ->
                 incomeCategories = (result.map { document ->
                     document.getString("name") ?: ""
