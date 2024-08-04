@@ -6,8 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import my.edu.tarc.studicash_0703.adapter.IncomeCategoryAdapter
 import my.edu.tarc.studicash_0703.Models.IncomeCategory
+import my.edu.tarc.studicash_0703.adapter.IncomeCategoryAdapter
 import my.edu.tarc.studicash_0703.R
 import my.edu.tarc.studicash_0703.databinding.ActivityEditIncomeCategoryBinding
 
@@ -49,7 +49,7 @@ class EditIncomeCategoryActivity : AppCompatActivity() {
                     val iconUri = document.getString("iconUri") ?: ""
                     val id = document.id
                     val uid = document.getString("uid") // Retrieve UID from Firestore document
-                    incomeCategories.add(IncomeCategory(icon, name,iconUri, id))
+                    incomeCategories.add(IncomeCategory(icon, name, iconUri, id))
                 }
                 incomeCategoryAdapter.notifyDataSetChanged()
             }
@@ -58,11 +58,17 @@ class EditIncomeCategoryActivity : AppCompatActivity() {
             }
     }
 
-
     private fun getCurrentUserUid(): String? {
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser
         return currentUser?.uid
+    }
+
+    fun editCategory(category: IncomeCategory) {
+        val dialogFragment = DialogEditIncomeCategoryFragment.newInstance(category) { updatedCategory ->
+            updateCategory(updatedCategory, incomeCategories.indexOf(category))
+        }
+        dialogFragment.show(supportFragmentManager, "EditCategoryDialog")
     }
 
     fun updateCategory(updatedCategory: IncomeCategory, position: Int) {

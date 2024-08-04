@@ -35,6 +35,7 @@ class EditExpensesCategoryActivity : AppCompatActivity() {
 
         fetchExpenseCategoriesFromFirestore()
 
+
     }
 
     private fun fetchExpenseCategoriesFromFirestore() {
@@ -75,6 +76,14 @@ class EditExpensesCategoryActivity : AppCompatActivity() {
         val currentUser = firebaseAuth.currentUser
         return currentUser?.uid
     }
+
+    fun editCategory(category: ExpenseCategory) {
+        val dialogFragment = DialogEditCategoryFragment.newInstance(category) { updatedCategory ->
+            updateCategory(updatedCategory, expenseCategories.indexOf(category))
+        }
+        dialogFragment.show(supportFragmentManager, "EditCategoryDialog")
+    }
+
     fun updateCategory(updatedCategory: ExpenseCategory, position: Int) {
         expenseCategories[position] = updatedCategory
         expenseCategoryAdapter.notifyItemChanged(position)

@@ -35,7 +35,7 @@ class ExpenseCategoryAdapter(
 
         holder.binding.editCategoryButton.setOnClickListener {
             if (context is EditExpensesCategoryActivity) {
-                // Implement edit functionality if needed
+                context.editCategory(category)
             }
         }
 

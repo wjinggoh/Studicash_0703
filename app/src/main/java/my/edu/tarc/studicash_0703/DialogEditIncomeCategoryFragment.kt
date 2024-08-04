@@ -10,22 +10,22 @@ import android.widget.ImageView
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
-import my.edu.tarc.studicash_0703.Models.ExpenseCategory
+import my.edu.tarc.studicash_0703.Models.IncomeCategory
 import my.edu.tarc.studicash_0703.R
 import java.io.Serializable
 
-class DialogEditCategoryFragment : DialogFragment() {
+class DialogEditIncomeCategoryFragment : DialogFragment() {
 
-    private lateinit var category: ExpenseCategory
-    private var onCategoryUpdated: ((ExpenseCategory) -> Unit)? = null
+    private lateinit var category: IncomeCategory
+    private var onCategoryUpdated: ((IncomeCategory) -> Unit)? = null
     private val db = FirebaseFirestore.getInstance()
 
     companion object {
         private const val ARG_CATEGORY = "category"
         private const val ARG_ON_CATEGORY_UPDATED = "onCategoryUpdated"
 
-        fun newInstance(category: ExpenseCategory, onCategoryUpdated: (ExpenseCategory) -> Unit): DialogEditCategoryFragment {
-            return DialogEditCategoryFragment().apply {
+        fun newInstance(category: IncomeCategory, onCategoryUpdated: (IncomeCategory) -> Unit): DialogEditIncomeCategoryFragment {
+            return DialogEditIncomeCategoryFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_CATEGORY, category)
                     putSerializable(ARG_ON_CATEGORY_UPDATED, SerializableWrapper(onCategoryUpdated))
@@ -43,7 +43,7 @@ class DialogEditCategoryFragment : DialogFragment() {
 
         arguments?.let {
             category = it.getParcelable(ARG_CATEGORY)!!
-            onCategoryUpdated = (it.getSerializable(ARG_ON_CATEGORY_UPDATED) as SerializableWrapper<*>).value as? (ExpenseCategory) -> Unit
+            onCategoryUpdated = (it.getSerializable(ARG_ON_CATEGORY_UPDATED) as SerializableWrapper<*>).value as? (IncomeCategory) -> Unit
         }
 
         nameEditText.setText(category.name)
@@ -69,8 +69,8 @@ class DialogEditCategoryFragment : DialogFragment() {
         return dialog
     }
 
-    private fun updateCategoryInFirestore(updatedCategory: ExpenseCategory) {
-        db.collection("ExpenseCategories").document(updatedCategory.id)
+    private fun updateCategoryInFirestore(updatedCategory: IncomeCategory) {
+        db.collection("IncomeCategories").document(updatedCategory.id)
             .update("name", updatedCategory.name)
             .addOnSuccessListener {
                 onCategoryUpdated?.invoke(updatedCategory)

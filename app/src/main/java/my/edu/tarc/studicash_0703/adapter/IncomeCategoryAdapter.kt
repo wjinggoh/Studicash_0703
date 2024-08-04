@@ -3,11 +3,13 @@ package my.edu.tarc.studicash_0703.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import my.edu.tarc.studicash_0703.Transaction.EditIncomeCategoryActivity
+import my.edu.tarc.studicash_0703.Transaction.DialogEditIncomeCategoryFragment
 import my.edu.tarc.studicash_0703.Models.IncomeCategory
 import my.edu.tarc.studicash_0703.R
+import my.edu.tarc.studicash_0703.Transaction.EditIncomeCategoryActivity
 import my.edu.tarc.studicash_0703.databinding.CategoryItemBinding
 
 class IncomeCategoryAdapter(
@@ -34,10 +36,11 @@ class IncomeCategoryAdapter(
         holder.binding.categoryName.text = category.name
 
         holder.binding.editCategoryButton.setOnClickListener {
-            // Implement edit functionality
-            if (context is EditIncomeCategoryActivity) {
-                // context.updateCategory(updatedCategory, position)
+            val editDialog = DialogEditIncomeCategoryFragment.newInstance(category) { updatedCategory ->
+                incomeCategories[position] = updatedCategory
+                notifyItemChanged(position)
             }
+            editDialog.show((context as AppCompatActivity).supportFragmentManager, "editIncomeCategory")
         }
 
         holder.binding.deleteCategoryButton.setOnClickListener {
