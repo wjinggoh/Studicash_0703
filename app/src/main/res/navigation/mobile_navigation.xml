@@ -20,11 +20,11 @@
             android:id="@+id/action_fragment_home_to_helpActivity"
             app:destination="@id/helpActivity" />
         <action
-            android:id="@+id/action_fragment_home_to_feedbackActivity"
-            app:destination="@id/feedbackActivity" />
-        <action
             android:id="@+id/action_fragment_home_to_contactUsActivity"
             app:destination="@id/contactUsActivity" />
+        <action
+            android:id="@+id/action_fragment_home_to_feedbackAndComplaintActivity"
+            app:destination="@id/feedbackAndComplaintActivity" />
 
     </fragment>
 
@@ -84,10 +84,11 @@
         android:name="my.edu.tarc.studicash_0703.sidebar.ContactUsActivity"
         android:label="activity_contact_us"
         tools:layout="@layout/activity_contact_us" />
+
     <activity
-        android:id="@+id/feedbackActivity"
-        android:name="my.edu.tarc.studicash_0703.sidebar.FeedbackActivity"
-        android:label="activity_feedback"
-        tools:layout="@layout/activity_feedback" />
+        android:id="@+id/feedbackAndComplaintActivity"
+        android:name="my.edu.tarc.studicash_0703.sidebar.FeedbackAndComplaintActivity"
+        android:label="activity_feedback_and_complaint"
+        tools:layout="@layout/activity_feedback_and_complaint" />
 
 </navigation>

@@ -133,15 +133,27 @@ class AddReceiptActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 for (block in it.textBlocks) text += block.text + "\n"
                 val receipts = receiptsViewModel.getReceipts(text)
+
+                // Set total and type as usual
                 binding.editTotal.setText(receipts.total, TextView.BufferType.EDITABLE)
                 binding.editLocation.setText(receipts.type, TextView.BufferType.EDITABLE)
-                binding.editTAX.setText(receipts.tax, TextView.BufferType.EDITABLE)
+
+                // Check for TAX, SST, or GST in the recognized text
+                val taxKeywords = listOf("TAX", "SST", "GST")
+                val taxFound = taxKeywords.any { keyword -> text.contains(keyword, ignoreCase = true) }
+
+                if (taxFound) {
+                    binding.editTAX.setText(receipts.tax, TextView.BufferType.EDITABLE)
+                } else {
+                    binding.editTAX.setText("unapplicable", TextView.BufferType.EDITABLE)
+                }
             }
             .addOnFailureListener {
                 // Handle failure
                 Log.e("AddReceiptActivity", "Text recognition failed")
             }
     }
+
 
     private fun saveReceiptToDatabase() {
         // Generate a unique ID for the receipt
@@ -156,9 +168,10 @@ class AddReceiptActivity : AppCompatActivity() {
                 // Get the download URL of the uploaded image
                 storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
                     // Create a Receipt object with the image URI and category
+                    val taxValue = if (binding.editTAX.text.toString() == "Unapplicable") "" else binding.editTAX.text.toString()
                     val receipt = Receipt(
                         total = binding.editTotal.text.toString(),
-                        tax = binding.editTAX.text.toString(),
+                        tax = taxValue,
                         type = binding.editLocation.text.toString(),
                         userId = getCurrentUserId(), // Get the user ID
                         imageUri = downloadUri.toString(),
@@ -188,6 +201,7 @@ class AddReceiptActivity : AppCompatActivity() {
             Log.e("AddReceiptActivity", "No image URI provided")
         }
     }
+
 
     private fun updateTransactionWithReceipt(receiptId: String, category: String) {
         val transactionId = getTransactionId()
