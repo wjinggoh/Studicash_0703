@@ -45,10 +45,6 @@ class AdminDashboardActivity : AppCompatActivity() {
             binding.LogoutBtn.isEnabled = false
         }
 
-        // Handle other UI interactions
-        binding.UserManagementBtn.setOnClickListener {
-            // Handle user management click
-        }
 
         binding.FeedbackComplaintReceiveBtn.setOnClickListener {
             val intent = Intent(this, FeedbackComplaintReceiveActivity::class.java)

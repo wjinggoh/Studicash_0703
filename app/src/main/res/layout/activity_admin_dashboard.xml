@@ -51,48 +51,14 @@
             app:layout_constraintTop_toBottomOf="@+id/FeedbackComplaintReceiveBtn" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/UserManagementBtn"
+            android:id="@+id/FeedbackComplaintReceiveBtn"
             android:layout_width="300dp"
             android:layout_height="150dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="32dp"
             android:background="@drawable/balance_blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar2">
-
-            <TextView
-                android:id="@+id/textView25"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:fontFamily="@font/concert_one"
-                android:text="User \n Management"
-                android:textAlignment="center"
-                android:textSize="28sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/textView25"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/user__2_" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/FeedbackComplaintReceiveBtn"
-            android:layout_width="300dp"
-            android:layout_height="150dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/balance_blue"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/UserManagementBtn">
 
             <TextView
                 android:id="@+id/textView26"

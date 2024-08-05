@@ -153,7 +153,7 @@ class CreateGoalActivity : AppCompatActivity() {
                         binding.textViewMonthlyIncome.text = "No income recorded"
                     } else {
                         val totalIncome = calculateTotalIncome(documents)
-                        binding.textViewMonthlyIncome.text = totalIncome.toString()
+                        binding.textViewMonthlyIncome.text = "RM"+totalIncome.toString()
                     }
                 }
                 .addOnFailureListener { exception ->

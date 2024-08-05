@@ -25,7 +25,7 @@ class FeedbackAdapter(private val feedbackList: List<Feedback>) : RecyclerView.A
     inner class FeedbackViewHolder(private val binding: ItemFeedbackBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(feedback: Feedback) {
             binding.emailTextView.text = feedback.email
-            binding.feedbackTextView.text = feedback.feedback
+            binding.feedbackTextView.text = feedback.feedbackText
         }
     }
 }

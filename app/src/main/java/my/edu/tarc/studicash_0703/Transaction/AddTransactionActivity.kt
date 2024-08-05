@@ -40,14 +40,41 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private val keywordToCategoryMap = mapOf(
         "mamak" to "Food",
+        "Malahotpot" to "Food",
+        "KFC" to "Food",
+        "Pizza" to "Food",
+        "MCD" to "Food",
+        "Burger" to "Food",
+        "Ramlee" to "Food",
+        "Bread" to "Food",
+        "Coffee" to "Drinks",
+        "Tea" to "Drinks",
+        "Juice" to "Drinks",
+        "Soda" to "Drinks",
+        "Water" to "Drinks",
+        "Ice Cream" to "Drinks",
         "Shopee" to "Shopping",
         "salary" to "Salary",
+        "Fees" to "Fees",
+        "Karaoke" to "Entertainment",
+        "Movie" to "Entertainment",
+        "Concert" to "Entertainment",
+        "Travel" to "Entertainment",
         "allowance" to "Allowance",
+        "Bonus" to "Salary",
         "freelance" to "Freelance",
         "food" to "Food",
         "fees" to "Fees",
         "shopping" to "Shopping",
         "transport" to "Transportation",
+        "bus" to "Transportation",
+        "train" to "Transportation",
+        "taxi" to "Transportation",
+        "parking" to "Transportation",
+        "lrt" to "Transportation",
+        "toll" to "Transportation",
+        "fuel" to "Transportation",
+        "car" to "Transportation",
         "Grab" to "Transportation",
         "receipt" to "Receipt"
     )
@@ -223,18 +250,26 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        // Initialize DatePickerDialog with current date
         val datePickerDialog = DatePickerDialog(
             this,
-            { _, year, month, dayOfMonth ->
-                val selectedDate = "$year-${month + 1}-$dayOfMonth"
+            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
+                val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDayOfMonth"
                 binding.dateView.text = selectedDate
             },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
+            year,
+            month,
+            day
         )
+
+        // Show the DatePickerDialog
         datePickerDialog.show()
     }
+
 
     private fun validateAndSaveTransaction() {
         val title = binding.transactionTitleInput.editText?.text.toString()
@@ -285,7 +320,7 @@ class AddTransactionActivity : AppCompatActivity() {
                 val adapter = ArrayAdapter(
                     this,
                     android.R.layout.simple_spinner_item,
-                    paymentMethods.map { "${it.type}: ${it.details}" }
+                    paymentMethods.map { "${it.type} ${it.details}" }
                 )
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 binding.paymentMethodSpinner.adapter = adapter

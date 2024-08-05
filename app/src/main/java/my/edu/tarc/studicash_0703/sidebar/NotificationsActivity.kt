@@ -32,7 +32,6 @@ class NotificationsActivity : AppCompatActivity() {
         // Initialize RecyclerView
         binding.notificationRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Fetch notifications
         fetchAllNotifications().addOnSuccessListener { notifications ->
             if (notifications.isNotEmpty()) {
                 val adapter = NotificationAdapter(this, notifications.toMutableList())
@@ -46,6 +45,7 @@ class NotificationsActivity : AppCompatActivity() {
             handleError("Error fetching notifications: ${exception.message}")
         }
 
+
         binding.notificationBackBtn.setOnClickListener {
             finish()
         }
@@ -55,34 +55,39 @@ class NotificationsActivity : AppCompatActivity() {
         val notifications = mutableListOf<NotificationItem>()
         val budgetTask = fetchBudgetExceededNotifications()
         val transactionTask = fetchTransactionNotifications()
-        val createdBudgetTask = fetchCreatedBudgetNotifications()  // Include created budget notifications
+        val createdBudgetTask = fetchCreatedBudgetNotifications()
 
         return Tasks.whenAllSuccess<List<NotificationItem>>(budgetTask, transactionTask, createdBudgetTask)
             .continueWith { task ->
                 val results = task.result ?: emptyList()
-                results.forEach { notifications.addAll(it) }
+                results.forEach { resultList ->
+                    notifications.addAll(resultList)
+                }
+                Log.d("NotificationsActivity", "Fetched Notifications: $notifications")
                 notifications
             }
     }
+
+
 
     private fun fetchTransactionNotifications(): Task<List<NotificationItem>> {
         val notificationList = mutableListOf<NotificationItem>()
         val firestore = FirebaseFirestore.getInstance()
         val transactionsCollection = firestore.collection("expenseTransactions")
-
         val currentUserUid = getCurrentUserUid()
+
         Log.d("NotificationsActivity", "Fetching transactions for UID: $currentUserUid")
 
         val taskCompletionSource = TaskCompletionSource<List<NotificationItem>>()
 
         transactionsCollection.whereEqualTo("userId", currentUserUid)
             .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
-            .limit(50)  // Increased limit
+            .limit(50)  // Adjust as needed
             .get()
             .addOnSuccessListener { result ->
-                Log.d("NotificationsActivity", "Firestore result: ${result.documents.size} documents")
+                Log.d("NotificationsActivity", "Firestore result: ${result.size()} documents")
                 if (result.isEmpty) {
-                    Log.d("NotificationsActivity", "No transactions found for UID: $currentUserUid")
+                    Log.d("NotificationsActivity", "No transactions found.")
                 } else {
                     for (document in result) {
                         val amount = document.getDouble("amount") ?: 0.0
@@ -92,12 +97,12 @@ class NotificationsActivity : AppCompatActivity() {
 
                         Log.d("NotificationsActivity", "Processing transaction: Amount: $amount")
 
-                        if (amount > 0.0) {  // Lower threshold for debugging
+                        if (amount > 0.0) {  // Adjust threshold as needed
                             val notification = NotificationItem(
                                 NotificationType.TRANSACTIONS_DONE,
                                 title,
                                 message,
-                                date = date
+                                date
                             )
                             notificationList.add(notification)
                             Log.d("NotificationsActivity", "Added Notification: $notification | Date: $date")
@@ -113,6 +118,7 @@ class NotificationsActivity : AppCompatActivity() {
 
         return taskCompletionSource.task
     }
+
 
     private fun fetchBudgetExceededNotifications(): Task<List<NotificationItem>> {
         val notificationList = mutableListOf<NotificationItem>()

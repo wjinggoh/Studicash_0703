@@ -40,6 +40,10 @@ class FeedbackAndComplaintActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please enter your feedback or complaint", Toast.LENGTH_SHORT).show()
             }
         }
+
+        binding.UserfeedbackBackBtn.setOnClickListener {
+            finish()
+        }
     }
 
     private fun submitFeedback(feedback: String) {
