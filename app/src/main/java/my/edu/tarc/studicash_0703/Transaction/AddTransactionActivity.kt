@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.widget.addTextChangedListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.ExpenseCategory
@@ -36,6 +37,21 @@ class AddTransactionActivity : AppCompatActivity() {
     private var incomeCategories = listOf<IncomeCategory>()
     private var expenseCategories = listOf<ExpenseCategory>()
     private var paymentMethods = listOf<PaymentMethod>()
+
+    private val keywordToCategoryMap = mapOf(
+        "mamak" to "Food",
+        "Shopee" to "Shopping",
+        "salary" to "Salary",
+        "allowance" to "Allowance",
+        "freelance" to "Freelance",
+        "food" to "Food",
+        "fees" to "Fees",
+        "shopping" to "Shopping",
+        "transport" to "Transportation",
+        "Grab" to "Transportation",
+        "receipt" to "Receipt"
+    )
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,7 +97,33 @@ class AddTransactionActivity : AppCompatActivity() {
         binding.back.setOnClickListener {
             onBackPressed()
         }
+
+        // Listen for changes in the transaction title to auto-detect category
+        binding.transactionTitleInput.editText?.addTextChangedListener {
+            autoDetectCategory(it.toString())
+        }
+
     }
+
+    private fun autoDetectCategory(title: String) {
+        for ((keyword, category) in keywordToCategoryMap) {
+            if (title.contains(keyword, ignoreCase = true)) {
+                val categoryIndex = getCategoryIndex(category)
+                if (categoryIndex >= 0) {
+                    binding.categorySpinner.setSelection(categoryIndex)
+                }
+                break
+            }
+        }
+    }
+
+    private fun getCategoryIndex(categoryName: String): Int {
+        val categories = if (binding.rbAddExpense.isChecked) expenseCategories else incomeCategories
+        return categories.indexOfFirst { (it as? ExpenseCategory)?.name.equals(categoryName, ignoreCase = true)
+                || (it as? IncomeCategory)?.name.equals(categoryName, ignoreCase = true) }
+    }
+
+
 
     override fun onResume() {
         super.onResume()
