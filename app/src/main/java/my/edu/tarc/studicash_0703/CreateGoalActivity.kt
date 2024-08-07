@@ -21,7 +21,6 @@ import my.edu.tarc.studicash_0703.Models.ExpenseCategory
 import my.edu.tarc.studicash_0703.databinding.ActivityCreateGoalBinding
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 class CreateGoalActivity : AppCompatActivity() {
@@ -150,10 +149,10 @@ class CreateGoalActivity : AppCompatActivity() {
                 .addOnSuccessListener { documents ->
                     if (documents.isEmpty) {
                         // No income records found for the user
-                        binding.textViewMonthlyIncome.text = "No income recorded"
+                        binding.textViewMonthlyIncome.text = "No income recorded for this month"
                     } else {
                         val totalIncome = calculateTotalIncome(documents)
-                        binding.textViewMonthlyIncome.text = "RM"+totalIncome.toString()
+                        binding.textViewMonthlyIncome.text = totalIncome.toString()
                     }
                 }
                 .addOnFailureListener { exception ->
@@ -164,12 +163,12 @@ class CreateGoalActivity : AppCompatActivity() {
         }
     }
 
-    private fun scheduleGoalNotification(goalName: String, amount: Double, frequency: String, goalId: String) {
+
+    private fun scheduleGoalNotification(goalName: String, frequency: String) {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, GoalNotificationsReceiver::class.java).apply {
             putExtra("goalName", goalName)
-            putExtra("goalAmount", amount)
-            putExtra("goalId", goalId) // Pass the goal ID
+            putExtra("notificationId", goalName.hashCode()) // Unique ID for each goal
         }
         val pendingIntent = PendingIntent.getBroadcast(this, goalName.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -190,7 +189,6 @@ class CreateGoalActivity : AppCompatActivity() {
             pendingIntent
         )
     }
-
 
     private fun saveGoal() {
         val name = binding.GoalName.text.toString()
@@ -200,15 +198,10 @@ class CreateGoalActivity : AppCompatActivity() {
         val monthlyIncome = binding.textViewMonthlyIncome.text.toString().toDoubleOrNull()
         val savingFrequency = binding.spinnerSavingFrequency.selectedItem.toString()
         val uid = auth.currentUser?.uid
-        val goalIconResId = R.drawable.goal // Ensure this is a valid resource ID
-
-        if (binding.textViewMonthlyIncome.text.toString() == "No income recorded") {
-            Toast.makeText(this, "You should add income before estimating the amount to save in goal!", Toast.LENGTH_LONG).show()
-            return
-        }
 
         if (amount != null && startDate.isNotEmpty() && endDate.isNotEmpty() && monthlyIncome != null && uid != null) {
             val averageSavingsPerPeriod = calculateAverageSavingsPerFrequency(amount, startDate, endDate, savingFrequency)
+            val formattedAverageSavingsPerPeriod = String.format("%.2f", averageSavingsPerPeriod).toDouble()
             binding.averageAmtperPeriodView.text = String.format("%.2f", averageSavingsPerPeriod)
 
             val savingsNeeded = calculateSavings(amount, startDate, endDate, savingFrequency)
@@ -217,7 +210,6 @@ class CreateGoalActivity : AppCompatActivity() {
                 return
             }
 
-            val amountToBeSavedPerPeriod = calculateAverageSavingsPerFrequency(amount, startDate, endDate, savingFrequency)
             val goalData = mapOf(
                 "name" to name,
                 "amount" to amount,
@@ -225,8 +217,8 @@ class CreateGoalActivity : AppCompatActivity() {
                 "endDate" to endDate,
                 "monthlyIncome" to monthlyIncome,
                 "savingFrequency" to savingFrequency,
+                "amountToBeSavedPerPeriod" to formattedAverageSavingsPerPeriod,
                 "savedAmount" to 0.0,
-                "amountToBeSavedPerPeriod" to amountToBeSavedPerPeriod, // Add this line
                 "uid" to uid
             )
 
@@ -234,131 +226,70 @@ class CreateGoalActivity : AppCompatActivity() {
                 .add(goalData)
                 .addOnSuccessListener {
                     Toast.makeText(this, "Goal saved successfully", Toast.LENGTH_SHORT).show()
-                    addExpenseCategory(name, goalIconResId)  // Pass the resource ID directly
-                    scheduleGoalNotification(name, amount, savingFrequency)
+                    scheduleGoalNotification(name, savingFrequency)
                     finish()
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(this, "Error saving goal: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
         } else {
-            Toast.makeText(this, "Please fill in all fields correctly.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Please fill all fields correctly", Toast.LENGTH_SHORT).show()
         }
-    }
-
-
-
-
-    private fun scheduleGoalNotification(goalName: String, amount: Double, frequency: String) {
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, GoalNotificationsReceiver::class.java).apply {
-            putExtra("goalName", goalName)
-            putExtra("goalAmount", amount)
-        }
-        val pendingIntent = PendingIntent.getBroadcast(this, goalName.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        val interval = when (frequency) {
-            "Weekly" -> AlarmManager.INTERVAL_DAY * 7
-            "Bi-weekly" -> AlarmManager.INTERVAL_DAY * 14
-            "Monthly" -> AlarmManager.INTERVAL_DAY * 30
-            "Quarterly" -> AlarmManager.INTERVAL_DAY * 90
-            else -> AlarmManager.INTERVAL_DAY * 30
-        }
-
-        val triggerAtMillis = System.currentTimeMillis() + interval
-
-        alarmManager.setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            triggerAtMillis,
-            interval,
-            pendingIntent
-        )
     }
 
 
     private fun calculateTotalIncome(documents: QuerySnapshot): Double {
         var totalIncome = 0.0
         for (document in documents) {
-            val income = document.getDouble("amount") ?: 0.0
-            totalIncome += income
+            val amount = document.getDouble("amount") ?: 0.0
+            totalIncome += amount
         }
         return totalIncome
     }
-    private fun addExpenseCategory(name: String, iconResId: Int) {
-        val uid = auth.currentUser?.uid ?: ""
-
-        val category = ExpenseCategory(
-            icon = iconResId,
-            name = name,
-            iconUri = null,
-            id = "",
-            uid = uid
-        )
-
-        firestore.collection("ExpenseCategories")
-            .add(category.toMap())
-            .addOnSuccessListener {
-                Toast.makeText(this, "Expense category added successfully", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Error adding expense category: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-
-
-    private fun calculateAverageSavingsPerFrequency(amount: Double, startDate: String, endDate: String, frequency: String): Double {
-        val start = SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(startDate)!!
-        val end = SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(endDate)!!
-
-        val periods = when (frequency) {
-            "Weekly" -> getWeeksBetween(start, end)
-            "Bi-weekly" -> getWeeksBetween(start, end) / 2
-            "Monthly" -> getMonthsBetween(start, end)
-            "Quarterly" -> getMonthsBetween(start, end) / 3
-            else -> getMonthsBetween(start, end)
-        }
-
-        return if (periods > 0) amount / periods else amount
-    }
-
-    private fun getWeeksBetween(startDate: Date, endDate: Date): Int {
-        val diffInMillis = endDate.time - startDate.time
-        return (diffInMillis / (1000 * 60 * 60 * 24 * 7)).toInt()
-    }
-
-    private fun getMonthsBetween(startDate: Date, endDate: Date): Int {
-        val startCalendar = Calendar.getInstance().apply { time = startDate }
-        val endCalendar = Calendar.getInstance().apply { time = endDate }
-
-        val yearsDiff = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR)
-        val monthsDiff = endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH)
-
-        return yearsDiff * 12 + monthsDiff
-    }
-
-    private fun getFrequencyMultiplier(frequency: String): Double {
-        return when (frequency) {
-            "Weekly" -> 4.0
-            "Bi-weekly" -> 2.0
-            "Monthly" -> 1.0
-            "Quarterly" -> 0.33
-            else -> 1.0
-        }
-    }
 
     private fun calculateSavings(amount: Double, startDate: String, endDate: String, frequency: String): Double {
-        val start = SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(startDate)!!
-        val end = SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(endDate)!!
+        val format = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        val start = format.parse(startDate)
+        val end = format.parse(endDate)
 
-        val periods = when (frequency) {
-            "Weekly" -> getWeeksBetween(start, end)
-            "Bi-weekly" -> getWeeksBetween(start, end) / 2
-            "Monthly" -> getMonthsBetween(start, end)
-            "Quarterly" -> getMonthsBetween(start, end) / 3
-            else -> getMonthsBetween(start, end)
+        val diffInMillis = end.time - start.time
+        val diffInDays = diffInMillis / (1000 * 60 * 60 * 24)
+
+        return when (frequency) {
+            "Weekly" -> amount / (diffInDays / 7.0)
+            "Bi-weekly" -> amount / (diffInDays / 14.0)
+            "Monthly" -> amount / (diffInDays / 30.0)
+            "Quarterly" -> amount / (diffInDays / 90.0)
+            else -> amount / (diffInDays / 30.0)
         }
-
-        return if (periods > 0) amount / periods else amount
     }
+
+    private fun calculateAverageSavingsPerFrequency(amount: Double, startDate: String, endDate: String, frequency: String): Double {
+        val format = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        val start = format.parse(startDate)
+        val end = format.parse(endDate)
+
+        val diffInMillis = end.time - start.time
+        val diffInDays = diffInMillis / (1000 * 60 * 60 * 24)
+
+        return when (frequency) {
+            "Weekly" -> amount / (diffInDays / 7.0)
+            "Bi-weekly" -> amount / (diffInDays / 14.0)
+            "Monthly" -> amount / (diffInDays / 30.0)
+            "Quarterly" -> amount / (diffInDays / 90.0)
+            else -> amount / (diffInDays / 30.0)
+        }
+    }
+
+    private fun getFrequencyMultiplier(frequency: String): Int {
+        return when (frequency) {
+            "Weekly" -> 4
+            "Bi-weekly" -> 2
+            "Monthly" -> 1
+            "Quarterly" -> 1 / 3
+            else -> 1
+        }
+    }
+
+
 }

@@ -22,11 +22,16 @@ class GoalAdapter(
         holder.bind(goal)
     }
 
+
     inner class GoalViewHolder(private val binding: GoalItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(goal: GoalItem) {
+            // Format amount and saved amount to 2 decimal places
+            val formattedAmount = String.format("%.2f", goal.amount)
+            val formattedSavedAmt = String.format("%.2f", goal.saved)
+
             binding.goalItemName.text = goal.name
-            binding.goalAmt.text = goal.amount.toString()
-            binding.GoalSavedAmt.text = goal.saved.toString()
+            binding.goalAmt.text = formattedAmount
+            binding.GoalSavedAmt.text = formattedSavedAmt
             binding.goalProgressBar.progress = goal.progress
             binding.goalProgress.text = "${goal.progress}%"
 
@@ -42,6 +47,7 @@ class GoalAdapter(
             }
         }
     }
+
 
     override fun getItemCount(): Int = goals.size
 }

@@ -34,7 +34,7 @@ class GoalTrackingActivity : AppCompatActivity() {
 
         val items = arrayOf("Goal", "Budget")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapter.setDropDownViewResource(R.layout.spinner_drop_down_item)
         binding.goalTrackingSpinner.adapter = adapter
 
         // Set default selection to Goal
@@ -68,6 +68,11 @@ class GoalTrackingActivity : AppCompatActivity() {
 
         binding.addGoalTrackingBtn.setOnClickListener {
             val intent = Intent(this, CreateGoalActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.goalRecordHistory.setOnClickListener {
+            val intent = Intent(this, GoalRecordHistoryActivity::class.java)
             startActivity(intent)
         }
 
@@ -128,11 +133,11 @@ class GoalTrackingActivity : AppCompatActivity() {
 
     private suspend fun fetchTotalSavedForGoal(goalName: String): Double {
         return try {
-            val transactionsCollection = firestore.collection("expenseTransactions") // Adjust if needed
-            val querySnapshot = transactionsCollection.whereEqualTo("category", goalName).get().await()
+            val transactionsCollection = firestore.collection("GoalRecord") // Adjust if needed
+            val querySnapshot = transactionsCollection.whereEqualTo("goal", goalName).get().await()
 
             querySnapshot.documents.sumOf { document ->
-                document.getDouble("amount") ?: 0.0
+                document.getDouble("saveAmount") ?: 0.0
             }
         } catch (exception: Exception) {
             handleError("Error fetching total saved for goal: ${exception.message}")
