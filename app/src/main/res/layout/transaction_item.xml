@@ -29,12 +29,11 @@
 
         <TextView
             android:id="@+id/transactionAmount"
-            android:layout_width="200dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="Amount"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@+id/transactionTitle"
-            app:layout_constraintStart_toStartOf="@+id/transactionTitle"
             app:layout_constraintTop_toBottomOf="@id/transactionTitle" />
 
         <TextView
@@ -44,7 +43,7 @@
             android:text="Date"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@+id/transactionAmount"
-            app:layout_constraintStart_toStartOf="@+id/transactionAmount"
+            app:layout_constraintStart_toStartOf="@+id/transactionTitle"
             app:layout_constraintTop_toBottomOf="@id/transactionAmount" />
 
         <TextView
@@ -99,6 +98,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/transactionCategory"
             app:srcCompat="@drawable/edit_transaction" />
+
+        <TextView
+            android:id="@+id/textView28"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RM"
+            app:layout_constraintStart_toStartOf="@+id/transactionTitle"
+            app:layout_constraintTop_toBottomOf="@+id/transactionTitle" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

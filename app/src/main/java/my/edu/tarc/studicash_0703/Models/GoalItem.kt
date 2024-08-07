@@ -10,6 +10,7 @@ data class GoalItem(
     val id: String = "",
     val name: String = "",
     val amount: Double = 0.0,
+    val amountToBeSavedPerPeriod:Double=0.0,
     var saved: Double = 0.0,
     var progress: Int = 0,
     val startDate: String = "", // Add this line

@@ -1,7 +1,10 @@
 package my.edu.tarc.studicash_0703
 
-
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -11,9 +14,9 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import my.edu.tarc.studicash_0703.Models.Feedback
+import my.edu.tarc.studicash_0703.adapter.FeedbackAdapter
 import my.edu.tarc.studicash_0703.databinding.ActivityFeedbackComplaintReceiveBinding
 import java.util.Date
-
 
 class FeedbackComplaintReceiveActivity : AppCompatActivity() {
 
@@ -43,7 +46,6 @@ class FeedbackComplaintReceiveActivity : AppCompatActivity() {
         }
     }
 
-
     private fun fetchFeedbackData() {
         firestore.collection("Feedback")
             .orderBy("timestamp", Query.Direction.DESCENDING)  // Order by timestamp
@@ -61,7 +63,9 @@ class FeedbackComplaintReceiveActivity : AppCompatActivity() {
 
                     Feedback(email, feedback, timestamp)
                 }
-                binding.feedbackRecyclerView.adapter = FeedbackAdapter(feedbackList)
+                binding.feedbackRecyclerView.adapter = FeedbackAdapter(feedbackList) { feedback ->
+                    sendEmail(feedback.email)
+                }
             }
             .addOnFailureListener { exception ->
                 // Handle error
@@ -69,5 +73,21 @@ class FeedbackComplaintReceiveActivity : AppCompatActivity() {
             }
     }
 
+    private fun sendEmail(email: String) {
+        val subject = "Hi Studicash Team,"
+        val emailBody = "Body of the email"
 
+        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:$email")
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, emailBody)
+        }
+
+        try {
+            startActivity(emailIntent)
+        } catch (e: Exception) {
+            Log.e("FeedbackComplaintReceiveActivity", "Error launching email client", e)
+            Toast.makeText(this, "Error launching email client", Toast.LENGTH_SHORT).show()
+        }
+    }
 }

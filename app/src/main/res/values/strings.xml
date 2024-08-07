@@ -134,6 +134,8 @@
     <string name="customerSupportTitle">Customer Support</string>
     <string name="contactNoTitle">Contact Number</string>
 
+    <string name="amtToSavePerFrequency"><u>Amount</u></string>
+    <string name="goalRecordDate"><u>Date</u></string>
 
     <!-- Bank options for the card -->
     <string-array name="banks_array">

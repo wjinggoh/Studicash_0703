@@ -1,4 +1,4 @@
-package my.edu.tarc.studicash_0703
+package my.edu.tarc.studicash_0703.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,7 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import my.edu.tarc.studicash_0703.Models.Feedback
 import my.edu.tarc.studicash_0703.databinding.ItemFeedbackBinding
 
-class FeedbackAdapter(private val feedbackList: List<Feedback>) : RecyclerView.Adapter<FeedbackAdapter.FeedbackViewHolder>() {
+class FeedbackAdapter(
+    private val feedbackList: List<Feedback>,
+    private val onItemClicked: (Feedback) -> Unit
+) : RecyclerView.Adapter<FeedbackAdapter.FeedbackViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedbackViewHolder {
         val binding = ItemFeedbackBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -26,6 +29,9 @@ class FeedbackAdapter(private val feedbackList: List<Feedback>) : RecyclerView.A
         fun bind(feedback: Feedback) {
             binding.emailTextView.text = feedback.email
             binding.feedbackTextView.text = feedback.feedbackText
+            binding.root.setOnClickListener {
+                onItemClicked(feedback)
+            }
         }
     }
 }
