@@ -272,6 +272,13 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
                 drawerLayout.closeDrawer(GravityCompat.START)
                 return true
             }
+
+            R.id.navFeedbackandComplain ->{
+                // Navigate to FeedbackActivity
+                findNavController().navigate(R.id.action_fragment_home_to_feedbackAndComplaintActivity)
+                drawerLayout.closeDrawer(GravityCompat.START)
+                return true
+            }
             else -> return false
         }
     }

@@ -196,12 +196,12 @@ class CreateGoalActivity : AppCompatActivity() {
         val startDate = binding.editTextStartDate.text.toString()
         val endDate = binding.editTextEndDate.text.toString()
         val monthlyIncome = binding.textViewMonthlyIncome.text.toString().toDoubleOrNull()
-        val goalIconResId = R.drawable.goal
         val savingFrequency = binding.spinnerSavingFrequency.selectedItem.toString()
         val uid = auth.currentUser?.uid
 
         if (amount != null && startDate.isNotEmpty() && endDate.isNotEmpty() && monthlyIncome != null && uid != null) {
             val averageSavingsPerPeriod = calculateAverageSavingsPerFrequency(amount, startDate, endDate, savingFrequency)
+            val formattedAverageSavingsPerPeriod = String.format("%.2f", averageSavingsPerPeriod).toDouble()
             binding.averageAmtperPeriodView.text = String.format("%.2f", averageSavingsPerPeriod)
 
             val savingsNeeded = calculateSavings(amount, startDate, endDate, savingFrequency)
@@ -217,6 +217,7 @@ class CreateGoalActivity : AppCompatActivity() {
                 "endDate" to endDate,
                 "monthlyIncome" to monthlyIncome,
                 "savingFrequency" to savingFrequency,
+                "amountToBeSavedPerPeriod" to formattedAverageSavingsPerPeriod,
                 "savedAmount" to 0.0,
                 "uid" to uid
             )
@@ -225,7 +226,6 @@ class CreateGoalActivity : AppCompatActivity() {
                 .add(goalData)
                 .addOnSuccessListener {
                     Toast.makeText(this, "Goal saved successfully", Toast.LENGTH_SHORT).show()
-                    addExpenseCategory(name, goalIconResId)
                     scheduleGoalNotification(name, savingFrequency)
                     finish()
                 }
@@ -236,6 +236,7 @@ class CreateGoalActivity : AppCompatActivity() {
             Toast.makeText(this, "Please fill all fields correctly", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     private fun calculateTotalIncome(documents: QuerySnapshot): Double {
         var totalIncome = 0.0
@@ -287,37 +288,6 @@ class CreateGoalActivity : AppCompatActivity() {
             "Monthly" -> 1
             "Quarterly" -> 1 / 3
             else -> 1
-        }
-    }
-
-    private fun addExpenseCategory(name: String, iconResId: Int) {
-        val category = ExpenseCategory(name = name, icon = iconResId)
-        val uid = auth.currentUser?.uid
-
-        if (uid != null) {
-            firestore.collection("ExpenseCategories")
-                .whereEqualTo("name", name)
-                .whereEqualTo("uid", uid)
-                .get()
-                .addOnSuccessListener { documents ->
-                    if (documents.isEmpty) {
-                        firestore.collection("ExpenseCategories")
-                            .add(category.toMap() + mapOf("uid" to uid))
-                            .addOnSuccessListener {
-                                Toast.makeText(this, "Expense category added successfully", Toast.LENGTH_SHORT).show()
-                            }
-                            .addOnFailureListener { e ->
-                                Toast.makeText(this, "Error adding expense category: ${e.message}", Toast.LENGTH_SHORT).show()
-                            }
-                    } else {
-                        Toast.makeText(this, "Expense category already exists", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(this, "Error checking category: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-        } else {
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
         }
     }
 

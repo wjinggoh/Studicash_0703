@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<paths>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
     <external-path
-        name="my_images"
-        path="Android/data/my.edu.tarc.studicash_0703/files/Pictures" />
-    <external-path name="external_files" path="." />
+        name="external_files"
+        path="." />
+    <!-- Add other paths as needed -->
 </paths>

@@ -13,6 +13,7 @@ import my.edu.tarc.studicash_0703.Models.ExpenseCategory
 import my.edu.tarc.studicash_0703.Models.IncomeCategory
 import my.edu.tarc.studicash_0703.R
 
+
 class CategorySpinnerAdapter(
     private val context: Context,
     private val categories: List<Any>
@@ -27,6 +28,9 @@ class CategorySpinnerAdapter(
     fun getPosition(category: Any): Int {
         return categories.indexOf(category)
     }
+
+
+    fun getCategories(): List<Any> = categories
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.spinner_items, parent, false)
@@ -61,5 +65,4 @@ class CategorySpinnerAdapter(
 
         return view
     }
-
 }

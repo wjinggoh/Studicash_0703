@@ -20,7 +20,10 @@ data class ExpenseCategory(
         return mapOf(
             "name" to name,
             "icon" to icon,
-            "iconUri" to (iconUri ?: "")
+            "iconUri" to (iconUri ?: ""),
+            "uid" to uid // Include uid in the map
         )
     }
+
+
 }

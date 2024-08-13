@@ -15,6 +15,7 @@ import my.edu.tarc.studicash_0703.Models.GoalItem
 import my.edu.tarc.studicash_0703.databinding.ActivityGoalTrackingBinding
 import java.util.concurrent.TimeUnit
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.launch
 import my.edu.tarc.studicash_0703.Budget.BudgetTrackingActivity
@@ -24,6 +25,7 @@ class GoalTrackingActivity : AppCompatActivity() {
 
     private val firestore = FirebaseFirestore.getInstance()
     private lateinit var binding: ActivityGoalTrackingBinding
+    private val auth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +34,7 @@ class GoalTrackingActivity : AppCompatActivity() {
 
         val items = arrayOf("Goal", "Budget")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapter.setDropDownViewResource(R.layout.spinner_drop_down_item)
         binding.goalTrackingSpinner.adapter = adapter
 
         // Set default selection to Goal
@@ -69,6 +71,11 @@ class GoalTrackingActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        binding.goalRecordHistory.setOnClickListener {
+            val intent = Intent(this, GoalRecordHistoryActivity::class.java)
+            startActivity(intent)
+        }
+
         fetchAndDisplayGoals()
 
         // Schedule the worker to run daily
@@ -78,10 +85,16 @@ class GoalTrackingActivity : AppCompatActivity() {
     }
 
     private fun fetchAndDisplayGoals() {
+        val uid = auth.currentUser?.uid
+
+        if (uid == null) {
+            handleError("User is not logged in!")
+            return
+        }
         lifecycleScope.launch {
             try {
                 val goalCollection = firestore.collection("Goal")
-                val goalDocuments = goalCollection.get().await()
+                val goalDocuments = goalCollection.whereEqualTo("uid", uid).get().await()
 
                 val goalItems = goalDocuments.map { document ->
                     val id = document.id
@@ -120,11 +133,11 @@ class GoalTrackingActivity : AppCompatActivity() {
 
     private suspend fun fetchTotalSavedForGoal(goalName: String): Double {
         return try {
-            val transactionsCollection = firestore.collection("expenseTransactions") // Adjust if needed
-            val querySnapshot = transactionsCollection.whereEqualTo("category", goalName).get().await()
+            val transactionsCollection = firestore.collection("GoalRecord") // Adjust if needed
+            val querySnapshot = transactionsCollection.whereEqualTo("goal", goalName).get().await()
 
             querySnapshot.documents.sumOf { document ->
-                document.getDouble("amount") ?: 0.0
+                document.getDouble("saveAmount") ?: 0.0
             }
         } catch (exception: Exception) {
             handleError("Error fetching total saved for goal: ${exception.message}")

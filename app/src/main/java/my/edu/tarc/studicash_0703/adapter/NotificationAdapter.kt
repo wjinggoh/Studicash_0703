@@ -44,4 +44,5 @@ class NotificationAdapter(
         notifications.addAll(newNotifications)
         notifyDataSetChanged()
     }
+
 }

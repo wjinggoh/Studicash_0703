@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.widget.addTextChangedListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import my.edu.tarc.studicash_0703.Models.ExpenseCategory
@@ -36,6 +37,48 @@ class AddTransactionActivity : AppCompatActivity() {
     private var incomeCategories = listOf<IncomeCategory>()
     private var expenseCategories = listOf<ExpenseCategory>()
     private var paymentMethods = listOf<PaymentMethod>()
+
+    private val keywordToCategoryMap = mapOf(
+        "mamak" to "Food",
+        "Malahotpot" to "Food",
+        "KFC" to "Food",
+        "Pizza" to "Food",
+        "MCD" to "Food",
+        "Burger" to "Food",
+        "Ramlee" to "Food",
+        "Bread" to "Food",
+        "Coffee" to "Drinks",
+        "Tea" to "Drinks",
+        "Juice" to "Drinks",
+        "Soda" to "Drinks",
+        "Water" to "Drinks",
+        "Ice Cream" to "Drinks",
+        "Shopee" to "Shopping",
+        "salary" to "Salary",
+        "Fees" to "Fees",
+        "Karaoke" to "Entertainment",
+        "Movie" to "Entertainment",
+        "Concert" to "Entertainment",
+        "Travel" to "Entertainment",
+        "allowance" to "Allowance",
+        "Bonus" to "Salary",
+        "freelance" to "Freelance",
+        "food" to "Food",
+        "fees" to "Fees",
+        "shopping" to "Shopping",
+        "transport" to "Transportation",
+        "bus" to "Transportation",
+        "train" to "Transportation",
+        "taxi" to "Transportation",
+        "parking" to "Transportation",
+        "lrt" to "Transportation",
+        "toll" to "Transportation",
+        "fuel" to "Transportation",
+        "car" to "Transportation",
+        "Grab" to "Transportation",
+        "receipt" to "Receipt"
+    )
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,7 +124,33 @@ class AddTransactionActivity : AppCompatActivity() {
         binding.back.setOnClickListener {
             onBackPressed()
         }
+
+        // Listen for changes in the transaction title to auto-detect category
+        binding.transactionTitleInput.editText?.addTextChangedListener {
+            autoDetectCategory(it.toString())
+        }
+
     }
+
+    private fun autoDetectCategory(title: String) {
+        for ((keyword, category) in keywordToCategoryMap) {
+            if (title.contains(keyword, ignoreCase = true)) {
+                val categoryIndex = getCategoryIndex(category)
+                if (categoryIndex >= 0) {
+                    binding.categorySpinner.setSelection(categoryIndex)
+                }
+                break
+            }
+        }
+    }
+
+    private fun getCategoryIndex(categoryName: String): Int {
+        val categories = if (binding.rbAddExpense.isChecked) expenseCategories else incomeCategories
+        return categories.indexOfFirst { (it as? ExpenseCategory)?.name.equals(categoryName, ignoreCase = true)
+                || (it as? IncomeCategory)?.name.equals(categoryName, ignoreCase = true) }
+    }
+
+
 
     override fun onResume() {
         super.onResume()
@@ -181,18 +250,26 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        // Initialize DatePickerDialog with current date
         val datePickerDialog = DatePickerDialog(
             this,
-            { _, year, month, dayOfMonth ->
-                val selectedDate = "$year-${month + 1}-$dayOfMonth"
+            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
+                val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDayOfMonth"
                 binding.dateView.text = selectedDate
             },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
+            year,
+            month,
+            day
         )
+
+        // Show the DatePickerDialog
         datePickerDialog.show()
     }
+
 
     private fun validateAndSaveTransaction() {
         val title = binding.transactionTitleInput.editText?.text.toString()
@@ -243,7 +320,7 @@ class AddTransactionActivity : AppCompatActivity() {
                 val adapter = ArrayAdapter(
                     this,
                     android.R.layout.simple_spinner_item,
-                    paymentMethods.map { "${it.type}: ${it.details}" }
+                    paymentMethods.map { "${it.type} ${it.details}" }
                 )
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 binding.paymentMethodSpinner.adapter = adapter
@@ -290,12 +367,14 @@ class AddTransactionActivity : AppCompatActivity() {
             .add(transaction)
             .addOnSuccessListener {
                 Toast.makeText(this, "Transaction saved successfully", Toast.LENGTH_SHORT).show()
+                sendNewTransactionNotification(transaction) // Notify user about the new transaction
                 finish()
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Failed to save transaction: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
 
     private fun getIncomeCategories(): List<IncomeCategory> {
         return listOf(
@@ -312,6 +391,7 @@ class AddTransactionActivity : AppCompatActivity() {
             ExpenseCategory(R.drawable.fees, "Fees"),
             ExpenseCategory(R.drawable.shopping, "Shopping"),
             ExpenseCategory(R.drawable.transport, "Transportation"),
+            ExpenseCategory(R.drawable.receipts, "Receipt"),
             ExpenseCategory(R.drawable.custom_category, "Other")
         )
     }
@@ -353,5 +433,6 @@ class AddTransactionActivity : AppCompatActivity() {
             Log.e("Notification", "Error sending notification", e)
         }
     }
+
 
 }

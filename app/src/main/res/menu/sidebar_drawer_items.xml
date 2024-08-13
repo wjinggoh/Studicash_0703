@@ -20,4 +20,9 @@
         android:icon="@drawable/contact_mail"
         android:id="@+id/navContact"
         android:title="Contact Us"/>
+
+    <item
+        android:icon="@drawable/feedback"
+        android:id="@+id/navFeedbackandComplain"
+        android:title="Feedback and Complaint"/>
 </menu>

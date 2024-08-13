@@ -38,10 +38,6 @@ class SettingsFragment : Fragment() {
             val intent=Intent(activity, HelpActivity::class.java)
             startActivity(intent)
         }
-        binding.currencyBtn.setOnClickListener{
-            val intent=Intent(activity,ChangeCurrencyActivity::class.java)
-            startActivity(intent)
-        }
 
         return view
     }

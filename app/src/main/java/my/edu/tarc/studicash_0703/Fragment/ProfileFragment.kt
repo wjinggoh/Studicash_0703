@@ -1,7 +1,14 @@
 package my.edu.tarc.studicash_0703.Fragment
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,6 +32,9 @@ class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
+
+    private val CHANNEL_ID = "balance_notification_channel"
+    private val NOTIFICATION_ID = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +75,7 @@ class ProfileFragment : Fragment() {
                     user?.let {
                         binding.userName.text = it.name
                         binding.email.text = it.email
-                        binding.profileGender.text=it.gender
+                        binding.profileGender.text = it.gender
                         if (!it.image.isNullOrEmpty()) {
                             Glide.with(requireContext())
                                 .load(it.image)
@@ -116,6 +126,11 @@ class ProfileFragment : Fragment() {
                             binding.profileBalance.text = df.format(balance)
                             binding.profileTotalIncome.text = df.format(totalIncome)
                             binding.profileTotalExpenses.text = df.format(totalExpenses)
+
+                            // Check if balance is negative and send notification
+                            if (balance < 0) {
+                                sendNotification(balance)
+                            }
                         }
                         .addOnFailureListener { exception ->
                             Toast.makeText(requireContext(), "Failed to fetch expense transactions: ${exception.message}", Toast.LENGTH_SHORT).show()
@@ -124,6 +139,41 @@ class ProfileFragment : Fragment() {
                 .addOnFailureListener { exception ->
                     Toast.makeText(requireContext(), "Failed to fetch income transactions: ${exception.message}", Toast.LENGTH_SHORT).show()
                 }
+        }
+    }
+
+    private fun sendNotification(balance: Double) {
+        createNotificationChannel()
+
+        val intent = Intent(requireContext(), ProfileFragment::class.java)
+        val pendingIntent = PendingIntent.getActivity(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val notification = NotificationCompat.Builder(requireContext(), CHANNEL_ID)
+            .setSmallIcon(R.drawable.notification)
+            .setContentTitle("Balance Alert")
+            .setContentText("Your balance is negative: $balance, please be alert!")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()
+
+        with(NotificationManagerCompat.from(requireContext())) {
+            notify(NOTIFICATION_ID, notification)
+        }
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Balance Notification Channel"
+            val descriptionText = "Channel for balance notifications"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+
+            val notificationManager: NotificationManager =
+                requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
     }
 }
