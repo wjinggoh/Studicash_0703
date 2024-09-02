@@ -111,7 +111,7 @@ class AddReceiptActivity : AppCompatActivity() {
             photoImage = resizedBitmap
             firebaseImage = FirebaseVisionImage.fromBitmap(photoImage)
             binding.imageResult.setImageBitmap(photoImage)
-            imageURI = data.data // Store the image URI
+            imageURI = data.data
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
@@ -134,11 +134,10 @@ class AddReceiptActivity : AppCompatActivity() {
                 for (block in it.textBlocks) text += block.text + "\n"
                 val receipts = receiptsViewModel.getReceipts(text)
 
-                // Set total and type as usual
                 binding.editTotal.setText(receipts.total, TextView.BufferType.EDITABLE)
                 binding.editLocation.setText(receipts.type, TextView.BufferType.EDITABLE)
 
-                // Check for TAX, SST, or GST in the recognized text
+
                 val taxKeywords = listOf("TAX", "SST", "GST")
                 val taxFound = taxKeywords.any { keyword -> text.contains(keyword, ignoreCase = true) }
 
@@ -149,7 +148,7 @@ class AddReceiptActivity : AppCompatActivity() {
                 }
             }
             .addOnFailureListener {
-                // Handle failure
+
                 Log.e("AddReceiptActivity", "Text recognition failed")
             }
     }
